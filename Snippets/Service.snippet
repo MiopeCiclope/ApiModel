@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>API Service</Title>
+      <Shortcut>service</Shortcut>
+      <Description>Cria um Service com o padrão da arquitetura da Kivalita</Description>
+      <Author>Rômulo Tone</Author>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal default="true">
+          <ID>model</ID>
+          <ToolTip>Nome do Model</ToolTip>
+          <Default>ModelName</Default>
+        </Literal>
+      </Declarations>
+      <Code Language="csharp" Format="CData">
+        <![CDATA[
+using KivalitaAPI.Data;
+using KivalitaAPI.Models;
+using KivalitaAPI.Repositories;
+
+namespace KivalitaAPI.Services
+{
+
+    public class $model$Service : Service<$model$, KivalitaApiContext, $model$Repository>
+    {       
+        public $model$Service(KivalitaApiContext context, $model$Repository baseRepository) : base(context, baseRepository) { }
+    }
+}
+
+
+                ]]>
+      </Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

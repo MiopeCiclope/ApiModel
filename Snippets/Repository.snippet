@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>API Repository</Title>
+      <Shortcut>repo</Shortcut>
+      <Description>Cria um Repositório com o padrão da arquitetura da Kivalita</Description>
+      <Author>Rômulo Tone</Author>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal default="true">
+          <ID>model</ID>
+          <ToolTip>Nome do Model</ToolTip>
+          <Default>ModelName</Default>
+        </Literal>
+      </Declarations>
+      <Code Language="csharp" Format="CData">
+        <![CDATA[
+using Microsoft.EntityFrameworkCore;
+using KivalitaAPI.Models;
+
+namespace KivalitaAPI.Repositories
+{
+    public class $model$Repository : Repository<$model$, DbContext>
+    {
+        public $model$Repository(DbContext context) : base(context) { }
+    }
+}
+
+                ]]>
+      </Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

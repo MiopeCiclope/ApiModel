@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>API Controller</Title>
+      <Shortcut>ctrl</Shortcut>
+      <Description>Cria um controller com o padrão da arquitetura da Kivalita</Description>
+      <Author>Rômulo Tone</Author>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal default="true">
+          <ID>model</ID>
+          <ToolTip>Nome do Model</ToolTip>
+          <Default>ModelName</Default>
+        </Literal>
+      </Declarations>
+      <Code Language="csharp" Format="CData">
+        <![CDATA[
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using KivalitaAPI.Models;
+using KivalitaAPI.Services;
+
+namespace KivalitaAPI.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class $model$Controller : CustomController<$model$, $model$Service>
+    {
+        public $model$Controller($model$Service service, ILogger<$model$Controller> logger) : base(service, logger) { }
+    }
+}
+                ]]>
+      </Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>
