@@ -8,6 +8,8 @@ using System;
 using System.Threading.Tasks;
 using KivalitaAPI.Common;
 using System.Collections.Generic;
+using System.Net;
+using KivalitaAPI.DTOs;
 
 namespace KivalitaAPI.Controllers
 {
@@ -20,49 +22,87 @@ namespace KivalitaAPI.Controllers
         [HttpPost]
         [Route("auth")]
         [AllowAnonymous]
-        public async Task<ActionResult<dynamic>> Authenticate([FromBody] User userCredentials)
+        public HttpResponse<Token> Authenticate([FromBody] AuthDTO userCredentials)
         {
             try
             {
-                var user = this.service.GetByLoginData(userCredentials);
-                if (user == null)
-                    return NotFound(new { message = "Usuário ou senha inválidos" });
-
-                var token = TokenService.GenerateToken(user);
-                user.Password = "";
-                return new
+                var tokenService = new TokenService(this.service.context, new Repositories.TokenRepository(this.service.context));
+                if (userCredentials.GrantType == "password")
                 {
-                    user = user,
-                    token = token
-                };
+                    var fakeUser = new User
+                    {
+                        Email = userCredentials.Email,
+                        Password = userCredentials.Password
+                    };
+
+                    var user = this.service.GetByLoginData(fakeUser);
+                    if (user == null)
+                    {
+                        return new HttpResponse<Token>
+                        {
+                            IsStatusCodeSuccess = false,
+                            data = null,
+                            statusCode = HttpStatusCode.NotFound,
+                            ErrorMessage = "Usuário ou senha inválidos"
+                        };
+                    }
+
+                    var token = tokenService.GenerateToken(user);
+                    token.User.Password = "";
+                    token.Id = 0;
+
+                    return new HttpResponse<Token>
+                    {
+                        IsStatusCodeSuccess = true,
+                        data = token,
+                        statusCode = HttpStatusCode.OK
+                    };
+                }
+                else if(userCredentials.GrantType == "refresh_token")
+                {
+                    if(String.IsNullOrEmpty(userCredentials.RefreshToken))
+                    {
+                        return new HttpResponse<Token>
+                        {
+                            IsStatusCodeSuccess = false,
+                            data = null,
+                            statusCode = HttpStatusCode.BadRequest,
+                            ErrorMessage = "O RefreshToken é obrigatório para o GratType 'refresh_token'"
+                        };
+                    }
+                    else
+                    {
+                        var token = tokenService.RefreshToken(userCredentials.RefreshToken);
+                        token.User.Password = "";
+                        token.Id = 0;
+
+                        return new HttpResponse<Token>
+                        {
+                            IsStatusCodeSuccess = true,
+                            data = token,
+                            statusCode = HttpStatusCode.OK
+                        };  
+                    }
+                }
+                else
+                {
+                    return new HttpResponse<Token>
+                    {
+                        IsStatusCodeSuccess = false,
+                        data = null,
+                        statusCode = HttpStatusCode.BadRequest,
+                        ErrorMessage = "GrantType inválido"
+                    };
+                }
             }
             catch(Exception e)
             {
-                return NotFound(new { message = "Usuário ou senha inválidos" });
+                this.logger.LogError(e.Message);
+                return new HttpResponse<Token>{ IsStatusCodeSuccess = false,
+                    data = null,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    ErrorMessage = "Erro ao realizar a autenticaçâo" };
             }
         }
-
-        //public override HttpResponse<List<User>> Get()
-        //{
-        //    return base.Get();
-        //}
-
-        //public override HttpResponse<User> Get(int id)
-        //{
-        //    return base.Get(id);
-        //}
-
-        //public override HttpResponse<User> Post(User entity)
-        //{
-        //    return base.Post(entity);
-        //}
-        //public override HttpResponse<User> Put(int id, User entity)
-        //{
-        //    return base.Put(id, entity);
-        //}
-        //public override HttpResponse<User> Delete(int id)
-        //{
-        //    return base.Delete(id);
-        //}
     }
 }

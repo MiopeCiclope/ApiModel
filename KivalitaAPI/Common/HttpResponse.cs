@@ -7,5 +7,6 @@ namespace KivalitaAPI.Common
         public HttpStatusCode statusCode { get; set; }
         public bool IsStatusCodeSuccess { get; set; }
         public T data { get; set; }
+        public string? ErrorMessage { get; set; }
     }
 }

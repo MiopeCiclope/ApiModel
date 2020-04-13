@@ -46,12 +46,14 @@ namespace KivalitaAPI.Controllers
             logger.LogInformation($"{this.GetType().Name} - Get - {id}");
             var data = service.Get(id);
             var statusRequest = (data == null) ? HttpStatusCode.NotFound : HttpStatusCode.OK;
+            var hasError = (statusRequest == HttpStatusCode.OK);
 
             return new HttpResponse<TEntity>
             {
-                IsStatusCodeSuccess = (statusRequest == HttpStatusCode.OK),
+                IsStatusCodeSuccess = hasError,
                 statusCode = statusRequest,
-                data = data
+                data = data,
+                ErrorMessage = $"Id inválido"
             };
         }
 

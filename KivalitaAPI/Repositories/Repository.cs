@@ -53,6 +53,13 @@ namespace KivalitaAPI.Repositories
 
         public virtual TEntity Update(TEntity entity)
         {
+            var local = context.Set<TEntity>()
+                .Local
+                .FirstOrDefault(entry => entry.Id.Equals(entity.Id));
+            if (local != null)
+            {
+                context.Entry(local).State = EntityState.Detached;
+            }
             context.Entry(entity).State = EntityState.Modified;
             context.SaveChanges();
             return entity;

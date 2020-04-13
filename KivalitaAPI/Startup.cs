@@ -75,6 +75,9 @@ namespace KivalitaAPI
             services.AddScoped<UserRepository>();
             services.AddScoped<UserService>();
 
+            services.AddScoped<TokenRepository>();
+            services.AddScoped<TokenService>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
