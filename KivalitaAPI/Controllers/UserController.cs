@@ -5,9 +5,7 @@ using Microsoft.Extensions.Logging;
 using KivalitaAPI.Models;
 using KivalitaAPI.Services;
 using System;
-using System.Threading.Tasks;
 using KivalitaAPI.Common;
-using System.Collections.Generic;
 using System.Net;
 using KivalitaAPI.DTOs;
 
