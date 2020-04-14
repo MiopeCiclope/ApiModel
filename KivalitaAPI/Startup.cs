@@ -85,6 +85,10 @@ namespace KivalitaAPI
 
             services.AddScoped<JobRepository>();
             services.AddScoped<JobService>();
+
+            services.AddScoped<ImageRepository>();
+            services.AddScoped<ImageService>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
