@@ -1,12 +1,11 @@
 ﻿using KivalitaAPI.Interfaces;
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace KivalitaAPI.Models
 {
-    public class Post : IEntity
+    public class Job : IEntity
     {
         [JsonIgnore]
         public int Id { get; set; }
@@ -17,7 +16,7 @@ namespace KivalitaAPI.Models
         [JsonIgnore]
         public int ImageId { get; set; }
         [JsonIgnore]
-        public Image PostImage { get; set; }
+        public Image JobImage { get; set; }
         [ForeignKey("User")]
         public int AuthorId { get; set; }
         [JsonIgnore]

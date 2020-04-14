@@ -14,11 +14,17 @@ namespace KivalitaAPI.Data
         public DbSet<Token> Token { get; set; }
         public DbSet<Post> Post { get; set; }
         public DbSet<Image> Image { get; set; }
+        public DbSet<Job> Job { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Post>()
                 .HasOne(a => a.PostImage)
+                .WithOne()
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Job>()
+                .HasOne(a => a.JobImage)
                 .WithOne()
                 .OnDelete(DeleteBehavior.Cascade);
         }

@@ -66,6 +66,7 @@ namespace KivalitaAPI
                             Url = new Uri("https://kivalitaconsulting.com.br")
                         }
                     });
+                c.EnableAnnotations();
             });
 
             services.AddDbContext<KivalitaApiContext>(options =>
@@ -81,6 +82,9 @@ namespace KivalitaAPI
 
             services.AddScoped<PostRepository>();
             services.AddScoped<PostService>();
+
+            services.AddScoped<JobRepository>();
+            services.AddScoped<JobService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
