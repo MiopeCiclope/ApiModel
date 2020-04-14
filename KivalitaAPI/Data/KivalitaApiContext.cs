@@ -12,5 +12,15 @@ namespace KivalitaAPI.Data
 
         public DbSet<User> User { get; set; }
         public DbSet<Token> Token { get; set; }
+        public DbSet<Post> Post { get; set; }
+        public DbSet<Image> Image { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Post>()
+                .HasOne(a => a.PostImage)
+                .WithOne()
+                .OnDelete(DeleteBehavior.Cascade);
+        }
     }
 }

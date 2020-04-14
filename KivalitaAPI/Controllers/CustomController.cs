@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using KivalitaAPI.Common;
 using KivalitaAPI.Interfaces;
+using System;
 
 namespace KivalitaAPI.Controllers
 {
@@ -29,14 +30,28 @@ namespace KivalitaAPI.Controllers
         public virtual HttpResponse<List<TEntity>> Get()
         {
             logger.LogInformation($"{this.GetType().Name} - GetAll");
-            var dataList = service.GetAll();
-
-            return new HttpResponse<List<TEntity>>
+            try
             {
-                IsStatusCodeSuccess = true,
-                statusCode = HttpStatusCode.OK,
-                data = dataList
-            };
+                var dataList = service.GetAll();
+
+                return new HttpResponse<List<TEntity>>
+                {
+                    IsStatusCodeSuccess = true,
+                    statusCode = HttpStatusCode.OK,
+                    data = dataList
+                };
+            }
+            catch(Exception e)
+            {
+                logger.LogError(e.Message);
+                return new HttpResponse<List<TEntity>>
+                {
+                    IsStatusCodeSuccess = false,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    data = null,
+                    ErrorMessage = "Erro ao realizar a requisição"
+                };
+            }
         }
 
         [HttpGet("{id}")]
@@ -44,17 +59,30 @@ namespace KivalitaAPI.Controllers
         public virtual HttpResponse<TEntity> Get(int id)
         {
             logger.LogInformation($"{this.GetType().Name} - Get - {id}");
-            var data = service.Get(id);
-            var statusRequest = (data == null) ? HttpStatusCode.NotFound : HttpStatusCode.OK;
-            var hasError = (statusRequest == HttpStatusCode.OK);
-
-            return new HttpResponse<TEntity>
+            try
             {
-                IsStatusCodeSuccess = hasError,
-                statusCode = statusRequest,
-                data = data,
-                ErrorMessage = $"Id inválido"
-            };
+                var data = service.Get(id);
+                var statusRequest = (data == null) ? HttpStatusCode.NotFound : HttpStatusCode.OK;
+                var hasError = (statusRequest == HttpStatusCode.OK);
+
+                return new HttpResponse<TEntity>
+                {
+                    IsStatusCodeSuccess = hasError,
+                    statusCode = statusRequest,
+                    data = data
+                };
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.Message);
+                return new HttpResponse<TEntity>
+                {
+                    IsStatusCodeSuccess = false,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    data = null,
+                    ErrorMessage = "Erro ao realizar a requisição"
+                };
+            }
         }
 
         [HttpPut("{id}")]
@@ -62,16 +90,29 @@ namespace KivalitaAPI.Controllers
         public virtual HttpResponse<TEntity> Put(int id, TEntity entity)
         {
             logger.LogInformation($"{this.GetType().Name} - Put - {id}");
-
-            var statusRequest = (id != entity.Id) ? HttpStatusCode.BadRequest : HttpStatusCode.OK;
-            var updatedData = service.Update(entity);
-
-            return new HttpResponse<TEntity>
+            try
             {
-                IsStatusCodeSuccess = (statusRequest == HttpStatusCode.OK),
-                statusCode = statusRequest,
-                data = updatedData
-            };
+                var statusRequest = (id != entity.Id) ? HttpStatusCode.BadRequest : HttpStatusCode.OK;
+                var updatedData = service.Update(entity);
+
+                return new HttpResponse<TEntity>
+                {
+                    IsStatusCodeSuccess = (statusRequest == HttpStatusCode.OK),
+                    statusCode = statusRequest,
+                    data = updatedData
+                };
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.Message);
+                return new HttpResponse<TEntity>
+                {
+                    IsStatusCodeSuccess = false,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    data = null,
+                    ErrorMessage = "Erro ao realizar a requisição"
+                };
+            }
         }
 
         [HttpPost]
@@ -79,16 +120,29 @@ namespace KivalitaAPI.Controllers
         public virtual HttpResponse<TEntity> Post(TEntity entity)
         {
             logger.LogInformation($"{this.GetType().Name} - Post - {entity.ToString()}");
-
-            var statusRequest = HttpStatusCode.Created;
-            var createdData = service.Add(entity);
-
-            return new HttpResponse<TEntity>
+            try
             {
-                IsStatusCodeSuccess = true,
-                statusCode = statusRequest,
-                data = createdData
-            };
+                var statusRequest = HttpStatusCode.Created;
+                var createdData = service.Add(entity);
+
+                return new HttpResponse<TEntity>
+                {
+                    IsStatusCodeSuccess = true,
+                    statusCode = statusRequest,
+                    data = createdData
+                };
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.Message);
+                return new HttpResponse<TEntity>
+                {
+                    IsStatusCodeSuccess = false,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    data = null,
+                    ErrorMessage = "Erro ao realizar a requisição"
+                };
+            }
         }
 
         [HttpDelete("{id}")]
@@ -96,16 +150,29 @@ namespace KivalitaAPI.Controllers
         public virtual HttpResponse<TEntity> Delete(int id)
         {
             logger.LogInformation($"{this.GetType().Name} - Delete - {id}");
-
-            var statusRequest = HttpStatusCode.OK;
-            var createdData = service.Delete(id);
-
-            return new HttpResponse<TEntity>
+            try
             {
-                IsStatusCodeSuccess = true,
-                statusCode = statusRequest,
-                data = createdData
-            };
+                var statusRequest = HttpStatusCode.OK;
+                var createdData = service.Delete(id);
+
+                return new HttpResponse<TEntity>
+                {
+                    IsStatusCodeSuccess = true,
+                    statusCode = statusRequest,
+                    data = createdData
+                };
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.Message);
+                return new HttpResponse<TEntity>
+                {
+                    IsStatusCodeSuccess = false,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    data = null,
+                    ErrorMessage = "Erro ao realizar a requisição"
+                };
+            }
         }
 
     }

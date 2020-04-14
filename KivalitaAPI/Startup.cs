@@ -27,6 +27,7 @@ namespace KivalitaAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMvc();
             services.AddCors();
             services.AddControllers().AddNewtonsoftJson();
 
@@ -78,6 +79,8 @@ namespace KivalitaAPI
             services.AddScoped<TokenRepository>();
             services.AddScoped<TokenService>();
 
+            services.AddScoped<PostRepository>();
+            services.AddScoped<PostService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

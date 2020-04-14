@@ -46,7 +46,7 @@ namespace KivalitaAPI.Repositories
             return context.Set<TEntity>().ToList();
         }
 
-        public List<TEntity> GetBy(Func<TEntity, bool> condition)
+        public virtual List<TEntity> GetBy(Func<TEntity, bool> condition)
         {
             return context.Set<TEntity>().Where(condition).ToList();
         }
