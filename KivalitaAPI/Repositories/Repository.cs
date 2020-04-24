@@ -64,5 +64,15 @@ namespace KivalitaAPI.Repositories
             context.SaveChanges();
             return entity;
         }
+
+        public virtual void ReverseUpdateState(TEntity entity)
+        {
+            var local = context.Set<TEntity>()
+                .Local
+                .FirstOrDefault(entry => entry.Id.Equals(entity.Id));
+
+            if (local != null)
+                context.Entry(local).State = EntityState.Detached;
+        }
     }
 }

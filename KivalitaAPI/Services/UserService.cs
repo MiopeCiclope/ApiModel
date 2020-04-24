@@ -11,10 +11,23 @@ namespace KivalitaAPI.Services
     public class UserService : Service<User, KivalitaApiContext, UserRepository>
     {
         public UserService(KivalitaApiContext context, UserRepository baseRepository) : base(context, baseRepository) { }
+
+        public override User Add(User user)
+        {
+            user.Password = Encrypt(user.Password);
+            return base.Add(user);
+        }
+
         public User GetByLoginData(User user)
         {
             user.Password = Encrypt(user.Password);
             return this.baseRepository.GetByLoginData(user);
+        }
+
+        public override User Update(User user)
+        {
+            user.Password = Encrypt(user.Password);
+            return base.Update(user);
         }
 
         private string Encrypt(string str)

@@ -28,7 +28,14 @@ namespace KivalitaAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            services.AddCors();
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: "AllowAll",
+                builder =>
+                {
+                    builder.AllowAnyOrigin();
+                });
+            });
             services.AddControllers().AddNewtonsoftJson();
 
             var key = Encoding.ASCII.GetBytes(Setting.Secret);

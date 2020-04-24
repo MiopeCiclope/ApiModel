@@ -21,8 +21,7 @@ namespace KivalitaAPI.Repositories
         public override User Get(int id)
         {
             var user = base.Get(id);
-            user.Password = "";
-            return user;
+            return removePassword(user);
         }
 
         public override List<User> GetAll()
@@ -30,8 +29,7 @@ namespace KivalitaAPI.Repositories
             var users = base.GetAll();
             users = users.Select(user =>
             {
-                user.Password = "";
-                return user;
+                return removePassword(user);
             }).ToList();
             return users;
         }
@@ -39,8 +37,7 @@ namespace KivalitaAPI.Repositories
         public override User Add(User entity)
         {
             var user = base.Add(entity);
-            user.Password = "";
-            return user;
+            return removePassword(user);
         }
 
         public override User Update(User entity)
@@ -52,8 +49,7 @@ namespace KivalitaAPI.Repositories
             }
 
             var user = base.Update(entity);
-            user.Password = "";
-            return user;
+            return removePassword(user);
         }
 
         public override List<User> GetBy(Func<User, bool> condition)
@@ -61,10 +57,16 @@ namespace KivalitaAPI.Repositories
             var users = base.GetBy(condition);
             users = users.Select(user =>
             {
-                user.Password = "";
-                return user;
+                return removePassword(user);
             }).ToList();
             return users;
+        }
+
+        private User removePassword(User user)
+        {
+            user.Password = "";
+            base.ReverseUpdateState(user);
+            return user;
         }
     }
 }
