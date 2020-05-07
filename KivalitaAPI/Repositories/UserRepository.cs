@@ -45,6 +45,12 @@ namespace KivalitaAPI.Repositories
 
         public override User Update(User entity)
         {
+            if (entity.Password is null)
+            {
+                var currentUser = base.Get(entity.Id);
+                entity.Password = currentUser.Password;
+            }
+
             var user = base.Update(entity);
             user.Password = "";
             return user;
