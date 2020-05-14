@@ -96,10 +96,13 @@ namespace KivalitaAPI.Controllers
             catch(Exception e)
             {
                 this.logger.LogError(e.Message);
-                return new HttpResponse<Token>{ IsStatusCodeSuccess = false,
+                return new HttpResponse<Token>
+                {
+                    IsStatusCodeSuccess = false,
                     data = null,
                     statusCode = HttpStatusCode.InternalServerError,
-                    ErrorMessage = "Erro ao realizar a autenticaçâo" };
+                    ErrorMessage = "Erro ao realizar a autenticaçâo"
+                };
             }
         }
     }
