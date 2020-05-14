@@ -23,6 +23,8 @@ namespace KivalitaAPI.Controllers
     public class WpRdStationController : CustomController<WpRdStation, WpRdStationService>
     {
         private static readonly HttpClient client = new HttpClient();
+        private static readonly string RdUrl = "https://api.rd.services/platform/conversions?api_key=byCzSPWWqGZFIxAutxGBbakVhAMxuxShdzBj";
+
         public WpRdStationController(WpRdStationService service, ILogger<WpRdStationController> logger) : base(service, logger) { }
 
         [HttpPost]
@@ -31,9 +33,16 @@ namespace KivalitaAPI.Controllers
         {
             try
             {
-                var teste = new WpRdStation();
-                teste.FormData = JsonSerializer.Serialize(jivoData);
-                return base.Post(teste);
+                if (jivoData.event_name == "chat_finished")
+                {
+                    var rdData = ParseJivoData(jivoData.visitor);
+                    var result = sendRdData(rdData);
+                    var json = new WpRdStation();
+                    json.FormData = JsonSerializer.Serialize(json);
+                    return base.Post(json);
+
+                }
+                else return null;
             }
             catch (Exception e)
             {
@@ -49,43 +58,15 @@ namespace KivalitaAPI.Controllers
         {
             try
             {
-                var qwer = new StreamReader(Request.Body);
-                var requestBody = await qwer.ReadToEndAsync();
-                var clean = requestBody.Replace('+', ' ').Replace('&', ' ').Replace("%40", "@");
-                var splited = clean.Split("No Label ");
-                var name = splited[1].Split('=')[1];
-                var empresa = splited[2].Split('=')[1];
-                var cargo = splited[3].Split('=')[1];
-                var email = splited[4].Split('=')[1];
-                var telefone = splited[5].Split('=')[1].Replace("form_id", "");
+                var body = new StreamReader(Request.Body);
+                var requestBody = await body.ReadToEndAsync();
+                var rdData = ParseWordPressData(requestBody);
 
-                string url = "https://api.rd.services/platform/conversions?api_key=byCzSPWWqGZFIxAutxGBbakVhAMxuxShdzBj";
-                var httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
-                httpWebRequest.ContentType = "application/json";
-                httpWebRequest.Method = "POST";
+                var result = sendRdData(rdData);
 
-                string json = "{\"event_type\":\"CONVERSION\"," +
-                            "\"event_family\":\"CDP\"," +
-                            "\"payload\":{" +
-                            "\"conversion_identifier\":\"Formulario Legislacao\"," +
-                            "\"email\":\"" + email + "\"," +
-                            "\"name\":\"" + name + "\"," +
-                            "\"job_title\":\"" + cargo + "\"," +
-                            "\"company_name\":\"" + empresa + "\"}}";
-
-                using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
-                {
-                    streamWriter.Write(json);
-                }
-
-                var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
-                {
-                    var result = streamReader.ReadToEnd();
-                }
-                var teste = new WpRdStation();
-                teste.FormData = json;
-                return base.Post(teste);
+                var json = new WpRdStation();
+                json.FormData = rdData;
+                return base.Post(json);
             }
             catch(Exception e)
             {
@@ -95,10 +76,68 @@ namespace KivalitaAPI.Controllers
             }
         }
 
-        //private string ParseWordPressData(string messyData)
-        //{
+        private string sendRdData(string rdData)
+        {
+            var httpWebRequest = (HttpWebRequest)WebRequest.Create(RdUrl);
+            httpWebRequest.ContentType = "application/json";
+            httpWebRequest.Method = "POST";
 
-        //}
+            using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
+            {
+                streamWriter.Write(rdData);
+            }
+
+            var result = "";
+            var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+            using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+            {
+                result = streamReader.ReadToEnd();
+            }
+
+            return result;
+        }
+
+        private string ParseWordPressData(string messyData)
+        {
+            var clean = messyData.Replace('+', ' ').Replace('&', ' ').Replace("%40", "@");
+            var splited = clean.Split("No Label ");
+            var name = splited[1].Split('=')[1];
+            var empresa = splited[2].Split('=')[1];
+            var cargo = splited[3].Split('=')[1];
+            var email = splited[4].Split('=')[1];
+            var telefone = splited[5].Split('=')[1].Replace("form_id", "");
+
+            var RdData = new RdStationLeadDTO
+            {
+                event_name = "CONVERSION",
+                event_family = "CDP",
+                payload = new RdStationLeadPayload
+                {
+                    conversion_identifier = "Formulario Legislacao",
+                    email = email,
+                    name = name,
+                    job_title = cargo,
+                    company_name = empresa
+                }
+            };
+            return JsonSerializer.Serialize(RdData);
+        }
+
+        private string ParseJivoData(JivoVisitor jivoLead)
+        {
+            var RdData = new RdStationLeadDTO
+            {
+                event_name = "CONVERSION",
+                event_family = "CDP",
+                payload = new RdStationLeadPayload
+                {
+                    conversion_identifier = "JivoChat",
+                    email = jivoLead.email,
+                    name = jivoLead.name
+                }
+            };
+            return JsonSerializer.Serialize(RdData);
+        }
     }
 }
     
