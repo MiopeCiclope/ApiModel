@@ -12,6 +12,9 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Net;
 using System.Text;
+using KivalitaAPI.DTOs;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace KivalitaAPI.Controllers
 {
@@ -21,6 +24,24 @@ namespace KivalitaAPI.Controllers
     {
         private static readonly HttpClient client = new HttpClient();
         public WpRdStationController(WpRdStationService service, ILogger<WpRdStationController> logger) : base(service, logger) { }
+
+        [HttpPost]
+        [Route("JivoChat")]
+        public async Task<HttpResponse<WpRdStation>> JivoHookAsync([FromBody] JivoPayload jivoData)
+        {
+            try
+            {
+                var teste = new WpRdStation();
+                teste.FormData = JsonSerializer.Serialize(jivoData);
+                return base.Post(teste);
+            }
+            catch (Exception e)
+            {
+                var teste = new WpRdStation();
+                teste.FormData = e.Message + '\n' + e.StackTrace;
+                return base.Post(teste);
+            }
+        }
 
         [HttpPost]
         [Route("WebHook")]
@@ -73,6 +94,11 @@ namespace KivalitaAPI.Controllers
                 return base.Post(teste);
             }
         }
+
+        //private string ParseWordPressData(string messyData)
+        //{
+
+        //}
     }
 }
     
