@@ -37,8 +37,9 @@ namespace KivalitaAPI.Controllers
                 {
                     var rdData = ParseJivoData(jivoData.visitor);
                     var result = sendRdData(rdData);
+
                     var json = new WpRdStation();
-                    json.FormData = JsonSerializer.Serialize(json);
+                    json.FormData = rdData;
                     return base.Post(json);
 
                 }
@@ -46,9 +47,9 @@ namespace KivalitaAPI.Controllers
             }
             catch (Exception e)
             {
-                var teste = new WpRdStation();
-                teste.FormData = e.Message + '\n' + e.StackTrace;
-                return base.Post(teste);
+                var json = new WpRdStation();
+                json.FormData = e.Message + '\n' + e.StackTrace;
+                return base.Post(json);
             }
         }
 
@@ -70,9 +71,9 @@ namespace KivalitaAPI.Controllers
             }
             catch(Exception e)
             {
-                var teste = new WpRdStation();
-                teste.FormData = e.Message+'\n'+e.StackTrace;
-                return base.Post(teste);
+                var json = new WpRdStation();
+                json.FormData = e.Message+'\n'+e.StackTrace;
+                return base.Post(json);
             }
         }
 
@@ -109,7 +110,7 @@ namespace KivalitaAPI.Controllers
 
             var RdData = new RdStationLeadDTO
             {
-                event_name = "CONVERSION",
+                event_type = "CONVERSION",
                 event_family = "CDP",
                 payload = new RdStationLeadPayload
                 {
@@ -127,7 +128,7 @@ namespace KivalitaAPI.Controllers
         {
             var RdData = new RdStationLeadDTO
             {
-                event_name = "CONVERSION",
+                event_type = "CONVERSION",
                 event_family = "CDP",
                 payload = new RdStationLeadPayload
                 {
