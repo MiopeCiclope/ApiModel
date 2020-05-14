@@ -96,6 +96,9 @@ namespace KivalitaAPI
             services.AddScoped<ImageRepository>();
             services.AddScoped<ImageService>();
 
+            services.AddScoped<WpRdStationRepository>();
+            services.AddScoped<WpRdStationService>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
