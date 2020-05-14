@@ -98,6 +98,12 @@ namespace KivalitaAPI
 
             services.AddScoped<WpRdStationRepository>();
             services.AddScoped<WpRdStationService>();
+            services.AddScoped<LeadsRepository>();
+
+            services.AddScoped<GetEmailService>();
+
+            services.AddScoped<IEmailExtractorService, EmailExtractorService>();
+            services.AddScoped<RequestsService>();
 
         }
 
