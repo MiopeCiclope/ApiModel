@@ -3,6 +3,7 @@ using KivalitaAPI.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace KivalitaAPI.Repositories
 {
@@ -39,6 +40,11 @@ namespace KivalitaAPI.Repositories
         public virtual TEntity Get(int id)
         {
             return context.Set<TEntity>().Find(id);
+        }
+
+        public virtual ValueTask<TEntity> GetAsync(int id)
+        {
+            return context.Set<TEntity>().FindAsync(id);
         }
 
         public virtual List<TEntity> GetAll()
