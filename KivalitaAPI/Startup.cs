@@ -102,6 +102,8 @@ namespace KivalitaAPI
 
             services.AddScoped<IEmailExtractorService, EmailExtractorService>();
             services.AddScoped<RequestService>();
+            services.AddScoped<WpRdStationRepository>();
+            services.AddScoped<WpRdStationService>();
 
         }
 

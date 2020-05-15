@@ -16,6 +16,7 @@ namespace KivalitaAPI.Data
         public DbSet<Image> Image { get; set; }
         public DbSet<Job> Job { get; set; }
         public DbSet<Leads> Leads { get; set; }
+        public DbSet<WpRdStation> WpRdStation { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
