@@ -10,22 +10,6 @@ namespace KivalitaAPI.Repositories
     {
         public LeadsRepository(DbContext context) : base(context) { }
 
-        public override Leads Get(int id)
-        {
-            var lead = base.Get(id);
-            return lead;
-        }
-
-        public override List<Leads> GetAll()
-        {
-            var leads = base.GetAll();
-            leads = leads.Select(lead =>
-            {
-                return lead;
-            }).ToList();
-            return leads;
-        }
-
         public override Leads Add(Leads entity)
         {
             var leadSearch = this.GetBy(storedLead => storedLead.LinkedIn == entity.LinkedIn);
@@ -40,12 +24,6 @@ namespace KivalitaAPI.Repositories
                 return lead;
             }
 
-        }
-
-        public override Leads Update(Leads entity)
-        {
-            var lead = base.Update(entity);
-            return lead;
         }
 
         public override List<Leads> GetBy(Func<Leads, bool> condition)
