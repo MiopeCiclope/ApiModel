@@ -1,8 +1,9 @@
 ﻿
-using Microsoft.AspNetCore.Mvc;
+using KivalitaAPI.Queues;
+
 using KivalitaAPI.Services;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace KivalitaAPI.Controllers
 {
@@ -16,25 +17,28 @@ namespace KivalitaAPI.Controllers
     [ApiController]
     public class GetEmailController : ControllerBase
     {
-        public readonly GetEmailService getEmailService;
+
+        GetEmailService _getEmailService;
 
         public GetEmailController(GetEmailService getEmailService)
         {
-            this.getEmailService = getEmailService;
+            this._getEmailService = getEmailService;
         }
 
 
         [HttpPost]
-        public async Task<IActionResult> PostAsync([FromBody] RequestExtractEmailDTO request)
+        public IActionResult Post([FromBody] RequestExtractEmailDTO request)
         {
-            foreach (int id in request.ids)
+            DefaultQueue queue = new DefaultQueue();
+
+            foreach (int leadID in request.ids)
             {
-                await getEmailService.FromLeadId(id);
+                queue.Enqueue(() => _getEmailService.FromLeadIdAsync(leadID));
+
             }
 
             return Ok();
         }
-
 
     }
 

@@ -103,7 +103,7 @@ namespace KivalitaAPI
             services.AddScoped<GetEmailService>();
 
             services.AddScoped<IEmailExtractorService, EmailExtractorService>();
-            services.AddScoped<RequestsService>();
+            services.AddScoped<RequestService>();
 
         }
 
