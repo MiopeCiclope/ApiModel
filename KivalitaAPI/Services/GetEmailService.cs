@@ -1,45 +1,40 @@
 ﻿using System;
 using System.Threading.Tasks;
-using KivalitaAPI.Models;
 using KivalitaAPI.Repositories;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace KivalitaAPI.Services
 {
     public class GetEmailService
     {
-        LeadsRepository leadsRepository;
         IEmailExtractorService emailExtractorService;
+        IServiceProvider _serviceProvider;
+        IServiceScope scope;
 
-        public GetEmailService(LeadsRepository leadsRepository, IEmailExtractorService emailExtractorService)
+        public GetEmailService(IServiceProvider serviceProvider, IEmailExtractorService emailExtractorService)
         {
-            this.leadsRepository = leadsRepository;
             this.emailExtractorService = emailExtractorService;
+            this._serviceProvider = serviceProvider;
         }
 
-        public async Task FromLeadId(int leadId) {
-            //EmailExtractorQueue queue = new EmailExtractorQueue();
-            //queue.Enqueue(() => GuessEmailLeadAsync(leadId));
-            await GuessEmailLeadAsync(leadId);
-            
-        }
-
-        private async Task GuessEmailLeadAsync(int leadId)
+        public async Task FromLeadIdAsync(int leadId)
         {
-            Console.WriteLine("Init Task ----------------");
-            Leads lead = leadsRepository.Get(leadId);
+            if (scope == null)
+            {
+                scope = this._serviceProvider.CreateScope();
+            }
+
+            var leadsRepository = scope.ServiceProvider.GetService<LeadsRepository>();
+            var lead = leadsRepository.Get(leadId);
+
             string firstName;
             string lastName;
             string domain;
-
-            Console.WriteLine(lead.name);
 
             domain = GetDomain(lead.CompanySite);
             (firstName, lastName) = GetFirstAndLastName(lead.name);
 
             string email = await emailExtractorService.Run(firstName, lastName, domain);
-
-            //string email = "douglas.bosco@kivalita.com";
-            Console.WriteLine(email);
 
             if (email != null)
             {
