@@ -27,4 +27,7 @@
   </ItemGroup>
 
 
+  <ItemGroup>
+    <Folder Include="Queues\" />
+  </ItemGroup>
 </Project>
