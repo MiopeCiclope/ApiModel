@@ -7,9 +7,10 @@ namespace KivalitaAPI.Services
     public class EmailExtractorService : IEmailExtractorService
     {
 
-        private RequestsService request;
+        private RequestService request;
+        private readonly string apiUrl = "https://www.baselimpa.com/controllers/ValidateMail.ashx";
 
-        public EmailExtractorService(RequestsService _requestService)
+        public EmailExtractorService(RequestService _requestService)
         {
             this.request = _requestService;
         }
@@ -26,10 +27,7 @@ namespace KivalitaAPI.Services
                     new KeyValuePair<string, string>("mail", email)
                 };
 
-                string url = "https://www.baselimpa.com/controllers/ValidateMail.ashx";
-                var response = await request.PostFormAsync(url, queries);
-
-                Console.WriteLine(response);
+                var response = await request.PostFormAsync(apiUrl, queries);
 
                 if (response["Status"] == "2")
                 {
