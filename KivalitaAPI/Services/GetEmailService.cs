@@ -32,13 +32,13 @@ namespace KivalitaAPI.Services
             string domain;
 
             domain = GetDomain(lead.CompanySite);
-            (firstName, lastName) = GetFirstAndLastName(lead.name);
+            (firstName, lastName) = GetFirstAndLastName(lead.Name);
 
             string email = await emailExtractorService.Run(firstName, lastName, domain);
 
             if (email != null)
             {
-                lead.email = email;
+                lead.Email = email;
                 leadsRepository.Update(lead);
             }
 
