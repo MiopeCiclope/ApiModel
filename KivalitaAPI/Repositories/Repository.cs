@@ -23,6 +23,13 @@ namespace KivalitaAPI.Repositories
             return entity;
         }
 
+        public virtual TEntity[] AddRange(TEntity[] entities)
+        {
+            context.Set<TEntity>().AddRange(entities);
+            context.SaveChanges();
+            return entities;
+        }
+
         public virtual TEntity Delete(int id)
         {
             var entity = context.Set<TEntity>().Find(id);

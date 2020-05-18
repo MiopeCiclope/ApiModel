@@ -97,6 +97,7 @@ namespace KivalitaAPI
             services.AddScoped<ImageService>();
 
             services.AddScoped<LeadsRepository>();
+            services.AddScoped<LeadsService>();
 
             services.AddScoped<GetEmailService>();
 

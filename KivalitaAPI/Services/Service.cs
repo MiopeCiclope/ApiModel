@@ -23,6 +23,11 @@ namespace KivalitaAPI.Services
             return baseRepository.Add(entity);
         }
 
+        public virtual TEntity[] AddRange(TEntity[] entities)
+        {
+            return baseRepository.AddRange(entities);
+        }
+
         public virtual TEntity Delete(int id)
         {
             return baseRepository.Delete(id);
