@@ -26,7 +26,8 @@ namespace KivalitaAPI.Services
 
         public override User Update(User user)
         {
-            user.Password = Encrypt(user.Password);
+            if(!String.IsNullOrEmpty(user.Password)) 
+                user.Password = Encrypt(user.Password);
             return base.Update(user);
         }
 

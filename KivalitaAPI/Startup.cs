@@ -103,15 +103,9 @@ namespace KivalitaAPI
 
             services.AddScoped<IEmailExtractorService, EmailExtractorService>();
             services.AddScoped<RequestService>();
+
             services.AddScoped<WpRdStationRepository>();
             services.AddScoped<WpRdStationService>();
-            services.AddScoped<LeadsRepository>();
-
-            services.AddScoped<GetEmailService>();
-
-            services.AddScoped<IEmailExtractorService, EmailExtractorService>();
-            services.AddScoped<RequestService>();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
