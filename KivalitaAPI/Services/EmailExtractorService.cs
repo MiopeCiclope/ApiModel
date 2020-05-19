@@ -44,7 +44,6 @@ namespace KivalitaAPI.Services
             var emails = new List<string>
             {
                 $"{firstName}.{lastName}@{domainCompany}",
-                $"{firstName}_{lastName}@{domainCompany}",
                 $"{firstName}{lastName}@{domainCompany}",
                 $"{firstName}{((lastName.Length > 0) ? lastName[0] : (char?)null)}@{domainCompany}",
                 $"{((firstName.Length > 0) ? firstName[0] : (char?)null)}{lastName}@{domainCompany}",

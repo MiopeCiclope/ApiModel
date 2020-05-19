@@ -5,6 +5,8 @@ using KivalitaAPI.Services;
 using System;
 using KivalitaAPI.Common;
 using System.Net;
+using KivalitaAPI.Queues;
+using System.Collections.Generic;
 
 namespace KivalitaAPI.Controllers
 {
@@ -13,16 +15,24 @@ namespace KivalitaAPI.Controllers
 	public class LeadsController : CustomController<Leads, LeadsService>
     {
         public readonly LeadsService service;
+        GetEmailService _getEmailService;
 
-        public LeadsController (LeadsService _service, ILogger<LeadsController> logger) : base (_service, logger) {
+        public LeadsController (GetEmailService getEmailService, LeadsService _service, ILogger<LeadsController> logger) : base (_service, logger) {
             this.service = _service;
+            this._getEmailService = getEmailService;
         }
 
         [HttpPost]
         [Route("list")]
-        public HttpResponse<string> Post([FromBody] Leads[] leads)
+        public HttpResponse<string> Post([FromBody] List<Leads> leads)
         {
-            this.service.AddRange(leads);
+            DefaultQueue queue = new DefaultQueue();
+            List<Leads> newLeads = this.service.AddRange(leads);
+
+            foreach (Leads lead in newLeads)
+            {
+                queue.Enqueue(() => _getEmailService.FromLeadAsync(lead));
+            }
 
             return new HttpResponse<string>
             {

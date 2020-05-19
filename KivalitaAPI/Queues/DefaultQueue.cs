@@ -28,6 +28,8 @@ namespace KivalitaAPI.Queues
             {
                 var f = func();
                 f.Wait();
+
+                Console.WriteLine($"[queue] - Number of jobs in the queue: {_jobs.Count}");
             }
 
         }

@@ -10,7 +10,7 @@ namespace KivalitaAPI.Interfaces
         List<T> GetAll();
         T Get(int id);
         T Add(T entity);
-        T[] AddRange(T[] entities);
+        List<T> AddRange(List<T> entities);
         T Update(T entity);
         T Delete(int id);
         List<T> GetBy(Func<T, bool> condition);

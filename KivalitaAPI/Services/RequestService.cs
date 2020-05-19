@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -15,6 +16,7 @@ namespace KivalitaAPI.Services
 
             using (HttpClient client = new HttpClient())
             {
+                client.Timeout = TimeSpan.FromSeconds(20);
                 using (HttpResponseMessage response = await client.PostAsync(url, q))
                 {
                     using (HttpContent content = response.Content)

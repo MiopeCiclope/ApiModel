@@ -1,5 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using KivalitaAPI.Models;
 using KivalitaAPI.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -27,6 +32,24 @@ namespace KivalitaAPI.Services
             var leadsRepository = scope.ServiceProvider.GetService<LeadsRepository>();
             var lead = leadsRepository.Get(leadId);
 
+            await FromLeadAsync(lead);
+
+        }
+
+        public async Task FromLeadAsync(Leads lead)
+        {
+            if (scope == null)
+            {
+                scope = this._serviceProvider.CreateScope();
+            }
+
+            if (String.IsNullOrEmpty(lead.CompanySite))
+            {
+                return;
+            }
+
+            var leadsRepository = scope.ServiceProvider.GetService<LeadsRepository>();
+
             string firstName;
             string lastName;
             string domain;
@@ -34,7 +57,19 @@ namespace KivalitaAPI.Services
             domain = GetDomain(lead.CompanySite);
             (firstName, lastName) = GetFirstAndLastName(lead.Name);
 
-            string email = await emailExtractorService.Run(firstName, lastName, domain);
+            Console.WriteLine($"{domain} - {firstName} {lastName}");
+
+            string email;
+            try
+            {
+                email = await emailExtractorService.Run(firstName, lastName, domain);
+            }
+            catch
+            {
+                email = null;
+            }
+
+            Console.WriteLine($"Email - {email}");
 
             if (email != null)
             {
@@ -61,18 +96,39 @@ namespace KivalitaAPI.Services
 
         public (string, string) GetFirstAndLastName(string fullName)
         {
-            var names = fullName.ToLower().Split(' ');
-            switch (names.Length)
+            fullName = RemoveAccentuation(fullName);
+
+            List<string> names = fullName.ToLower().Split(' ').ToList();
+            List<string> namesFiltered = names.FindAll(n => n.Length > 2);
+
+            switch (namesFiltered.Count)
             {
                 case 0:
                     return ("", "");
                 case 1:
-                    return (names[0], "");
+                    return (namesFiltered[0], "");
                 case 2:
-                    return (names[0], names[1]);
+                    return (namesFiltered[0], namesFiltered[1]);
                 default:
-                    return (names[0], names[names.Length - 1]);
+                    return (namesFiltered[0], namesFiltered[namesFiltered.Count - 1]);
             }
+        }
+
+        static string RemoveAccentuation(string text)
+        {
+            var normalizedString = text.Normalize(NormalizationForm.FormD);
+            var stringBuilder = new StringBuilder();
+
+            foreach (var c in normalizedString)
+            {
+                var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
+                if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+                {
+                    stringBuilder.Append(c);
+                }
+            }
+
+            return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
         }
     }
 }
