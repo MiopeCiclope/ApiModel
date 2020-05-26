@@ -26,30 +26,72 @@ namespace KivalitaAPI.Controllers
         [Route("list")]
         public HttpResponse<string> Post([FromBody] List<Leads> leads)
         {
-            var userAuditId = base.GetAuditTrailUser();
-            var utfNowTime = DateTime.UtcNow;
-
-            if (userAuditId == 0) throw new Exception("Token Sem Usuário válido.");
-            leads.ForEach(lead => {
-                lead.CreatedBy = userAuditId;
-                lead.CreatedAt = utfNowTime;
-            });
-
-            DefaultQueue queue = new DefaultQueue();
-            List<Leads> newLeads = this.service.AddRange(leads);
-
-            foreach (Leads lead in newLeads)
+            logger.LogInformation($"{this.GetType().Name} - Post Lead List");
+            try
             {
-                queue.Enqueue(() => _getEmailService.FromLeadAsync(lead));
+                var userAuditId = base.GetAuditTrailUser();
+                var utfNowTime = DateTime.UtcNow;
+
+                if (userAuditId == 0) throw new Exception("Token Sem Usuário válido.");
+                leads.ForEach(lead => {
+                    lead.CreatedBy = userAuditId;
+                    lead.CreatedAt = utfNowTime;
+                });
+
+                DefaultQueue queue = new DefaultQueue();
+                List<Leads> newLeads = this.service.AddRange(leads);
+
+                foreach (Leads lead in newLeads)
+                {
+                    queue.Enqueue(() => _getEmailService.FromLeadAsync(lead));
+                }
+
+                return new HttpResponse<string>
+                {
+                    IsStatusCodeSuccess = true,
+                    data = "Leads salva com sucesso!",
+                    statusCode = HttpStatusCode.OK
+                };
             }
-
-            return new HttpResponse<string>
+            catch (Exception e)
             {
-                IsStatusCodeSuccess = true,
-                data = "Leads salva com sucesso!",
-                statusCode = HttpStatusCode.OK
-            };
+                logger.LogError(e.Message);
+                return new HttpResponse<string>
+                {
+                    IsStatusCodeSuccess = false,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    data = null,
+                    ErrorMessage = "Erro ao realizar a requisição"
+                };
+            }
         }
 
+        [HttpGet]
+        [Route("dates")]
+        public HttpResponse<List<DateTime>> GetDates()
+        {
+            logger.LogInformation($"{this.GetType().Name} - Dates");
+            try
+            {
+                var LeadsDates = this.service.GetDates();
+                return new HttpResponse<List<DateTime>>
+                {
+                    IsStatusCodeSuccess = true,
+                    data = LeadsDates,
+                    statusCode = HttpStatusCode.OK
+                };
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.Message);
+                return new HttpResponse<List<DateTime>>
+                {
+                    IsStatusCodeSuccess = false,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    data = null,
+                    ErrorMessage = "Erro ao realizar a requisição"
+                };
+            }
+        }
     }
 }
