@@ -24,5 +24,11 @@ namespace KivalitaAPI.Models
         public User Author { get; set; }
         [NotMapped]
         public string ImageData { get; set; }
+        [JsonIgnore]
+        public int CreatedBy { get; set; }
+        [JsonIgnore]
+        public int UpdatedBy { get; set; }
+        [JsonIgnore]
+        public DateTime UpdatedAt { get; set; }
     }
 }

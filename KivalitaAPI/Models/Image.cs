@@ -1,4 +1,5 @@
 ﻿using KivalitaAPI.Interfaces;
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 namespace KivalitaAPI.Models
@@ -10,5 +11,13 @@ namespace KivalitaAPI.Models
         [JsonIgnore]
         public byte[] ImageData { get; set; }
         public string Type { get; set; }
+        [JsonIgnore]
+        public int CreatedBy { get; set; }
+        [JsonIgnore]
+        public int UpdatedBy { get; set; }
+        [JsonIgnore]
+        public DateTime CreatedAt { get; set; }
+        [JsonIgnore]
+        public DateTime UpdatedAt { get; set; }
     }
 }

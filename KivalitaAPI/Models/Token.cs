@@ -1,6 +1,7 @@
 ﻿using KivalitaAPI.Interfaces;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace KivalitaAPI.Models
 {
@@ -13,5 +14,13 @@ namespace KivalitaAPI.Models
         [ForeignKey("User")]
         public int UserId { get; set; }
         public User User { get; set; }
+        [JsonIgnore]
+        public int CreatedBy { get; set; }
+        [JsonIgnore]
+        public int UpdatedBy { get; set; }
+        [JsonIgnore]
+        public DateTime CreatedAt { get; set; }
+        [JsonIgnore]
+        public DateTime UpdatedAt { get; set; }
     }
 }

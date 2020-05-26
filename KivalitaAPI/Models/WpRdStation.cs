@@ -10,5 +10,13 @@ namespace KivalitaAPI.Models
         [JsonIgnore]
         public int Id { get; set; }
         public string FormData { get; set; }
-    }
+		[JsonIgnore]
+		public int CreatedBy { get; set; }
+		[JsonIgnore]
+		public int UpdatedBy { get; set; }
+		[JsonIgnore]
+		public DateTime CreatedAt { get; set; }
+		[JsonIgnore]
+		public DateTime UpdatedAt { get; set; }
+	}
 }

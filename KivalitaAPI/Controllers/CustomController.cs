@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using KivalitaAPI.Common;
 using KivalitaAPI.Interfaces;
 using System;
+using System.Security.Claims;
 
 namespace KivalitaAPI.Controllers
 {
@@ -23,6 +24,14 @@ namespace KivalitaAPI.Controllers
         {
             this.service = _service;
             this.logger = _logger;
+        }
+        private int GetAuditTrailUser()
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            if (identity != null)
+                return int.Parse(identity.FindFirst("Id").Value);
+            else
+                return 0;
         }
 
         [HttpGet]
@@ -92,9 +101,15 @@ namespace KivalitaAPI.Controllers
             logger.LogInformation($"{this.GetType().Name} - Put - {id}");
             try
             {
-                var statusRequest = (id != entity.Id) ? HttpStatusCode.BadRequest : HttpStatusCode.OK;
+                var userAuditId = GetAuditTrailUser();
+                if (userAuditId == 0) throw new Exception("Token Sem Usuário válido.");
+
+                entity.UpdatedBy = userAuditId;
+                entity.UpdatedAt = DateTime.UtcNow;
+
                 var updatedData = service.Update(entity);
 
+                var statusRequest = (id != entity.Id) ? HttpStatusCode.BadRequest : HttpStatusCode.OK;
                 return new HttpResponse<TEntity>
                 {
                     IsStatusCodeSuccess = (statusRequest == HttpStatusCode.OK),
@@ -122,9 +137,15 @@ namespace KivalitaAPI.Controllers
             logger.LogInformation($"{this.GetType().Name} - Post - {entity.ToString()}");
             try
             {
-                var statusRequest = HttpStatusCode.Created;
+                var userAuditId = GetAuditTrailUser();
+                if (userAuditId == 0) throw new Exception("Token Sem Usuário válido.");
+
+                entity.CreatedBy = userAuditId;
+                entity.CreatedAt = DateTime.UtcNow;
+
                 var createdData = service.Add(entity);
 
+                var statusRequest = HttpStatusCode.Created;
                 return new HttpResponse<TEntity>
                 {
                     IsStatusCodeSuccess = true,
