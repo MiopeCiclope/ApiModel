@@ -26,6 +26,15 @@ namespace KivalitaAPI.Controllers
         [Route("list")]
         public HttpResponse<string> Post([FromBody] List<Leads> leads)
         {
+            var userAuditId = base.GetAuditTrailUser();
+            var utfNowTime = DateTime.UtcNow;
+
+            if (userAuditId == 0) throw new Exception("Token Sem Usuário válido.");
+            leads.ForEach(lead => {
+                lead.CreatedBy = userAuditId;
+                lead.CreatedAt = utfNowTime;
+            });
+
             DefaultQueue queue = new DefaultQueue();
             List<Leads> newLeads = this.service.AddRange(leads);
 
