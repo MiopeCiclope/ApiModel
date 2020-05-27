@@ -74,6 +74,7 @@ namespace KivalitaAPI
                         }
                     });
                 c.EnableAnnotations();
+                c.IgnoreObsoleteActions();
             });
 
             services.AddDbContext<KivalitaApiContext>(options =>

@@ -25,6 +25,8 @@ namespace KivalitaAPI.Controllers
             this.service = _service;
             this.logger = _logger;
         }
+
+        [ApiExplorerSettings(IgnoreApi = true)]
         public virtual int GetAuditTrailUser()
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
