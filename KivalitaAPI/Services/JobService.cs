@@ -34,6 +34,23 @@ namespace KivalitaAPI.Services
             return base.Add(Job);
         }
 
+        public override Job Update(Job Job)
+        {
+            if (!String.IsNullOrEmpty(Job.ImageData) && !Convert.ToBoolean(Job.ImageId))
+            {
+                var JobImage = new Image
+                {
+                    ImageData = Convert.FromBase64String(Job.ImageData),
+                    Type = "Job"
+                };
+
+                var storedImage = this._imageRepository.Add(JobImage);
+                Job.ImageId = storedImage.Id;
+            }
+
+            return base.Update(Job);
+        }
+
         public override Job Get(int id)
         {
             var storedJob = base.Get(id);

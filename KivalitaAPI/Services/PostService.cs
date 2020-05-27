@@ -34,6 +34,23 @@ namespace KivalitaAPI.Services
             return base.Add(post);
         }
 
+        public override Post Update(Post post)
+        {
+            if (!String.IsNullOrEmpty(post.ImageData) && !Convert.ToBoolean(post.ImageId))
+            {
+                var JobImage = new Image
+                {
+                    ImageData = Convert.FromBase64String(post.ImageData),
+                    Type = "Blog"
+                };
+
+                var storedImage = this._imageRepository.Add(JobImage);
+                post.ImageId = storedImage.Id;
+            }
+
+            return base.Update(post);
+        }
+
         public override Post Get(int id)
         {
             var storedPost = base.Get(id);
