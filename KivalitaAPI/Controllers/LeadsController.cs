@@ -22,6 +22,34 @@ namespace KivalitaAPI.Controllers
             this._getEmailService = getEmailService;
         }
 
+        [HttpGet]
+        [Route("{linkedInID}/exists")]
+        public virtual HttpResponse<Boolean> Get(string linkedInID)
+        {
+            logger.LogInformation($"{this.GetType().Name} - Exists");
+            try
+            {
+                Boolean leadExists = service.LeadExists(linkedInID);
+                return new HttpResponse<Boolean>
+                {
+                    IsStatusCodeSuccess = true,
+                    statusCode = HttpStatusCode.OK,
+                    data = leadExists
+                };
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.Message);
+                return new HttpResponse<Boolean>
+                {
+                    IsStatusCodeSuccess = false,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    data = false,
+                    ErrorMessage = "Erro ao realizar a requisi??o"
+                };
+            }
+        }
+
         [HttpPost]
         [Route("list")]
         public HttpResponse<string> Post([FromBody] List<Leads> leads)

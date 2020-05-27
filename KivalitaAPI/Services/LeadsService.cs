@@ -28,6 +28,12 @@ namespace KivalitaAPI.Services {
 						.OrderBy(x => x)
 						.ToList();
 		}
+        public Boolean LeadExists(string linkedInID)
+        {
+			var leadSearch = this.baseRepository.GetBy(storedLead => storedLead.LinkedIn == linkedInID);
+
+			return leadSearch.FirstOrDefault() != null ? true : false;
+		}
 
 	}
 }
