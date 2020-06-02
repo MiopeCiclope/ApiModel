@@ -29,6 +29,5 @@
 
   <ItemGroup>
     <Folder Include="Queues\" />
-    <Folder Include="Mapping\" />
   </ItemGroup>
 </Project>
