@@ -1,20 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 using KivalitaAPI.Interfaces;
 
 namespace KivalitaAPI.Models {
-	public class User : IEntity {
-		[JsonIgnore]
-		public int Id { get; set; }
-		public string FirstName { get; set; }
-		public string LastName { get; set; }
-		public string Email { get; set; }
-		public string Role { get; set; }
-		public virtual ICollection<Filter> Filters { get; set; }
+	public class Filter : IEntity {
 
 		[JsonIgnore]
-		public string Password { get; set; }
+		public int Id { get; set; }
+		public string Name { get; set; }
+		public string Company { get; set; }
+		public string Sector { get; set; }
+		public string Position { get; set; }
+		public string Email { get; set; }
+
+		[ForeignKey ("User")]
+		public int UserId { get; set; }
+
+		[JsonIgnore]
+		public virtual User User { get; set; }
 
 		[JsonIgnore]
 		public int CreatedBy { get; set; }
@@ -27,5 +31,6 @@ namespace KivalitaAPI.Models {
 
 		[JsonIgnore]
 		public DateTime UpdatedAt { get; set; }
+
 	}
 }
