@@ -49,7 +49,7 @@ namespace KivalitaAPI.Controllers
                     IsStatusCodeSuccess = false,
                     statusCode = HttpStatusCode.InternalServerError,
                     data = false,
-                    ErrorMessage = "Erro ao realizar a requisi??o"
+                    ErrorMessage = "Erro ao realizar a requisição"
                 };
             }
         }
@@ -77,7 +77,7 @@ namespace KivalitaAPI.Controllers
                     IsStatusCodeSuccess = false,
                     statusCode = HttpStatusCode.InternalServerError,
                     data = null,
-                    ErrorMessage = "Erro ao realizar a requisi??o"
+                    ErrorMessage = "Erro ao realizar a requisição"
                 };
             }
         }
@@ -92,7 +92,7 @@ namespace KivalitaAPI.Controllers
                 var userAuditId = base.GetAuditTrailUser();
                 var utfNowTime = DateTime.UtcNow;
 
-                if (userAuditId == 0) throw new Exception("Token Sem Usu?rio v?lido.");
+                if (userAuditId == 0) throw new Exception("Token Sem Usuário válido.");
 
                 leads.ForEach(lead => {
                     lead.CreatedBy = userAuditId;
@@ -122,7 +122,7 @@ namespace KivalitaAPI.Controllers
                     IsStatusCodeSuccess = false,
                     statusCode = HttpStatusCode.InternalServerError,
                     data = null,
-                    ErrorMessage = "Erro ao realizar a requisi??o"
+                    ErrorMessage = "Erro ao realizar a requisição"
                 };
             }
         }
@@ -151,7 +151,7 @@ namespace KivalitaAPI.Controllers
                     IsStatusCodeSuccess = false,
                     statusCode = HttpStatusCode.InternalServerError,
                     data = null,
-                    ErrorMessage = "Erro ao realizar a requisi??o"
+                    ErrorMessage = "Erro ao realizar a requisição"
                 };
             }
         }
