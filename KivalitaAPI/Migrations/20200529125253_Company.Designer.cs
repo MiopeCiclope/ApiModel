@@ -4,14 +4,16 @@ using KivalitaAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace KivalitaAPI.Migrations
 {
     [DbContext(typeof(KivalitaApiContext))]
-    partial class KivalitaApiContextModelSnapshot : ModelSnapshot
+    [Migration("20200529125253_Company")]
+    partial class Company
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,12 +52,7 @@ namespace KivalitaAPI.Migrations
                     b.Property<int>("UpdatedBy")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Company");
                 });
@@ -320,14 +317,6 @@ namespace KivalitaAPI.Migrations
                     b.ToTable("WpRdStation");
                 });
 
-            modelBuilder.Entity("KivalitaAPI.Models.Company", b =>
-                {
-                    b.HasOne("KivalitaAPI.Models.User", "User")
-                        .WithMany("Company")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.SetNull);
-                });
-
             modelBuilder.Entity("KivalitaAPI.Models.Job", b =>
                 {
                     b.HasOne("KivalitaAPI.Models.User", "Author")
@@ -348,7 +337,7 @@ namespace KivalitaAPI.Migrations
                     b.HasOne("KivalitaAPI.Models.Company", "Company")
                         .WithMany("Leads")
                         .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 

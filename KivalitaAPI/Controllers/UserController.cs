@@ -13,9 +13,16 @@ namespace KivalitaAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : CustomController<User, UserService>
+    public class UserController :  CustomController<User, UserService>
     {
-        public UserController(UserService service, ILogger<UserController> logger) : base(service, logger) { }
+        private readonly UserService service;
+        private readonly ILogger logger;
+
+        public UserController(UserService service, ILogger<UserController> logger) : base(service, logger)
+        {
+            this.service = service;
+            this.logger = logger;
+        }
 
         [HttpPost]
         [Route("auth")]

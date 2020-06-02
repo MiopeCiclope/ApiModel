@@ -20,13 +20,16 @@ namespace KivalitaAPI.Repositories
 
         public override User Get(int id)
         {
-            var user = base.Get(id);
+            var user = context.Set<User>().Include(u => u.Company).FirstOrDefault();
             return removePassword(user);
         }
 
         public override List<User> GetAll()
         {
-            var users = base.GetAll();
+            var users = context.Set<User>()
+                .Include(u => u.Company)
+                .ToList();
+
             users = users.Select(user =>
             {
                 return removePassword(user);

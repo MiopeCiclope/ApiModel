@@ -12,6 +12,7 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 
 namespace KivalitaAPI
 {
@@ -27,7 +28,11 @@ namespace KivalitaAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            services.AddMvc().AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            });
+
             services.AddCors(options =>
             {
                 options.AddPolicy(name: "AllowAll",
@@ -36,6 +41,7 @@ namespace KivalitaAPI
                     builder.AllowAnyOrigin();
                 });
             });
+
             services.AddControllers().AddNewtonsoftJson();
 
             var key = Encoding.ASCII.GetBytes(Setting.Secret);
@@ -99,6 +105,9 @@ namespace KivalitaAPI
 
             services.AddScoped<LeadsRepository>();
             services.AddScoped<LeadsService>();
+
+            services.AddScoped<CompanyRepository>();
+            services.AddScoped<CompanyService>();
 
             services.AddScoped<GetEmailService>();
 

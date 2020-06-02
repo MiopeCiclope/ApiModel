@@ -1,5 +1,7 @@
 ﻿using KivalitaAPI.Interfaces;
 using System;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 
 namespace KivalitaAPI.Models
@@ -22,5 +24,8 @@ namespace KivalitaAPI.Models
         public DateTime CreatedAt { get; set; }
         [JsonIgnore]
         public DateTime UpdatedAt { get; set; }
+
+        [JsonIgnore]
+        public ICollection<Company> Company { get; set; }
     }
 }
