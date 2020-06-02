@@ -13,7 +13,7 @@ namespace KivalitaAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController :  CustomController<User, UserService>
+    public class UserController : CustomController<User, UserService>
     {
         public UserController(UserService service, ILogger<UserController> logger) : base(service, logger) { }
 
