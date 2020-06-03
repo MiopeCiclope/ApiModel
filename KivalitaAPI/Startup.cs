@@ -1,15 +1,16 @@
 using System;
-using System.Text;
-using KivalitaAPI.Data;
-using KivalitaAPI.Repositories;
-using KivalitaAPI.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.EntityFrameworkCore;
+using KivalitaAPI.Data;
+using KivalitaAPI.Services;
+using KivalitaAPI.Repositories;
+using Microsoft.OpenApi.Models;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 

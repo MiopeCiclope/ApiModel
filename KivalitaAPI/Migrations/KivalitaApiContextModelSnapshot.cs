@@ -364,7 +364,6 @@ namespace KivalitaAPI.Migrations
                     b.ToTable("WpRdStation");
                 });
 
-<<<<<<< HEAD
             modelBuilder.Entity("KivalitaAPI.Models.Filter", b =>
                 {
                     b.HasOne("KivalitaAPI.Models.User", "User")
@@ -372,14 +371,13 @@ namespace KivalitaAPI.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-=======
+                });
             modelBuilder.Entity("KivalitaAPI.Models.Company", b =>
                 {
                     b.HasOne("KivalitaAPI.Models.User", "User")
                         .WithMany("Company")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.SetNull);
->>>>>>> faab5294ecb549ba06f0f7252a5ef79df465a688
                 });
 
             modelBuilder.Entity("KivalitaAPI.Models.Job", b =>

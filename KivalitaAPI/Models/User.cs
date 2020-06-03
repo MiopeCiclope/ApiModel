@@ -34,3 +34,4 @@ namespace KivalitaAPI.Models
         [JsonIgnore]
         public ICollection<Company> Company { get; set; }
     }
+}
