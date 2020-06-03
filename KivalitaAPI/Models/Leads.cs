@@ -23,7 +23,7 @@ namespace KivalitaAPI.Models {
 		public DateTime UpdatedAt { get; set; }
 
 		[ForeignKey("Company")]
-		public int CompanyId { get; set; }
+		public int? CompanyId { get; set; }
 
 		public Company Company { get; set; }
 	}
