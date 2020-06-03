@@ -17,6 +17,7 @@ namespace KivalitaAPI.Data
         public DbSet<Job> Job { get; set; }
         public DbSet<Leads> Leads { get; set; }
         public DbSet<WpRdStation> WpRdStation { get; set; }
+        public DbSet<Company> Company { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -29,6 +30,16 @@ namespace KivalitaAPI.Data
                 .HasOne(a => a.JobImage)
                 .WithOne()
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Leads>()
+                .HasOne(l => l.Company)
+                .WithMany(c => c.Leads)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Company>()
+                .HasOne(l => l.User)
+                .WithMany(c => c.Company)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

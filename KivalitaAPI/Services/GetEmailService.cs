@@ -43,7 +43,7 @@ namespace KivalitaAPI.Services
                 scope = this._serviceProvider.CreateScope();
             }
 
-            if (String.IsNullOrEmpty(lead.CompanySite))
+            if (String.IsNullOrEmpty(lead.Company.Site))
             {
                 return;
             }
@@ -54,7 +54,7 @@ namespace KivalitaAPI.Services
             string lastName;
             string domain;
 
-            domain = GetDomain(lead.CompanySite);
+            domain = GetDomain(lead.Company.Site);
             (firstName, lastName) = GetFirstAndLastName(lead.Name);
 
             Console.WriteLine($"{domain} - {firstName} {lastName}");

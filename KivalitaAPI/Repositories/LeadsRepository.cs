@@ -17,7 +17,7 @@ namespace KivalitaAPI.Repositories
             var leadExists = leadSearch.Any() ? leadSearch.First() : null;
             if (leadExists != null)
             {
-                return null;
+                return leadExists;
             }
             else
             {
@@ -27,14 +27,12 @@ namespace KivalitaAPI.Repositories
 
         }
 
-        public override List<Leads> AddRange(List<Leads> entities)
+        public override List<Leads> GetAll()
         {
-
-            var missingRecords = entities.Where(x => !context.Set<Leads>().Any(z => z.LinkedIn == x.LinkedIn)).ToList();
-            context.Set<Leads>().AddRange(missingRecords);
-            context.SaveChanges();
-
-            return missingRecords;
+            return context.Set<Leads>()
+                .AsNoTracking()
+                .Include(l => l.Company)
+                .ToList();
         }
 
         public override List<Leads> GetBy(Func<Leads, bool> condition)

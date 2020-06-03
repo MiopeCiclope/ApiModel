@@ -7,6 +7,8 @@ using KivalitaAPI.Common;
 using System.Net;
 using KivalitaAPI.Queues;
 using System.Collections.Generic;
+using KivalitaAPI.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace KivalitaAPI.Controllers
 {
@@ -15,10 +17,12 @@ namespace KivalitaAPI.Controllers
 	public class LeadsController : CustomController<Leads, LeadsService>
     {
         public readonly LeadsService service;
-        GetEmailService _getEmailService;
+        public readonly CompanyService companyService;
+        public readonly GetEmailService _getEmailService;
 
-        public LeadsController (GetEmailService getEmailService, LeadsService _service, ILogger<LeadsController> logger) : base (_service, logger) {
+        public LeadsController (CompanyService companyService, GetEmailService getEmailService, LeadsService _service, ILogger<LeadsController> logger) : base (_service, logger) {
             this.service = _service;
+            this.companyService = companyService;
             this._getEmailService = getEmailService;
         }
 
@@ -45,14 +49,42 @@ namespace KivalitaAPI.Controllers
                     IsStatusCodeSuccess = false,
                     statusCode = HttpStatusCode.InternalServerError,
                     data = false,
-                    ErrorMessage = "Erro ao realizar a requisi??o"
+                    ErrorMessage = "Erro ao realizar a requisi√ß√£o"
+                };
+            }
+        }
+
+        [HttpGet]
+        [Route("availableCompanies")]
+        public virtual HttpResponse<List<Company>> GetCompanies()
+        {
+            logger.LogInformation($"{this.GetType().Name} - GetCompanies");
+            try
+            {
+                List<Company> AvailableCompanies = companyService.WithOutOwner();
+                return new HttpResponse<List<Company>>
+                {
+                    IsStatusCodeSuccess = true,
+                    statusCode = HttpStatusCode.OK,
+                    data = AvailableCompanies
+                };
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.Message);
+                return new HttpResponse<List<Company>>
+                {
+                    IsStatusCodeSuccess = false,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    data = null,
+                    ErrorMessage = "Erro ao realizar a requisi√ß√£o"
                 };
             }
         }
 
         [HttpPost]
         [Route("list")]
-        public HttpResponse<string> Post([FromBody] List<Leads> leads)
+        public HttpResponse<string> Post([FromBody] List<LeadDTO> leads)
         {
             logger.LogInformation($"{this.GetType().Name} - Post Lead List");
             try
@@ -60,14 +92,15 @@ namespace KivalitaAPI.Controllers
                 var userAuditId = base.GetAuditTrailUser();
                 var utfNowTime = DateTime.UtcNow;
 
-                if (userAuditId == 0) throw new Exception("Token Sem Usu·rio v·lido.");
+                if (userAuditId == 0) throw new Exception("Token Sem Usu√°rio v√°lido.");
+
                 leads.ForEach(lead => {
                     lead.CreatedBy = userAuditId;
                     lead.CreatedAt = utfNowTime;
                 });
 
                 DefaultQueue queue = new DefaultQueue();
-                List<Leads> newLeads = this.service.AddRange(leads);
+                List<Leads> newLeads = this.service.SaveRange(leads);
 
                 foreach (Leads lead in newLeads)
                 {
@@ -89,12 +122,13 @@ namespace KivalitaAPI.Controllers
                     IsStatusCodeSuccess = false,
                     statusCode = HttpStatusCode.InternalServerError,
                     data = null,
-                    ErrorMessage = "Erro ao realizar a requisiÁ„o"
+                    ErrorMessage = "Erro ao realizar a requisi√ß√£o"
                 };
             }
         }
 
         [HttpGet]
+        [Authorize]
         [Route("dates")]
         public HttpResponse<List<DateTime>> GetDates()
         {
@@ -117,7 +151,7 @@ namespace KivalitaAPI.Controllers
                     IsStatusCodeSuccess = false,
                     statusCode = HttpStatusCode.InternalServerError,
                     data = null,
-                    ErrorMessage = "Erro ao realizar a requisiÁ„o"
+                    ErrorMessage = "Erro ao realizar a requisi√ß√£o"
                 };
             }
         }

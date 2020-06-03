@@ -4,14 +4,16 @@ using KivalitaAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace KivalitaAPI.Migrations
 {
     [DbContext(typeof(KivalitaApiContext))]
-    partial class KivalitaApiContextModelSnapshot : ModelSnapshot
+    [Migration("20200602130817_UserCompany")]
+    partial class UserCompany
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -20,55 +22,11 @@ namespace KivalitaAPI.Migrations
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("KivalitaAPI.Models.Company", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int")
-                    .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                b.Property<DateTime>("CreatedAt")
-                    .HasColumnType("datetime2");
-
-                b.Property<int>("CreatedBy")
-                    .HasColumnType("int");
-
-                b.Property<string>("LinkedIn")
-                .HasColumnType("nvarchar(max)");
-
-                b.Property<string>("Name")
-                    .HasColumnType("nvarchar(max)");
-
-                b.Property<string>("Sector")
-                    .HasColumnType("nvarchar(max)");
-
-                b.Property<string>("Site")
-                .HasColumnType("nvarchar(max)");
-
-                b.Property<DateTime>("UpdatedAt")
-                    .HasColumnType("datetime2");
-
-                b.Property<int>("UpdatedBy")
-                    .HasColumnType("int");
-
-                b.Property<int?>("UserId")
-                .HasColumnType("int");
-
-                b.HasKey("Id");
-
-                b.HasIndex("UserId");
-
-                b.ToTable("Company");
-            });
-
-            modelBuilder.Entity("KivalitaAPI.Models.Filter", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Company")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -76,16 +34,16 @@ namespace KivalitaAPI.Migrations
                     b.Property<int>("CreatedBy")
                         .HasColumnType("int");
 
-                    b.Property<string>("Email")
+                    b.Property<string>("LinkedIn")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Position")
+                    b.Property<string>("Sector")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Sector")
+                    b.Property<string>("Site")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -94,14 +52,14 @@ namespace KivalitaAPI.Migrations
                     b.Property<int>("UpdatedBy")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Filter");
+                    b.ToTable("Company");
                 });
 
             modelBuilder.Entity("KivalitaAPI.Models.Image", b =>
@@ -364,22 +322,12 @@ namespace KivalitaAPI.Migrations
                     b.ToTable("WpRdStation");
                 });
 
-<<<<<<< HEAD
-            modelBuilder.Entity("KivalitaAPI.Models.Filter", b =>
-                {
-                    b.HasOne("KivalitaAPI.Models.User", "User")
-                        .WithMany("Filters")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-=======
             modelBuilder.Entity("KivalitaAPI.Models.Company", b =>
                 {
                     b.HasOne("KivalitaAPI.Models.User", "User")
                         .WithMany("Company")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.SetNull);
->>>>>>> faab5294ecb549ba06f0f7252a5ef79df465a688
                 });
 
             modelBuilder.Entity("KivalitaAPI.Models.Job", b =>

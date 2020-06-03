@@ -11,123 +11,148 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 
-namespace KivalitaAPI {
-	public class Startup {
-		public Startup (IConfiguration configuration) {
-			Configuration = configuration;
-		}
+namespace KivalitaAPI
+{
+    public class Startup
+    {
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
 
-		public IConfiguration Configuration { get; }
+        public IConfiguration Configuration { get; }
 
-		// This method gets called by the runtime. Use this method to add services to the container.
-		public void ConfigureServices (IServiceCollection services) {
-			services.AddMvc ();
-			services.AddCors (options => {
-				options.AddPolicy (name: "AllowAll",
-					builder => {
-						builder.AllowAnyOrigin ();
-					});
-			});
-			services.AddControllers ().AddNewtonsoftJson ();
+        // This method gets called by the runtime. Use this method to add services to the container.
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddMvc().AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            });
 
-			var key = Encoding.ASCII.GetBytes (Setting.Secret);
-			services.AddAuthentication (x => {
-					x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-					x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-				})
-				.AddJwtBearer (x => {
-					x.RequireHttpsMetadata = false;
-					x.SaveToken = true;
-					x.TokenValidationParameters = new TokenValidationParameters {
-						ValidateIssuerSigningKey = true,
-							IssuerSigningKey = new SymmetricSecurityKey (key),
-							ValidateIssuer = false,
-							ValidateAudience = false,
-							ValidateLifetime = true,
-							ClockSkew = TimeSpan.Zero
-					};
-				});
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: "AllowAll",
+                builder =>
+                {
+                    builder.AllowAnyOrigin();
+                });
+            });
 
-			services.AddSwaggerGen (c => {
-				c.SwaggerDoc ("v1",
-					new OpenApiInfo {
-						Title = "Kivalita API",
-							Version = "v1",
-							Description = "Master API",
-							Contact = new OpenApiContact {
-								Name = "Kivalita Consulting",
-									Url = new Uri ("https://kivalitaconsulting.com.br")
-							}
-					});
-				c.EnableAnnotations ();
-				c.IgnoreObsoleteActions ();
-			});
+            services.AddControllers().AddNewtonsoftJson();
 
-			services.AddDbContext<KivalitaApiContext> (options =>
-				options.UseSqlServer (Configuration.GetConnectionString ("DefaultConnection")));
+            var key = Encoding.ASCII.GetBytes(Setting.Secret);
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
+                };
+            });
 
-			services.AddScoped<DbContext, KivalitaApiContext> ();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1",
+                    new OpenApiInfo
+                    {
+                        Title = "Kivalita API",
+                        Version = "v1",
+                        Description = "Master API",
+                        Contact = new OpenApiContact
+                        {
+                            Name = "Kivalita Consulting",
+                            Url = new Uri("https://kivalitaconsulting.com.br")
+                        }
+                    });
+                c.EnableAnnotations();
+                c.IgnoreObsoleteActions();
+            });
 
-			services.AddScoped<UserRepository> ();
-			services.AddScoped<UserService> ();
+            services.AddDbContext<KivalitaApiContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-			services.AddScoped<FilterRepository> ();
-			services.AddScoped<FilterService> ();
+            services.AddScoped<DbContext, KivalitaApiContext>();
 
-			services.AddScoped<TokenRepository> ();
-			services.AddScoped<TokenService> ();
+            services.AddScoped<UserRepository>();
+            services.AddScoped<UserService>();
 
-			services.AddScoped<PostRepository> ();
-			services.AddScoped<PostService> ();
+            services.AddScoped<FilterRepository>();
+            services.AddScoped<FilterService>();
 
-			services.AddScoped<JobRepository> ();
-			services.AddScoped<JobService> ();
+            services.AddScoped<TokenRepository>();
+            services.AddScoped<TokenService>();
 
-			services.AddScoped<ImageRepository> ();
-			services.AddScoped<ImageService> ();
+            services.AddScoped<PostRepository>();
+            services.AddScoped<PostService>();
 
-			services.AddScoped<LeadsRepository> ();
-			services.AddScoped<LeadsService> ();
+            services.AddScoped<JobRepository>();
+            services.AddScoped<JobService>();
 
-			services.AddScoped<GetEmailService> ();
+            services.AddScoped<ImageRepository>();
+            services.AddScoped<ImageService>();
 
-			services.AddScoped<IEmailExtractorService, EmailExtractorService> ();
-			services.AddScoped<RequestService> ();
+            services.AddScoped<LeadsRepository>();
+            services.AddScoped<LeadsService>();
 
-			services.AddScoped<WpRdStationRepository> ();
-			services.AddScoped<WpRdStationService> ();
-		}
+            services.AddScoped<CompanyRepository>();
+            services.AddScoped<CompanyService>();
 
-		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure (IApplicationBuilder app, IWebHostEnvironment env) {
-			// Ativando middlewares para uso do Swagger
-			app.UseSwagger ();
-			app.UseSwaggerUI (c => {
-				c.SwaggerEndpoint ("v1/swagger.json", "Kivalita API");
-			});
+            services.AddScoped<GetEmailService>();
 
-			if (env.IsDevelopment ()) {
-				app.UseDeveloperExceptionPage ();
-			}
+            services.AddScoped<IEmailExtractorService, EmailExtractorService>();
+            services.AddScoped<RequestService>();
 
-			app.UseHttpsRedirection ();
+            services.AddScoped<WpRdStationRepository>();
+            services.AddScoped<WpRdStationService>();
+        }
 
-			app.UseRouting ();
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            // Ativando middlewares para uso do Swagger
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("v1/swagger.json", "Kivalita API");
+            });
 
-			app.UseCors (x => {
-				x.AllowAnyOrigin ()
-					.AllowAnyMethod ()
-					.AllowAnyHeader ();
-			});
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
 
-			app.UseAuthentication ();
-			app.UseAuthorization ();
+            app.UseHttpsRedirection();
 
-			app.UseEndpoints (endpoints => {
-				endpoints.MapControllers ();
-			});
-		}
-	}
+            app.UseRouting();
+
+            app.UseCors(x =>
+            {
+                x.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+            });
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+        }
+    }
 }

@@ -6,7 +6,6 @@ using KivalitaAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using KivalitaAPI.Common;
 using System.Net;
-using KivalitaAPI.DTOs;
 using System.Collections.Generic;
 using System;
 
