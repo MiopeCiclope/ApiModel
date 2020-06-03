@@ -28,14 +28,16 @@ namespace KivalitaAPI.Services {
 				})
 				.ToList();
 		}
-		public List<DateTime> GetDates()
+		public List<GroupOwnerLeadDTO> GetDates()
 		{
-			return this.baseRepository.GetAll()
-						.Select(lead => lead.CreatedAt.Date)
-						.Distinct()
-						.OrderBy(x => x)
-						.ToList();
+			// TODO - Get only 200 leads
+			return this.baseRepository.GetAll().Take(200).GroupBy(lead => lead.Company?.UserId, (key, func) => new GroupOwnerLeadDTO
+			{
+				Dates = func.Select(lead => lead.CreatedAt.Date).Distinct().OrderByDescending(value => value).ToList(),
+				UserId = key
+			}).ToList();
 		}
+
         public Boolean LeadExists(string linkedInID)
         {
 			var leadSearch = this.baseRepository.GetBy(storedLead => storedLead.LinkedIn == linkedInID);

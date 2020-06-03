@@ -130,13 +130,13 @@ namespace KivalitaAPI.Controllers
         [HttpGet]
         [Authorize]
         [Route("dates")]
-        public HttpResponse<List<DateTime>> GetDates()
+        public HttpResponse<List<GroupOwnerLeadDTO>> GetDates()
         {
             logger.LogInformation($"{this.GetType().Name} - Dates");
             try
             {
                 var LeadsDates = this.service.GetDates();
-                return new HttpResponse<List<DateTime>>
+                return new HttpResponse<List<GroupOwnerLeadDTO>>
                 {
                     IsStatusCodeSuccess = true,
                     data = LeadsDates,
@@ -146,7 +146,7 @@ namespace KivalitaAPI.Controllers
             catch (Exception e)
             {
                 logger.LogError(e.Message);
-                return new HttpResponse<List<DateTime>>
+                return new HttpResponse<List<GroupOwnerLeadDTO>>
                 {
                     IsStatusCodeSuccess = false,
                     statusCode = HttpStatusCode.InternalServerError,
