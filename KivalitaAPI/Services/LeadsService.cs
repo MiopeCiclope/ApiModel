@@ -19,7 +19,9 @@ namespace KivalitaAPI.Services {
 
 		public override List<Leads> GetAll()
 		{
+			// TODO - Get only 200 leads
 			return base.GetAll()
+				.Take(200)
 				.Select(lead => { 
 					lead.CreatedAt = lead.CreatedAt.Date;
 					return lead; 
