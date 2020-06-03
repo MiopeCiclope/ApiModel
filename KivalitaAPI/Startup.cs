@@ -91,6 +91,9 @@ namespace KivalitaAPI
             services.AddScoped<UserRepository>();
             services.AddScoped<UserService>();
 
+            services.AddScoped<FilterRepository>();
+            services.AddScoped<FilterService>();
+
             services.AddScoped<TokenRepository>();
             services.AddScoped<TokenService>();
 
@@ -123,7 +126,8 @@ namespace KivalitaAPI
         {
             // Ativando middlewares para uso do Swagger
             app.UseSwagger();
-            app.UseSwaggerUI(c => {
+            app.UseSwaggerUI(c =>
+            {
                 c.SwaggerEndpoint("v1/swagger.json", "Kivalita API");
             });
 
