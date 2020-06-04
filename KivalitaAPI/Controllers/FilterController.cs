@@ -5,6 +5,7 @@ using KivalitaAPI.Services;
 using System;
 using KivalitaAPI.Common;
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
 
 namespace KivalitaAPI.Controllers
 {
@@ -21,6 +22,7 @@ namespace KivalitaAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("{nameOfFilter}/exists")]
         public virtual HttpResponse<Boolean> Get(string nameOfFilter)
         {

@@ -27,6 +27,7 @@ namespace KivalitaAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("{linkedInID}/exists")]
         public virtual HttpResponse<Boolean> Get(string linkedInID)
         {
@@ -55,6 +56,7 @@ namespace KivalitaAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("availableCompanies")]
         public virtual HttpResponse<List<Company>> GetCompanies()
         {
@@ -83,6 +85,7 @@ namespace KivalitaAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [Route("list")]
         public HttpResponse<string> Post([FromBody] List<LeadDTO> leads)
         {

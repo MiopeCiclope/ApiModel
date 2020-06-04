@@ -18,7 +18,7 @@ namespace KivalitaAPI.Controllers
         public JobController(JobService service, ILogger<JobController> logger) : base(service, logger) { }
 
         [HttpGet]
-        [AllowAnonymous]
+        [Authorize]
         public override HttpResponse<List<Job>> Get()
         {
             logger.LogInformation($"Job - GetAll");
@@ -47,7 +47,7 @@ namespace KivalitaAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        [AllowAnonymous]
+        [Authorize]
         public override HttpResponse<Job> Get(int id)
         {
             logger.LogInformation($"Job - Get - {id}");

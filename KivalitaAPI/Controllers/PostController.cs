@@ -18,7 +18,7 @@ namespace KivalitaAPI.Controllers
         public PostController(PostService service, ILogger<PostController> logger) : base(service, logger) { }
 
         [HttpGet]
-        [AllowAnonymous]
+        [Authorize]
         public override HttpResponse<List<Post>> Get()
         {
             logger.LogInformation($"Post - GetAll");
@@ -47,7 +47,7 @@ namespace KivalitaAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        [AllowAnonymous]
+        [Authorize]
         public override HttpResponse<Post> Get(int id)
         {
             logger.LogInformation($"Post - Get - {id}");
