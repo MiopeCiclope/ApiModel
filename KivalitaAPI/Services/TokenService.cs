@@ -1,5 +1,6 @@
 ﻿
 using KivalitaAPI.Data;
+using KivalitaAPI.Enum;
 using KivalitaAPI.Models;
 using KivalitaAPI.Repositories;
 using Microsoft.IdentityModel.Tokens;
@@ -20,11 +21,13 @@ namespace KivalitaAPI.Services
             this._userRepository = new UserRepository(this.context);
         }
 
-        public Token GenerateToken(User user)
+        public Token GenerateToken(User user, LoginTypeEnum Client)
         {
             var authToken = createToken(user);
+            authToken.LoginClient = Client;
 
-            var tokenSearch = this.baseRepository.GetBy(storedToken => storedToken.UserId == authToken.UserId);
+            var tokenSearch = this.baseRepository
+                                    .GetBy(storedToken => storedToken.UserId == authToken.UserId && storedToken.LoginClient == Client);
 
             if(tokenSearch.Any())
             {
@@ -37,9 +40,11 @@ namespace KivalitaAPI.Services
             authToken.User = user;
             return authToken;
         }
-        public Token RefreshToken(string refreshToken)
+        public Token RefreshToken(string refreshToken, LoginTypeEnum Client)
         {
-            var expiredToken = this.baseRepository.GetBy(storedToken => storedToken.RefreshToken == refreshToken);
+            var expiredToken = this.baseRepository
+                                    .GetBy(storedToken => storedToken.RefreshToken == refreshToken && storedToken.LoginClient == Client);
+
             if (!expiredToken.Any())
                 return null;
             else
@@ -49,6 +54,8 @@ namespace KivalitaAPI.Services
 
                 var newToken = createToken(user);
                 newToken.Id = oldToken.Id;
+                newToken.LoginClient = Client;
+
                 this.baseRepository.Update(newToken);
                 newToken.User = user;
                 return newToken;

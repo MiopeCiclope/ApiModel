@@ -1,4 +1,5 @@
-﻿using KivalitaAPI.Interfaces;
+﻿using KivalitaAPI.Enum;
+using KivalitaAPI.Interfaces;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
@@ -22,5 +23,6 @@ namespace KivalitaAPI.Models
         public DateTime CreatedAt { get; set; }
         [JsonIgnore]
         public DateTime UpdatedAt { get; set; }
+        public LoginTypeEnum LoginClient { get; set; }
     }
 }

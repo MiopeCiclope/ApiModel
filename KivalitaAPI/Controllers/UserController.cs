@@ -45,7 +45,7 @@ namespace KivalitaAPI.Controllers
                         };
                     }
 
-                    var token = tokenService.GenerateToken(user);
+                    var token = tokenService.GenerateToken(user, userCredentials.Client);
                     token.User.Password = "";
                     token.Id = 0;
 
@@ -70,7 +70,7 @@ namespace KivalitaAPI.Controllers
                     }
                     else
                     {
-                        var token = tokenService.RefreshToken(userCredentials.RefreshToken);
+                        var token = tokenService.RefreshToken(userCredentials.RefreshToken, userCredentials.Client);
                         token.User.Password = "";
                         token.Id = 0;
 
