@@ -74,12 +74,7 @@ namespace KivalitaAPI.Repositories
 
         public override List<Leads> GetBy(Func<Leads, bool> condition)
         {
-            var leads = base.GetBy(condition);
-            leads = leads.Select(lead =>
-            {
-                return lead;
-            }).ToList();
-            return leads;
+            return base.GetBy(condition).ToList();
         }
 
         private IQueryable<Leads> BuildQuery(IQueryable<Leads> queryable, LeadQueryDTO leadQuery)

@@ -177,6 +177,35 @@ namespace KivalitaAPI.Controllers
 
         [HttpGet]
         [Authorize]
+        [Route("dailyLeads")]
+        public HttpResponse<int> GetDailyLeads()
+        {
+            logger.LogInformation($"{this.GetType().Name} - Daily Leads");
+            try
+            {
+                var totalLeads = this.service.GetDailyLeads();
+                return new HttpResponse<int>
+                {
+                    IsStatusCodeSuccess = true,
+                    data = totalLeads,
+                    statusCode = HttpStatusCode.OK
+                };
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.Message);
+                return new HttpResponse<int>
+                {
+                    IsStatusCodeSuccess = false,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    data = 0,
+                    ErrorMessage = "Erro ao realizar a requisição"
+                };
+            }
+        }
+
+        [HttpGet]
+        [Authorize]
         [Route("dates")]
         public HttpResponse<List<GroupOwnerLeadDTO>> GetDates()
         {

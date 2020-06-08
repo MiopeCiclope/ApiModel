@@ -103,5 +103,12 @@ namespace KivalitaAPI.Services {
 
 			return leads;
 		}
-	}
+
+        public int GetDailyLeads()
+        {
+			return this.baseRepository
+					.GetBy(lead => lead.CreatedAt.Date == DateTime.Now.Date)
+					.Count();
+        }
+    }
 }
