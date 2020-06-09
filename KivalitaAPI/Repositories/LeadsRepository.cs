@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using KivalitaAPI.Interfaces;
+using KivalitaAPI.Common;
+using KivalitaAPI.DTOs;
 using KivalitaAPI.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,6 +10,8 @@ namespace KivalitaAPI.Repositories
 {
     public class LeadsRepository : Repository<Leads, DbContext>
     {
+        public const int ItemsPerPage = 10;
+
         public LeadsRepository(DbContext context) : base(context) {}
 
         public override Leads Add(Leads entity)
@@ -27,6 +30,40 @@ namespace KivalitaAPI.Repositories
 
         }
 
+        public QueryResult<Leads> FetchAll(LeadQueryDTO leadQuery)
+        {
+            IQueryable<Leads> queryable = context.Set<Leads>()
+                .Include(l => l.Company)
+                .ThenInclude(c => c.User)
+                .AsNoTracking();
+
+            queryable = BuildQuery(queryable, leadQuery);
+
+            int totalItems = queryable.Count();
+
+            List<Leads> leads = queryable
+                .Skip((leadQuery.Page - 1) * ItemsPerPage)
+                .Take(ItemsPerPage)
+                .ToList();
+
+            return new QueryResult<Leads>
+            {
+                Items = leads,
+                TotalItems = totalItems,
+            };
+        }
+
+        public List<Leads> FetchFilterAll(LeadQueryDTO leadQuery)
+        {
+            IQueryable<Leads> queryable = context.Set<Leads>()
+                .Include(l => l.Company)
+                .AsNoTracking();
+
+            queryable = BuildQuery(queryable, leadQuery);
+
+            return queryable.ToList();
+        }
+
         public override List<Leads> GetAll()
         {
             return context.Set<Leads>()
@@ -43,6 +80,49 @@ namespace KivalitaAPI.Repositories
                 return lead;
             }).ToList();
             return leads;
+        }
+
+        private IQueryable<Leads> BuildQuery(IQueryable<Leads> queryable, LeadQueryDTO leadQuery)
+        {
+
+            if (!String.IsNullOrEmpty(leadQuery.Position))
+            {
+                queryable = queryable.Where(lead => lead.Position == leadQuery.Position);
+            }
+            if (!String.IsNullOrEmpty(leadQuery.Sector))
+            {
+                Console.WriteLine($"Sector: {leadQuery.Sector}");
+                queryable = queryable.Where(lead => lead.Company.Sector == leadQuery.Sector);
+            }
+            if (!String.IsNullOrEmpty(leadQuery.Company))
+            {
+                queryable = queryable.Where(lead => lead.Company.Name == leadQuery.Company);
+            }
+            if (leadQuery.Date.HasValue)
+            {
+                queryable = queryable.Where(lead => lead.CreatedAt.Date == leadQuery.Date);
+            }
+            if (leadQuery.UserId.HasValue)
+            {
+                var userId = leadQuery.UserId == 0 ? null : leadQuery.UserId;
+                queryable = queryable.Where(lead => lead.Company.UserId == userId);
+            }
+            if (!String.IsNullOrEmpty(leadQuery.Search))
+            {
+                queryable = queryable.Where(
+                    lead => lead.Name.Contains(leadQuery.Search) ||
+                            lead.Email.Contains(leadQuery.Search));
+            }
+            if (leadQuery.WithEmail)
+            {
+                queryable = queryable.Where(lead => lead.Email != null);
+            }
+            else if (leadQuery.WithoutEmail)
+            {
+                queryable = queryable.Where(lead => lead.Email == null);
+            }
+
+            return queryable;
         }
     }
 }

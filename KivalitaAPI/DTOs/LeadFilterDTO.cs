@@ -3,9 +3,10 @@ using System.Collections.Generic;
 
 namespace KivalitaAPI.DTOs
 {
-    public class GroupOwnerLeadDTO
+    public class LeadFilterDTO
     {
-		public int? UserId { get; set; }
-        public List<DateTime> Dates { get; set; }
+		public List<string> Sector { get; set; }
+        public List<string> Position { get; set; }
+        public List<string> Company { get; set; }
     }
 }

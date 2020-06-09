@@ -9,21 +9,66 @@ using KivalitaAPI.Queues;
 using System.Collections.Generic;
 using KivalitaAPI.DTOs;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+
 
 namespace KivalitaAPI.Controllers
 {
-	[Route ("api/[controller]")]
-	[ApiController]
-	public class LeadsController : CustomController<Leads, LeadsService>
+    [Route("api/[controller]")]
+    [ApiController]
+    public class LeadsController : ControllerBase
     {
         public readonly LeadsService service;
         public readonly CompanyService companyService;
         public readonly GetEmailService _getEmailService;
+        public readonly ILogger<LeadsController> logger;
 
-        public LeadsController (CompanyService companyService, GetEmailService getEmailService, LeadsService _service, ILogger<LeadsController> logger) : base (_service, logger) {
+        public LeadsController(CompanyService companyService, GetEmailService getEmailService, LeadsService _service, ILogger<LeadsController> logger)
+        {
             this.service = _service;
             this.companyService = companyService;
             this._getEmailService = getEmailService;
+            this.logger = logger;
+        }
+
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public virtual int GetAuditTrailUser()
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            if (identity != null)
+                return int.Parse(identity.FindFirst("Id").Value);
+            else
+                return 0;
+        }
+
+        [HttpGet]
+        [Authorize]
+        public HttpResponse<List<Leads>> Get([FromQuery] LeadQueryDTO leadQuery)
+        {
+            logger.LogInformation($"{this.GetType().Name} - GetAll");
+            try
+            {
+                var queryResult = service.FetchAll(leadQuery);
+
+                return new HttpResponse<List<Leads>>
+                {
+                    IsStatusCodeSuccess = true,
+                    statusCode = HttpStatusCode.OK,
+                    data = queryResult.Items,
+                    Total = queryResult.TotalItems
+                };
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.Message);
+                return new HttpResponse<List<Leads>>
+                {
+                    IsStatusCodeSuccess = false,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    data = null,
+                    ErrorMessage = "Erro ao realizar a requisição"
+                };
+            }
         }
 
         [HttpGet]
@@ -92,7 +137,7 @@ namespace KivalitaAPI.Controllers
             logger.LogInformation($"{this.GetType().Name} - Post Lead List");
             try
             {
-                var userAuditId = base.GetAuditTrailUser();
+                var userAuditId = GetAuditTrailUser();
                 var utfNowTime = DateTime.UtcNow;
 
                 if (userAuditId == 0) throw new Exception("Token Sem Usuário válido.");
@@ -150,6 +195,35 @@ namespace KivalitaAPI.Controllers
             {
                 logger.LogError(e.Message);
                 return new HttpResponse<List<GroupOwnerLeadDTO>>
+                {
+                    IsStatusCodeSuccess = false,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    data = null,
+                    ErrorMessage = "Erro ao realizar a requisição"
+                };
+            }
+        }
+
+        [HttpGet]
+        [Authorize]
+        [Route("filter")]
+        public HttpResponse<LeadFilterDTO> GetFilter([FromQuery] LeadQueryDTO leadQuery)
+        {
+            logger.LogInformation($"{this.GetType().Name} - Filter");
+            try
+            {
+                var leadFilters = this.service.GetFilter(leadQuery);
+                return new HttpResponse<LeadFilterDTO>
+                {
+                    IsStatusCodeSuccess = true,
+                    data = leadFilters,
+                    statusCode = HttpStatusCode.OK
+                };
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.Message);
+                return new HttpResponse<LeadFilterDTO>
                 {
                     IsStatusCodeSuccess = false,
                     statusCode = HttpStatusCode.InternalServerError,

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using KivalitaAPI.Common;
 using KivalitaAPI.Data;
 using KivalitaAPI.DTOs;
 using KivalitaAPI.Models;
@@ -17,11 +17,19 @@ namespace KivalitaAPI.Services {
 			this.companyRepository = companyRepository;
 		}
 
+		public QueryResult<Leads> FetchAll(LeadQueryDTO leadQuery)
+		{
+			if (leadQuery.Page <= 0)
+			{
+				leadQuery.Page = 1;
+			}
+
+			return this.baseRepository.FetchAll(leadQuery);
+		}
+
 		public override List<Leads> GetAll()
 		{
-			// TODO - Get only 200 leads
 			return base.GetAll()
-				.Take(200)
 				.Select(lead => { 
 					lead.CreatedAt = lead.CreatedAt.Date;
 					return lead; 
@@ -30,15 +38,28 @@ namespace KivalitaAPI.Services {
 		}
 		public List<GroupOwnerLeadDTO> GetDates()
 		{
-			// TODO - Get only 200 leads
-			return this.baseRepository.GetAll().Take(200).GroupBy(lead => lead.Company?.UserId, (key, func) => new GroupOwnerLeadDTO
+			return this.baseRepository.GetAll().GroupBy(lead => lead.Company?.UserId, (key, func) => new GroupOwnerLeadDTO
 			{
 				Dates = func.Select(lead => lead.CreatedAt.Date).Distinct().OrderByDescending(value => value).ToList(),
 				UserId = key
 			}).ToList();
 		}
 
-        public Boolean LeadExists(string linkedInID)
+		public LeadFilterDTO GetFilter(LeadQueryDTO leadQuery)
+		{
+			var leads = this.baseRepository.FetchFilterAll(leadQuery);
+			var positions = leads.Select(lead => lead.Position).Distinct().OrderBy(value => value).ToList();
+			var sector = leads.Select(lead => lead.Company?.Sector).Distinct().OrderBy(value => value).ToList();
+			var companies = leads.Select(lead => lead.Company?.Name).Distinct().OrderBy(value => value).ToList();
+			return new LeadFilterDTO
+			{
+				Position = positions,
+				Sector = sector,
+				Company = companies
+			};
+		}
+
+		public Boolean LeadExists(string linkedInID)
         {
 			var leadSearch = this.baseRepository.GetBy(storedLead => storedLead.LinkedIn == linkedInID);
 
