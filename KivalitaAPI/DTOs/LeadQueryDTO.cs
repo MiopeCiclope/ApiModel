@@ -13,5 +13,6 @@ namespace KivalitaAPI.DTOs
         public bool WithoutEmail { get; set; }
         public DateTime? Date { get; set; }
         public int? UserId { get; set; }
+        public int? ItemsPerPage { get; set; }
     }
 }

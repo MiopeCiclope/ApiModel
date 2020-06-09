@@ -1,16 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using KivalitaAPI.Common;
 using KivalitaAPI.DTOs;
 using KivalitaAPI.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace KivalitaAPI.Repositories
 {
     public class LeadsRepository : Repository<Leads, DbContext>
     {
-        public const int ItemsPerPage = 10;
+        public const int DefaultItemsPerPage = 10;
 
         public LeadsRepository(DbContext context) : base(context) {}
 
@@ -40,10 +40,11 @@ namespace KivalitaAPI.Repositories
             queryable = BuildQuery(queryable, leadQuery);
 
             int totalItems = queryable.Count();
+            int pageSize = leadQuery.ItemsPerPage ?? DefaultItemsPerPage;
 
             List<Leads> leads = queryable
-                .Skip((leadQuery.Page - 1) * ItemsPerPage)
-                .Take(ItemsPerPage)
+                .Skip((leadQuery.Page - 1) * pageSize)
+                .Take(pageSize)
                 .ToList();
 
             return new QueryResult<Leads>
