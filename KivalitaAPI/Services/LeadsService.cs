@@ -110,5 +110,60 @@ namespace KivalitaAPI.Services {
 					.GetBy(lead => lead.CreatedAt.Date == DateTime.Now.Date)
 					.Count();
         }
-    }
+
+		public void LinkWithoutOwnerToUser(List<int> userIds)
+		{
+			var usersWithLeadCount = new List<UserWithLeadCountDTO> { };
+
+			foreach (int userId in userIds)
+			{
+				var leadCount = companyRepository.QueryByUserId(userId)
+					.SelectMany(c => c.Leads).Count();
+
+				usersWithLeadCount.Add(new UserWithLeadCountDTO
+				{
+					UserId = userId,
+					LeadCount = leadCount
+				});
+			}
+
+			var companiesWithLeadCount = companyRepository.QueryWithOutOwner().Select(company => new
+			{
+				Company = company,
+				LeadCount = company.Leads.Count()
+			}).OrderBy(c => c.LeadCount).ToList();
+
+			var companiesWithLeadCountSplit = SplitList(companiesWithLeadCount, usersWithLeadCount.Count());
+			List<Company> companiesToUpdate = new List<Company> { };
+
+			foreach (var groupList in companiesWithLeadCountSplit)
+			{
+				var index = 0;
+				var usersWithLeadCountOrdered = usersWithLeadCount
+					.OrderByDescending(u => u.LeadCount).ToList();
+
+				foreach (var group in groupList)
+				{
+					var user = usersWithLeadCountOrdered[index];
+
+					group.Company.UserId = user.UserId;
+					companiesToUpdate.Add(group.Company);
+
+					user.LeadCount += group.LeadCount;
+					index += 1;
+				}
+			}
+
+			companyRepository.UpdateRange(companiesToUpdate);
+		}
+
+		private List<List<T>> SplitList<T>(List<T> list, int number)
+		{
+			return list
+				.Select((x, i) => new { Index = i, Value = x })
+				.GroupBy(x => x.Index / number)
+				.Select(x => x.Select(v => v.Value).ToList())
+				.ToList();
+		}
+	}
 }

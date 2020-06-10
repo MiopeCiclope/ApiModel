@@ -261,5 +261,34 @@ namespace KivalitaAPI.Controllers
                 };
             }
         }
+
+        [HttpPost]
+        [Authorize]
+        [Route("linkUsers")]
+        public HttpResponse<List<int>> LinkToUser([FromBody] List<int> userIds)
+        {
+            logger.LogInformation($"{this.GetType().Name} - LinkToUser");
+            try
+            {
+                this.service.LinkWithoutOwnerToUser(userIds);
+                return new HttpResponse<List<int>>
+                {
+                    IsStatusCodeSuccess = true,
+                    data = userIds,
+                    statusCode = HttpStatusCode.OK
+                };
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.Message);
+                return new HttpResponse<List<int>>
+                {
+                    IsStatusCodeSuccess = false,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    data = null,
+                    ErrorMessage = "Erro ao realizar a requisição"
+                };
+            }
+        }
     }
 }

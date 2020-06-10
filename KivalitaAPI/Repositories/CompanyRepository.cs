@@ -26,6 +26,13 @@ namespace KivalitaAPI.Repositories
 
         }
 
+        public List<Company> UpdateRange(List<Company> entities)
+        {
+            context.Set<Company>().UpdateRange(entities);
+            context.SaveChanges();
+            return entities;
+        }
+
         public List<Company> getByUserId(int userId)
         {
             return this.GetBy(c => c.UserId == userId).ToList();
@@ -33,7 +40,17 @@ namespace KivalitaAPI.Repositories
 
         public List<Company> WithOutOwner()
         {
-            return base.GetAll().FindAll(c => c.UserId == null);
+            return QueryWithOutOwner().ToList();
+        }
+
+        public IQueryable<Company> QueryWithOutOwner()
+        {
+            return context.Set<Company>().Where(c => c.UserId == null);
+        }
+
+        public IQueryable<Company> QueryByUserId(int userId)
+        {
+            return context.Set<Company>().Where(c => c.UserId == userId);
         }
     }
 }
