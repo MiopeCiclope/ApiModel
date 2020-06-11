@@ -18,8 +18,8 @@ namespace KivalitaAPI.Controllers
         public JobController(JobService service, ILogger<JobController> logger) : base(service, logger) { }
 
         [HttpGet]
-        [Authorize]
-        public override HttpResponse<List<Job>> Get()
+        [AllowAnonymous]
+        public override HttpResponse<List<Job>> Get([FromQuery] Job query)
         {
             logger.LogInformation($"Job - GetAll");
             try

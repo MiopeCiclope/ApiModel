@@ -12,6 +12,11 @@ namespace KivalitaAPI.Services
     public class ImageService : Service<Image, KivalitaApiContext, ImageRepository>
     {
         public ImageService(KivalitaApiContext context, ImageRepository baseRepository) : base(context, baseRepository) { }
+
+        public List<Image> GetByType(string imageType)
+        {
+            return baseRepository.GetBy(i => i.Type == imageType).ToList();
+        }
     }
 }
 

@@ -10,6 +10,10 @@ namespace KivalitaAPI.Models
         public int Id { get; set; }
         [JsonIgnore]
         public byte[] ImageData { get; set; }
+
+        [NotMapped]
+        public string ImageString { get; set; }
+
         public string Type { get; set; }
         [JsonIgnore]
         public int CreatedBy { get; set; }

@@ -18,8 +18,8 @@ namespace KivalitaAPI.Controllers
         public PostController(PostService service, ILogger<PostController> logger) : base(service, logger) { }
 
         [HttpGet]
-        [Authorize]
-        public override HttpResponse<List<Post>> Get()
+        [AllowAnonymous]
+        public override HttpResponse<List<Post>> Get([FromQuery] Post query)
         {
             logger.LogInformation($"Post - GetAll");
             try

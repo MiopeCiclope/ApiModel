@@ -38,7 +38,7 @@ namespace KivalitaAPI.Controllers
 
         [HttpGet]
         [Authorize]
-        public virtual HttpResponse<List<TEntity>> Get()
+        public virtual HttpResponse<List<TEntity>> Get([FromQuery] TEntity query)
         {
             logger.LogInformation($"{this.GetType().Name} - GetAll");
             try
