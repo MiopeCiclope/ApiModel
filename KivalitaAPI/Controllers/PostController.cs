@@ -47,7 +47,7 @@ namespace KivalitaAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize]
+        [AllowAnonymous]
         public override HttpResponse<Post> Get(int id)
         {
             logger.LogInformation($"Post - Get - {id}");

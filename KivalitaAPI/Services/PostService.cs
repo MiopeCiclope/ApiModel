@@ -68,12 +68,12 @@ namespace KivalitaAPI.Services
             var postImages = this._imageRepository.GetBy(image => image.Type == "Blog");
             var postAuthors = this._userRepository.GetBy(user => authors.Contains(user.Id));
 
-            storedPosts = storedPosts.Select(post => 
+            storedPosts = storedPosts.Select(post =>
             {
                 post.PostImage = postImages.Where(image => image.Id == post.ImageId).First();
                 post.Author = postAuthors.Where(author => author.Id == post.AuthorId).First();
-                return post; 
-            }).ToList();
+                return post;
+            }).OrderByDescending(p => p.Id).ToList();
 
             return storedPosts;
         }
