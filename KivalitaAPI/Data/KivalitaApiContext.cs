@@ -1,5 +1,7 @@
 ﻿using KivalitaAPI.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.Linq;
 
 namespace KivalitaAPI.Data
 {
@@ -40,6 +42,15 @@ namespace KivalitaAPI.Data
                 .HasOne(l => l.User)
                 .WithMany(c => c.Company)
                 .OnDelete(DeleteBehavior.SetNull);
+        }
+
+        public override int SaveChanges()
+        {
+            ChangeTracker.DetectChanges();
+            var updateList = ChangeTracker.Entries().Where(a => a.State == EntityState.Modified).ToList();
+
+            var result = base.SaveChanges();
+            return result;
         }
     }
 }

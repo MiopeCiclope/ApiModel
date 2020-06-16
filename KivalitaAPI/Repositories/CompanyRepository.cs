@@ -35,13 +35,6 @@ namespace KivalitaAPI.Repositories
 
         }
 
-        public List<Company> UpdateRange(List<Company> entities)
-        {
-            context.Set<Company>().UpdateRange(entities);
-            context.SaveChanges();
-            return entities;
-        }
-
         public List<Company> getByUserId(int userId)
         {
             return this.GetBy(c => c.UserId == userId).ToList();

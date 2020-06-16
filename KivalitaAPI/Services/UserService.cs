@@ -35,21 +35,20 @@ namespace KivalitaAPI.Services
         {
             var oldUser = this.baseRepository.Get(user.Id);
 
+            var companyToUnlink = oldUser.Company.Where(company => !user.Company.Select(company => company.Id)?.Contains(company.Id) ?? true);
+            var companyToLink = user.Company.Where(company => !oldUser.Company?.Select(companyUnlink => companyUnlink.Id).Contains(company.Id) ?? true);
 
-            var companyToUnlink = oldUser.Company.Except(user.Company);
-            var companyToLink = user.Company.Except(oldUser.Company);
-
-
-            foreach (var c in companyToUnlink)
-            {
-                c.UserId = null;
-                companyRepository.Update(c);
+            if(companyToUnlink.Any()) {
+                var companyList = companyToUnlink.ToList();
+                companyList.ForEach(company => company.UserId = null);
+                companyRepository.UpdateRange(companyList);
             }
 
-            foreach (var c in companyToLink)
+            if (companyToLink.Any())
             {
-                c.UserId = user.Id;
-                companyRepository.Update(c);
+                var companyList = companyToLink.ToList();
+                companyList.ForEach(company => company.UserId = user.Id);
+                companyRepository.UpdateRange(companyList);
             }
 
             if (!String.IsNullOrEmpty(user.Password)) 

@@ -54,15 +54,32 @@ namespace KivalitaAPI.Repositories {
 		}
 
 		public virtual TEntity Update (TEntity entity) {
+			entity.UpdatedAt = DateTime.Now;
 			var local = context.Set<TEntity> ()
 				.Local
 				.FirstOrDefault (entry => entry.Id.Equals (entity.Id));
 			if (local != null) {
 				context.Entry (local).State = EntityState.Detached;
 			}
-			context.Entry (entity).State = EntityState.Modified;
+			context.Entry(entity).State = EntityState.Modified;
 			context.SaveChanges ();
 			return entity;
+		}
+
+		public virtual List<TEntity> UpdateRange(List<TEntity> entities)
+		{
+			entities.ForEach(entity => entity.UpdatedAt = DateTime.Now);
+			var local = context.Set<TEntity>()
+				.Local
+				.Where(entry => entities.Select(entity => entity.Id).Contains(entry.Id));
+			if (local.Any())
+			{
+				var localList = local.ToList();
+				localList.ForEach(l => context.Entry(l).State = EntityState.Detached);
+				localList.ForEach(l => context.Entry(l).State = EntityState.Modified);
+			}
+			context.SaveChanges();
+			return entities;
 		}
 
 		public virtual void ReverseUpdateState (TEntity entity) {
