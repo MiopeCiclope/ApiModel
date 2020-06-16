@@ -68,16 +68,7 @@ namespace KivalitaAPI.Repositories {
 
 		public virtual List<TEntity> UpdateRange(List<TEntity> entities)
 		{
-			entities.ForEach(entity => entity.UpdatedAt = DateTime.Now);
-			var local = context.Set<TEntity>()
-				.Local
-				.Where(entry => entities.Select(entity => entity.Id).Contains(entry.Id));
-			if (local.Any())
-			{
-				var localList = local.ToList();
-				localList.ForEach(l => context.Entry(l).State = EntityState.Detached);
-				localList.ForEach(l => context.Entry(l).State = EntityState.Modified);
-			}
+			context.Set<TEntity>().UpdateRange(entities);
 			context.SaveChanges();
 			return entities;
 		}

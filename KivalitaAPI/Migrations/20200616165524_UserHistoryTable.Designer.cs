@@ -4,14 +4,16 @@ using KivalitaAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace KivalitaAPI.Migrations
 {
     [DbContext(typeof(KivalitaApiContext))]
-    partial class KivalitaApiContextModelSnapshot : ModelSnapshot
+    [Migration("20200616165524_UserHistoryTable")]
+    partial class UserHistoryTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -347,12 +349,6 @@ namespace KivalitaAPI.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("Action")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
@@ -362,17 +358,8 @@ namespace KivalitaAPI.Migrations
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Responsable")
-                        .HasColumnType("int");
-
                     b.Property<string>("Role")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("TableId")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

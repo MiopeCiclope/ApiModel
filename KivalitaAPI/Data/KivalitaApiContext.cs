@@ -1,4 +1,7 @@
-﻿using KivalitaAPI.Models;
+﻿using AutoMapper;
+using KivalitaAPI.Common;
+using KivalitaAPI.Interfaces;
+using KivalitaAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Linq;
@@ -7,9 +10,11 @@ namespace KivalitaAPI.Data
 {
     public class KivalitaApiContext : DbContext
     {
-        public KivalitaApiContext(DbContextOptions<KivalitaApiContext> options)
+        private readonly AuditFactory _auditFactory;
+        public KivalitaApiContext(DbContextOptions<KivalitaApiContext> options, IMapper mapper)
             : base(options)
         {
+            _auditFactory = new AuditFactory(mapper);
         }
 
         public DbSet<User> User { get; set; }
@@ -20,6 +25,7 @@ namespace KivalitaAPI.Data
         public DbSet<Leads> Leads { get; set; }
         public DbSet<WpRdStation> WpRdStation { get; set; }
         public DbSet<Company> Company { get; set; }
+        public DbSet<UserHistory> UserHistory { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -47,10 +53,17 @@ namespace KivalitaAPI.Data
         public override int SaveChanges()
         {
             ChangeTracker.DetectChanges();
-            var updateList = ChangeTracker.Entries().Where(a => a.State == EntityState.Modified).ToList();
+            var dataChanges = ChangeTracker.Entries().Where(a => a.State == EntityState.Modified);
+            if (dataChanges.Any())
+            {
+                dataChanges.ToList().ForEach(data => {
+                    var baseObject = data.Entity as IEntity;
+                    var auditData = _auditFactory.GetAuditObject(baseObject, data.State, data.State == EntityState.Added ? baseObject.CreatedBy: baseObject.UpdatedBy);
+                    this.Add(auditData);
+                });
 
-            var result = base.SaveChanges();
-            return result;
+            }
+            return base.SaveChanges();
         }
     }
 }

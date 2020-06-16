@@ -13,6 +13,8 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using AutoMapper;
+using KivalitaAPI.Models;
 
 namespace KivalitaAPI
 {
@@ -119,6 +121,17 @@ namespace KivalitaAPI
 
             services.AddScoped<WpRdStationRepository>();
             services.AddScoped<WpRdStationService>();
+
+            var mappingConfig = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<User, UserHistory>()
+                            .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Id))
+                            .ForMember(dest => dest.Id, opt => opt.Ignore());
+                cfg.CreateMap<UserHistory, User>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TableId));
+            });
+            IMapper mapper = mappingConfig.CreateMapper();
+
+            services.AddSingleton(mapper);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
