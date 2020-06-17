@@ -67,11 +67,14 @@ namespace KivalitaAPI.Data
         {
             ChangeTracker.DetectChanges();
             var dataChanges = ChangeTracker.Entries().Where(a => a.State == EntityState.Modified || a.State == EntityState.Added || a.State == EntityState.Deleted);
+            
             if (dataChanges.Any())
             {
                 dataChanges.ToList().ForEach(data => {
                     var baseObject = data.Entity as IEntity;
                     var auditData = _auditFactory.GetAuditObject(baseObject, data.State, data.State == EntityState.Added ? baseObject.CreatedBy: baseObject.UpdatedBy);
+                    base.SaveChanges();
+                    auditData.TableId = baseObject.Id;
                     this.Add(auditData);
                 });
 
