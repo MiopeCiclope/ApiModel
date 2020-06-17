@@ -13,9 +13,18 @@ namespace KivalitaAPI.Repositories
 
         public override Company Add(Company company)
         {
-            var companyFound = this.GetBy(
-                c => c.LinkedIn == company.LinkedIn ||
-                c.Name == company.Name).FirstOrDefault();
+            Company companyFound = null;
+
+            if (!String.IsNullOrEmpty(company.LinkedIn)) {
+                companyFound = this.GetBy(
+                    c => c.LinkedIn == company.LinkedIn).FirstOrDefault();
+            }
+
+            if (companyFound == null)
+            {
+                companyFound = this.GetBy(
+                    c => c.Name == company.Name).FirstOrDefault();
+            }
 
             if (companyFound != null)
             {
