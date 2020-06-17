@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using KivalitaAPI.AuditModels;
 using KivalitaAPI.Enum;
 using KivalitaAPI.Interfaces;
 using KivalitaAPI.Models;
@@ -21,12 +22,21 @@ namespace KivalitaAPI.Common
             switch (entity)
             {
                 case User user:
-                    var auditData = _mapper.Map<UserHistory>(user);
-                    return addAuditComplement(auditData, action, responsable);
+                    var userAudit = _mapper.Map<UserHistory>(user);
+                    return addAuditComplement(userAudit, action, responsable);
+                case Token token:
+                    var tokenAudit = _mapper.Map<TokenHistory>(token);
+                    return addAuditComplement(tokenAudit, action, responsable);
+                case Post post:
+                    var postAudit = _mapper.Map<PostHistory>(post);
+                    return addAuditComplement(postAudit, action, responsable);
+                case Image image:
+                    var imageAudit = _mapper.Map<ImageHistory>(image);
+                    return addAuditComplement(imageAudit, action, responsable);
                 default:
-                    auditData = new UserHistory();
-                    auditData.FirstName = "default";
-                    return addAuditComplement(auditData, action, responsable);
+                    var defaultAudit = new UserHistory();
+                    defaultAudit.FirstName = "default";
+                    return addAuditComplement(defaultAudit, action, responsable);
             }
         }
 
@@ -44,7 +54,7 @@ namespace KivalitaAPI.Common
                     data.Action = ActionEnum.Delete;
                     break;
             }
-            data.Date = DateTime.Now;
+            data.Date = DateTime.UtcNow;
             data.Responsable = responsable;
             return data;
         }

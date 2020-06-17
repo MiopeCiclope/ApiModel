@@ -9,15 +9,10 @@ namespace KivalitaAPI.Repositories
     {
         public ImageRepository(DbContext context) : base(context) { }
 
-        public override Image Add(Image Image)
+        public override Image Add(Image image)
         {
-            var NewImage = new Image
-            {
-                ImageData = Convert.FromBase64String(Image.ImageString),
-                Type = Image.Type
-            };
-
-            return base.Add(NewImage);
+            image.ImageData = Convert.FromBase64String(image.ImageString);
+            return base.Add(image);
         }
     }
 }

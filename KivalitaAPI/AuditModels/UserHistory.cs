@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using KivalitaAPI.Enum;
 
-namespace KivalitaAPI.Models
+namespace KivalitaAPI.AuditModels
 {
     public class UserHistory : IAuditTable
     {

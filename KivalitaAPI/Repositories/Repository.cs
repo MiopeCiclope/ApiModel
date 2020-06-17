@@ -54,7 +54,7 @@ namespace KivalitaAPI.Repositories {
 		}
 
 		public virtual TEntity Update (TEntity entity) {
-			entity.UpdatedAt = DateTime.Now;
+			entity.UpdatedAt = DateTime.UtcNow;
 			var local = context.Set<TEntity> ()
 				.Local
 				.FirstOrDefault (entry => entry.Id.Equals (entity.Id));

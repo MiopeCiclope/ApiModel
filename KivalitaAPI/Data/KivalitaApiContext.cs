@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using KivalitaAPI.AuditModels;
 using KivalitaAPI.Common;
 using KivalitaAPI.Interfaces;
 using KivalitaAPI.Models;
@@ -18,14 +19,28 @@ namespace KivalitaAPI.Data
         }
 
         public DbSet<User> User { get; set; }
-        public DbSet<Token> Token { get; set; }
-        public DbSet<Post> Post { get; set; }
-        public DbSet<Image> Image { get; set; }
-        public DbSet<Job> Job { get; set; }
-        public DbSet<Leads> Leads { get; set; }
-        public DbSet<WpRdStation> WpRdStation { get; set; }
-        public DbSet<Company> Company { get; set; }
         public DbSet<UserHistory> UserHistory { get; set; }
+
+        public DbSet<Token> Token { get; set; }
+        public DbSet<TokenHistory> TokenHistory { get; set; }
+
+        public DbSet<Post> Post { get; set; }
+        public DbSet<PostHistory> PostHistory { get; set; }
+
+        public DbSet<Image> Image { get; set; }
+        public DbSet<ImageHistory> ImageHistory { get; set; }
+
+        public DbSet<Job> Job { get; set; }
+        //public DbSet<Job> Job { get; set; }
+
+        public DbSet<Leads> Leads { get; set; }
+        //public DbSet<Leads> Leads { get; set; }
+
+        public DbSet<WpRdStation> WpRdStation { get; set; }
+        //public DbSet<WpRdStation> WpRdStation { get; set; }
+
+        public DbSet<Company> Company { get; set; }
+        //public DbSet<Company> Company { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -53,7 +68,7 @@ namespace KivalitaAPI.Data
         public override int SaveChanges()
         {
             ChangeTracker.DetectChanges();
-            var dataChanges = ChangeTracker.Entries().Where(a => a.State == EntityState.Modified);
+            var dataChanges = ChangeTracker.Entries().Where(a => a.State == EntityState.Modified || a.State == EntityState.Added || a.State == EntityState.Deleted);
             if (dataChanges.Any())
             {
                 dataChanges.ToList().ForEach(data => {

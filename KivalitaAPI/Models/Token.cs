@@ -15,6 +15,7 @@ namespace KivalitaAPI.Models
         [ForeignKey("User")]
         public int UserId { get; set; }
         public User User { get; set; }
+        public LoginTypeEnum LoginClient { get; set; }
         [JsonIgnore]
         public int CreatedBy { get; set; }
         [JsonIgnore]
@@ -23,6 +24,5 @@ namespace KivalitaAPI.Models
         public DateTime CreatedAt { get; set; }
         [JsonIgnore]
         public DateTime UpdatedAt { get; set; }
-        public LoginTypeEnum LoginClient { get; set; }
     }
 }

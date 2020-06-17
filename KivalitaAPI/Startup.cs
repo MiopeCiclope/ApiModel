@@ -15,6 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using AutoMapper;
 using KivalitaAPI.Models;
+using KivalitaAPI.AuditModels;
 
 namespace KivalitaAPI
 {
@@ -128,9 +129,25 @@ namespace KivalitaAPI
                             .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Id))
                             .ForMember(dest => dest.Id, opt => opt.Ignore());
                 cfg.CreateMap<UserHistory, User>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TableId));
-            });
-            IMapper mapper = mappingConfig.CreateMapper();
 
+                cfg.CreateMap<Token, TokenHistory>()
+                            .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Id))
+                            .ForMember(dest => dest.Id, opt => opt.Ignore());
+                cfg.CreateMap<TokenHistory, Token>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TableId));
+
+                cfg.CreateMap<Post, PostHistory>()
+                            .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Id))
+                            .ForMember(dest => dest.Id, opt => opt.Ignore());
+                cfg.CreateMap<PostHistory, Post>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TableId));
+
+                cfg.CreateMap<Image, ImageHistory>()
+                            .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Id))
+                            .ForMember(dest => dest.Id, opt => opt.Ignore())
+                            .ForMember(dest => dest.ImageData, opt => opt.MapFrom(src => src.ImageData == null ? Convert.FromBase64String(src.ImageString) : src.ImageData));
+                cfg.CreateMap<ImageHistory, Image>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TableId));
+            });
+
+            IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
         }
 

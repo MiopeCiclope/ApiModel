@@ -25,6 +25,7 @@ namespace KivalitaAPI.Services
             var postImage = new Image
             {
                 ImageData = Convert.FromBase64String(post.ImageData),
+                ImageString = post.ImageData,
                 Type = "Blog"
             };
 
