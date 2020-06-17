@@ -13,6 +13,9 @@ namespace KivalitaAPI.Models {
 		public string Email { get; set; }
 		public string Phone { get; set; }
 		public string LinkedIn { get; set; }
+		[ForeignKey("Company")]
+		public int? CompanyId { get; set; }
+		public Company Company { get; set; }
 		[JsonIgnore]
 		public int CreatedBy { get; set; }
 		[JsonIgnore]
@@ -21,10 +24,5 @@ namespace KivalitaAPI.Models {
 		public DateTime CreatedAt { get; set; }
 		[JsonIgnore]
 		public DateTime UpdatedAt { get; set; }
-
-		[ForeignKey("Company")]
-		public int? CompanyId { get; set; }
-
-		public Company Company { get; set; }
 	}
 }

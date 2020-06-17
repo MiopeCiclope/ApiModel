@@ -36,6 +36,12 @@ namespace KivalitaAPI.Common
                 case Job job:
                     var jobAudit = _mapper.Map<JobHistory>(job);
                     return addAuditComplement(jobAudit, action, responsable);
+                case Leads lead:
+                    var leadAudit = _mapper.Map<LeadsHistory>(lead);
+                    return addAuditComplement(leadAudit, action, responsable);
+                case Company company:
+                    var companyAudit = _mapper.Map<CompanyHistory>(company);
+                    return addAuditComplement(companyAudit, action, responsable);
                 default:
                     var defaultAudit = new UserHistory();
                     defaultAudit.FirstName = "default";

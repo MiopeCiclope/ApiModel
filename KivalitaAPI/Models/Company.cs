@@ -15,6 +15,9 @@ namespace KivalitaAPI.Models
         public string Sector { get; set; }
         public string Site { get; set; }
         public string LinkedIn { get; set; }
+        [ForeignKey("User")]
+        public int? UserId { get; set; }
+        public User User { get; set; }
         public DateTime CreatedAt { get; set; }
         [JsonIgnore]
         public int CreatedBy { get; set; }
@@ -25,9 +28,5 @@ namespace KivalitaAPI.Models
 
         [IgnoreDataMember]
         public ICollection<Leads> Leads { get; set; }
-
-        [ForeignKey("User")]
-        public int? UserId { get; set; }
-        public User User { get; set; }
     }
 }

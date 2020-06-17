@@ -34,13 +34,11 @@ namespace KivalitaAPI.Data
         public DbSet<JobHistory> JobHistory { get; set; }
 
         public DbSet<Leads> Leads { get; set; }
-        //public DbSet<Leads> Leads { get; set; }
+        public DbSet<LeadsHistory> LeadsHistory { get; set; }
+        public DbSet<Company> Company { get; set; }
+        public DbSet<CompanyHistory> CompanyHistory { get; set; }
 
         public DbSet<WpRdStation> WpRdStation { get; set; }
-        //public DbSet<WpRdStation> WpRdStation { get; set; }
-
-        public DbSet<Company> Company { get; set; }
-        //public DbSet<Company> Company { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
