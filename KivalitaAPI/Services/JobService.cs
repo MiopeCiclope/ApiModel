@@ -24,7 +24,8 @@ namespace KivalitaAPI.Services
         {
             var JobImage = new Image
             {
-                ImageData = Convert.FromBase64String(Job.ImageData),
+                ImageString = Job.ImageData,
+                CreatedBy = Job.CreatedBy,
                 Type = "Job"
             };
 

@@ -31,7 +31,7 @@ namespace KivalitaAPI.Data
         public DbSet<ImageHistory> ImageHistory { get; set; }
 
         public DbSet<Job> Job { get; set; }
-        //public DbSet<Job> Job { get; set; }
+        public DbSet<JobHistory> JobHistory { get; set; }
 
         public DbSet<Leads> Leads { get; set; }
         //public DbSet<Leads> Leads { get; set; }

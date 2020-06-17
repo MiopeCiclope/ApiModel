@@ -145,6 +145,11 @@ namespace KivalitaAPI
                             .ForMember(dest => dest.Id, opt => opt.Ignore())
                             .ForMember(dest => dest.ImageData, opt => opt.MapFrom(src => src.ImageData == null ? Convert.FromBase64String(src.ImageString) : src.ImageData));
                 cfg.CreateMap<ImageHistory, Image>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TableId));
+
+                cfg.CreateMap<Job, JobHistory>()
+                            .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Id))
+                            .ForMember(dest => dest.Id, opt => opt.Ignore());
+                cfg.CreateMap<JobHistory, Job>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TableId));
             });
 
             IMapper mapper = mappingConfig.CreateMapper();

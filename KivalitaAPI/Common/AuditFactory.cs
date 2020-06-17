@@ -33,6 +33,9 @@ namespace KivalitaAPI.Common
                 case Image image:
                     var imageAudit = _mapper.Map<ImageHistory>(image);
                     return addAuditComplement(imageAudit, action, responsable);
+                case Job job:
+                    var jobAudit = _mapper.Map<JobHistory>(job);
+                    return addAuditComplement(jobAudit, action, responsable);
                 default:
                     var defaultAudit = new UserHistory();
                     defaultAudit.FirstName = "default";
