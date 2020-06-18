@@ -16,6 +16,7 @@ using Newtonsoft.Json;
 using AutoMapper;
 using KivalitaAPI.Models;
 using KivalitaAPI.AuditModels;
+using Microsoft.Extensions.Logging;
 
 namespace KivalitaAPI
 {
@@ -167,8 +168,10 @@ namespace KivalitaAPI
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env,
+                          ILoggerFactory loggerFactory)
         {
+            loggerFactory.AddFile("../Logs/Api-{Date}.log");
             // Ativando middlewares para uso do Swagger
             app.UseSwagger();
             app.UseSwaggerUI(c =>
