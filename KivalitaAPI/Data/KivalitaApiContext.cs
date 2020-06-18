@@ -35,6 +35,7 @@ namespace KivalitaAPI.Data
 
         public DbSet<Leads> Leads { get; set; }
         public DbSet<LeadsHistory> LeadsHistory { get; set; }
+
         public DbSet<Company> Company { get; set; }
         public DbSet<CompanyHistory> CompanyHistory { get; set; }
 
