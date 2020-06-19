@@ -71,7 +71,10 @@ namespace KivalitaAPI.Services
 
             storedJobs = storedJobs.Select(Job =>
             {
-                Job.JobImage = JobImages.Where(image => image.Id == Job.ImageId).First();
+                Job.JobImage = JobImages.Where(image => image.Id == Job.ImageId)
+                    .Select(img => new Image { Id = img.Id, ThumbnailData = img.ThumbnailData })
+                    .First();
+
                 Job.Author = JobAuthors.Where(author => author.Id == Job.AuthorId).First();
                 return Job;
             }).ToList();

@@ -71,7 +71,10 @@ namespace KivalitaAPI.Services
 
             storedPosts = storedPosts.Select(post =>
             {
-                post.PostImage = postImages.Where(image => image.Id == post.ImageId).First();
+                post.PostImage = postImages.Where(image => image.Id == post.ImageId)
+                    .Select(img => new Image { Id = img.Id, ThumbnailData = img.ThumbnailData })
+                    .First();
+
                 post.Author = postAuthors.Where(author => author.Id == post.AuthorId).First();
                 return post;
             }).OrderByDescending(p => p.Id).ToList();

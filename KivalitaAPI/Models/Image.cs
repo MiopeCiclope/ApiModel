@@ -8,8 +8,12 @@ namespace KivalitaAPI.Models
     {
         [JsonIgnore]
         public int Id { get; set; }
+
         [JsonIgnore]
         public byte[] ImageData { get; set; }
+
+        [JsonIgnore]
+        public byte[] ThumbnailData { get; set; }
 
         [NotMapped]
         public string ImageString { get; set; }

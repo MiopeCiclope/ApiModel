@@ -8,6 +8,7 @@ namespace KivalitaAPI.AuditModels
     {
         public int Id { get; set; }
         public byte[] ImageData { get; set; }
+        public byte[] ThumbnailData { get; set; }
         public string Type { get; set; }
         public int TableId { get; set; }
         public ActionEnum Action { get; set; }
