@@ -89,6 +89,7 @@ namespace KivalitaAPI.Services {
 				{
 					Name = lead.Name,
 					Email = lead.Email,
+					PersonalEmail = lead.PersonalEmail,
 					Phone = lead.Phone,
 					Position = lead.Position,
 					LinkedIn = lead.LinkedIn,

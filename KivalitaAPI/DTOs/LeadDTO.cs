@@ -8,6 +8,7 @@ namespace KivalitaAPI.DTOs
 		public string Name { get; set; }
 		public string Position { get; set; }
 		public string Email { get; set; }
+		public string PersonalEmail { get; set; }
 		public string Company { get; set; }
 		public string Sector { get; set; }
 		public string CompanySite { get; set; }
