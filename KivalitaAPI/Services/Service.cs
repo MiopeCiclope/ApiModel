@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using KivalitaAPI.Interfaces;
 using System.Collections.Generic;
+using Sieve.Models;
 
 namespace KivalitaAPI.Services
 {
@@ -41,6 +42,11 @@ namespace KivalitaAPI.Services
         public virtual List<TEntity> GetAll()
         {
             return baseRepository.GetAll();
+        }
+
+        public List<TEntity> GetAll_v2(SieveModel filterQuery)
+        {
+            return baseRepository.GetAll_v2(filterQuery);
         }
 
         public virtual TEntity Update(TEntity entity)

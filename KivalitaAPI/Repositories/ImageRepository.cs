@@ -1,14 +1,15 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
 using System;
+using Sieve.Services;
 using System.IO;
 using System.Drawing;
 
 namespace KivalitaAPI.Repositories
 {
-    public class ImageRepository : Repository<Models.Image, DbContext>
+    public class ImageRepository : Repository<Models.Image, DbContext, SieveProcessor>
     {
-        public ImageRepository(DbContext context) : base(context) { }
+        public ImageRepository(DbContext context, SieveProcessor filterProcessor) : base(context, filterProcessor) { }
 
         public override Models.Image Add(Models.Image image)
         {

@@ -1,4 +1,5 @@
 ﻿using KivalitaAPI.Interfaces;
+using Sieve.Attributes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -10,14 +11,21 @@ namespace KivalitaAPI.Models
     public class Company : IEntity
     {
         [JsonIgnore]
+        [Sieve(CanFilter = true, CanSort = true)]
         public int Id { get; set; }
+        [Sieve(CanFilter = true, CanSort = true)]
         public string Name { get; set; }
+        [Sieve(CanFilter = true, CanSort = true)]
         public string Sector { get; set; }
+        [Sieve(CanFilter = true, CanSort = true)]
         public string Site { get; set; }
+        [Sieve(CanFilter = true, CanSort = true)]
         public string LinkedIn { get; set; }
         [ForeignKey("User")]
+        [Sieve(CanFilter = true, CanSort = true)]
         public int? UserId { get; set; }
         public User User { get; set; }
+        [Sieve(CanFilter = true, CanSort = true)]
         public DateTime CreatedAt { get; set; }
         [JsonIgnore]
         public int CreatedBy { get; set; }

@@ -16,8 +16,8 @@ namespace KivalitaAPI.Services
 
         public JobService(KivalitaApiContext context, JobRepository baseRepository) : base(context, baseRepository)
         {
-            _imageRepository = new ImageRepository(this.context);
-            _userRepository = new UserRepository(this.context);
+            _imageRepository = new ImageRepository(this.context, this.baseRepository.filterProcessor);
+            _userRepository = new UserRepository(this.context, this.baseRepository.filterProcessor);
         }
 
         public override Job Add(Job Job)

@@ -4,12 +4,13 @@ using KivalitaAPI.Models;
 using System.Linq;
 using System.Collections.Generic;
 using System;
+using Sieve.Services;
 
 namespace KivalitaAPI.Repositories
 {
-    public class UserRepository : Repository<User, DbContext>
+    public class UserRepository : Repository<User, DbContext, SieveProcessor>
     {
-        public UserRepository(DbContext context) : base(context) { }
+        public UserRepository(DbContext context, SieveProcessor filterProcessor) : base(context, filterProcessor) { }
 
         public User GetByLoginData(User user)
         {

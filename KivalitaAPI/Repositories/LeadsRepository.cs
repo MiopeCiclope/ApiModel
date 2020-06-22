@@ -2,17 +2,20 @@ using KivalitaAPI.Common;
 using KivalitaAPI.DTOs;
 using KivalitaAPI.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Linq.Translations;
+using Sieve.Models;
+using Sieve.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace KivalitaAPI.Repositories
 {
-    public class LeadsRepository : Repository<Leads, DbContext>
+    public class LeadsRepository : Repository<Leads, DbContext, SieveProcessor>
     {
         public const int DefaultItemsPerPage = 10;
 
-        public LeadsRepository(DbContext context) : base(context) {}
+        public LeadsRepository(DbContext context, SieveProcessor filterProcessor) : base(context, filterProcessor) {}
 
         public override Leads Add(Leads entity)
         {
@@ -119,6 +122,16 @@ namespace KivalitaAPI.Repositories
             }
 
             return queryable;
+        }
+
+        public override List<Leads> GetAll_v2(SieveModel filterQuery)
+        {
+            var result = context.Set<Leads>()
+                                .Include(l => l.Company)
+                                .AsNoTracking();
+                                
+            result = this.filterProcessor.Apply(filterQuery, result).WithTranslations();
+            return result.ToList();
         }
     }
 }

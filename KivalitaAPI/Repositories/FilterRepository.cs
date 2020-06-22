@@ -4,10 +4,11 @@ using System.Linq;
 using KivalitaAPI.Interfaces;
 using KivalitaAPI.Models;
 using Microsoft.EntityFrameworkCore;
+using Sieve.Services;
 
 namespace KivalitaAPI.Repositories {
-	public class FilterRepository : Repository<Filter, DbContext> {
-		public FilterRepository (DbContext context) : base (context) { }
+	public class FilterRepository : Repository<Filter, DbContext, SieveProcessor> {
+		public FilterRepository (DbContext context, SieveProcessor filterProcessor) : base (context, filterProcessor) { }
 
 		public override Filter Add (Filter entity) {
 			var filterSearch = this.GetBy (storedFilter => storedFilter.Name == entity.Name);

@@ -1,4 +1,5 @@
 ﻿using KivalitaAPI.Interfaces;
+using Sieve.Attributes;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
@@ -7,6 +8,7 @@ namespace KivalitaAPI.Models
     public class Image : IEntity
     {
         [JsonIgnore]
+        [Sieve(CanFilter = true, CanSort = true)]
         public int Id { get; set; }
 
         [JsonIgnore]
@@ -18,6 +20,7 @@ namespace KivalitaAPI.Models
         [NotMapped]
         public string ImageString { get; set; }
 
+        [Sieve(CanFilter = true, CanSort = true)]
         public string Type { get; set; }
         [JsonIgnore]
         public int CreatedBy { get; set; }

@@ -4,12 +4,13 @@ using System.Linq;
 using KivalitaAPI.Interfaces;
 using KivalitaAPI.Models;
 using Microsoft.EntityFrameworkCore;
+using Sieve.Services;
 
 namespace KivalitaAPI.Repositories
 {
-    public class CompanyRepository: Repository<Company, DbContext>
+    public class CompanyRepository: Repository<Company, DbContext, SieveProcessor>
     {
-        public CompanyRepository(DbContext context) : base(context) {}
+        public CompanyRepository(DbContext context, SieveProcessor filterProcessor) : base(context, filterProcessor) {}
 
         public override Company Add(Company company)
         {

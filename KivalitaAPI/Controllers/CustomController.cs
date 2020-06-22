@@ -7,6 +7,7 @@ using KivalitaAPI.Common;
 using KivalitaAPI.Interfaces;
 using System;
 using System.Security.Claims;
+using Sieve.Models;
 
 namespace KivalitaAPI.Controllers
 {
@@ -198,5 +199,34 @@ namespace KivalitaAPI.Controllers
             }
         }
 
+        [HttpGet]
+        [Authorize]
+        [Route("v2")]
+        public virtual HttpResponse<List<TEntity>> GetAll_v2([FromQuery] SieveModel filterQuery)
+        {
+            logger.LogInformation($"{this.GetType().Name} - GetAll_v2");
+            try
+            {
+                var dataList = service.GetAll_v2(filterQuery);
+
+                return new HttpResponse<List<TEntity>>
+                {
+                    IsStatusCodeSuccess = true,
+                    statusCode = HttpStatusCode.OK,
+                    data = dataList
+                };
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.Message);
+                return new HttpResponse<List<TEntity>>
+                {
+                    IsStatusCodeSuccess = false,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    data = null,
+                    ErrorMessage = "Erro ao realizar a requisição"
+                };
+            }
+        }
     }
 }

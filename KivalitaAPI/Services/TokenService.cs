@@ -18,7 +18,7 @@ namespace KivalitaAPI.Services
         private UserRepository _userRepository;
         public TokenService(KivalitaApiContext context, TokenRepository baseRepository) : base(context, baseRepository) 
         {
-            this._userRepository = new UserRepository(this.context);
+            this._userRepository = new UserRepository(this.context, this.baseRepository.filterProcessor);
         }
 
         public Token GenerateToken(User user, LoginTypeEnum Client)

@@ -17,6 +17,8 @@ using AutoMapper;
 using KivalitaAPI.Models;
 using KivalitaAPI.AuditModels;
 using Microsoft.Extensions.Logging;
+using Sieve.Services;
+using Sieve.Models;
 
 namespace KivalitaAPI
 {
@@ -165,6 +167,9 @@ namespace KivalitaAPI
 
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
+
+            services.Configure<SieveOptions>(Configuration.GetSection("Sieve"));
+            services.AddScoped<SieveProcessor>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

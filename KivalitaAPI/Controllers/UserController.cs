@@ -24,7 +24,7 @@ namespace KivalitaAPI.Controllers
         {
             try
             {
-                var tokenService = new TokenService(this.service.context, new Repositories.TokenRepository(this.service.context));
+                var tokenService = new TokenService(this.service.context, new Repositories.TokenRepository(this.service.context, this.service.baseRepository.filterProcessor));
                 if (userCredentials.GrantType == "password")
                 {
                     var fakeUser = new User

@@ -4,14 +4,20 @@ using System.Linq;
 using System.Threading.Tasks;
 using KivalitaAPI.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Sieve.Models;
+using Sieve.Services;
 
 namespace KivalitaAPI.Repositories {
-	public abstract class Repository<TEntity, TContext> : IRepository<TEntity>
+	public abstract class Repository<TEntity, TContext, TFilterEngine> : IRepository<TEntity>
 		where TEntity : class, IEntity
+		where TFilterEngine: SieveProcessor
 	where TContext : DbContext {
 		public readonly TContext context;
-		public Repository (TContext context) {
+		public readonly SieveProcessor filterProcessor;
+
+		public Repository (TContext context, SieveProcessor _filterProcessor) {
 			this.context = context;
+			this.filterProcessor = _filterProcessor;
 		}
 		public virtual TEntity Add (TEntity entity) {
 			context.Set<TEntity> ().Add (entity);
@@ -80,6 +86,13 @@ namespace KivalitaAPI.Repositories {
 
 			if (local != null)
 				context.Entry (local).State = EntityState.Detached;
+		}
+
+		public virtual List<TEntity> GetAll_v2(SieveModel filterQuery)
+		{
+			var result = context.Set<TEntity>().AsNoTracking();
+			result = this.filterProcessor.Apply(filterQuery, result);
+			return result.ToList();
 		}
 	}
 }
