@@ -16,7 +16,7 @@ namespace KivalitaAPI.Services
 
             using (HttpClient client = new HttpClient())
             {
-                client.Timeout = TimeSpan.FromSeconds(20);
+                client.Timeout = TimeSpan.FromSeconds(10);
                 using (HttpResponseMessage response = await client.PostAsync(url, q))
                 {
                     using (HttpContent content = response.Content)

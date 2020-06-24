@@ -43,7 +43,7 @@ namespace KivalitaAPI.Services
                 scope = this._serviceProvider.CreateScope();
             }
 
-            if (String.IsNullOrEmpty(lead.Company.Site))
+            if (!lead.CompanyId.HasValue)
             {
                 return;
             }
@@ -52,17 +52,16 @@ namespace KivalitaAPI.Services
 
             string firstName;
             string lastName;
-            string domain;
 
-            domain = GetDomain(lead.Company.Site);
-            (firstName, lastName) = GetFirstAndLastName(lead.Name);
+            var domains = GetDomainsFromCompany(lead.Company);
+            (firstName, lastName) = GetNames(lead.Name);
 
-            Console.WriteLine($"{domain} - {firstName} {lastName}");
+            Console.WriteLine($"{lead.Company.Name} - {firstName} {lastName}");
 
             string email;
             try
             {
-                email = await emailExtractorService.Run(firstName, lastName, domain);
+                email = await emailExtractorService.Run(firstName, lastName, domains);
             }
             catch
             {
@@ -79,22 +78,42 @@ namespace KivalitaAPI.Services
 
         }
 
-        public string GetDomain(string url)
+        public List<string> GetDomainsFromCompany(Company company)
         {
-            if (!url.StartsWith("http"))
+            List<string> domains = new List<string> { };
+
+            if (String.IsNullOrEmpty(company.Site))
             {
-                url = $"https://{url}";
+                var names = GetNames(company.Name, true);
+
+                domains.Add($"{names.Item1}.com");
+                domains.Add($"{names.Item1}.com.br");
+                domains.Add($"{names.Item1}{names.Item2}.com");
+                domains.Add($"{names.Item1}{names.Item2}.com.br");
             }
-            string domain = new Uri(url).Host;
-            if (domain.StartsWith("www"))
+            else
             {
-                domain = domain.Remove(0, 4);
+                var url = company.Site;
+
+                if (!url.StartsWith("http"))
+                {
+                    url = $"https://{url}";
+                }
+                string domain = new Uri(url).Host;
+                if (domain.StartsWith("www"))
+                {
+                    domain = domain.Remove(0, 4);
+                }
+
+                domains.Add(domain);
+
             }
 
-            return domain;
+            domains = domains.Distinct().ToList();
+            return domains;
         }
 
-        public (string, string) GetFirstAndLastName(string fullName)
+        public (string, string) GetNames(string fullName, bool isCompany = false)
         {
             fullName = RemoveAccentuation(fullName);
 
@@ -110,7 +129,14 @@ namespace KivalitaAPI.Services
                 case 2:
                     return (namesFiltered[0], namesFiltered[1]);
                 default:
-                    return (namesFiltered[0], namesFiltered[namesFiltered.Count - 1]);
+                    if (isCompany)
+                    {
+                        return (namesFiltered[0], namesFiltered[1]);
+                    }
+                    else
+                    {
+                        return (namesFiltered[0], namesFiltered[namesFiltered.Count - 1]);
+                    }
             }
         }
 

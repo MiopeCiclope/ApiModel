@@ -15,40 +15,45 @@ namespace KivalitaAPI.Services
             this.request = _requestService;
         }
 
-        async public Task<string> Run(string firstName, string lastName, string domainCompany)
+        async public Task<string> Run(string firstName, string lastName, List<string> domainsCompany)
         {
-            var emails = GenerateEmails(firstName, lastName, domainCompany);
+            var emails = GenerateEmails(firstName, lastName, domainsCompany);
 
             foreach (string email in emails)
             {
-
                 IEnumerable<KeyValuePair<string, string>> queries = new List<KeyValuePair<string, string>>()
                 {
                     new KeyValuePair<string, string>("mail", email)
                 };
 
-                var response = await request.PostFormAsync(apiUrl, queries);
-
-                if (response["Status"] == "2")
+                try
                 {
-                    return email;
+                    var response = await request.PostFormAsync(apiUrl, queries);
+
+                    if (response["Status"] == "2")
+                    {
+                        return email;
+                    }
+                }
+                catch
+                {
+                    Console.WriteLine("Email Timeout!");
                 }
             }
 
             return null;
-
         }
 
-        public IList<string> GenerateEmails(string firstName, string lastName, string domainCompany)
+        public IList<string> GenerateEmails(string firstName, string lastName, List<string> domainsCompany)
         {
-            var emails = new List<string>
+            var emails = new List<string> { };
+            foreach (string domain in domainsCompany)
             {
-                $"{firstName}.{lastName}@{domainCompany}",
-                $"{firstName}{lastName}@{domainCompany}",
-                $"{firstName}{((lastName.Length > 0) ? lastName[0] : (char?)null)}@{domainCompany}",
-                $"{((firstName.Length > 0) ? firstName[0] : (char?)null)}{lastName}@{domainCompany}",
-                $"{firstName}@{domainCompany}",
-            };
+                emails.Add($"{firstName}.{lastName}@{domain}");
+                emails.Add($"{firstName}{lastName}@{domain}");
+                emails.Add($"{firstName}@{domain}");
+                emails.Add($"{((firstName.Length > 0) ? firstName[0] : (char?)null)}{lastName}@{domain}");
+            }
 
             return emails;
         }
