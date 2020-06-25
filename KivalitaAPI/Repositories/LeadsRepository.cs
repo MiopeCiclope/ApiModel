@@ -46,6 +46,8 @@ namespace KivalitaAPI.Repositories
             int pageSize = leadQuery.ItemsPerPage ?? DefaultItemsPerPage;
 
             List<Leads> leads = queryable
+                .Where(lead => 
+                    lead.Deleted == false)
                 .Skip((leadQuery.Page - 1) * pageSize)
                 .Take(pageSize)
                 .ToList();
