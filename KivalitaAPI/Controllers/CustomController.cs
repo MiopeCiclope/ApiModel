@@ -31,7 +31,8 @@ namespace KivalitaAPI.Controllers
         public virtual int GetAuditTrailUser()
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
-            if (identity != null)
+
+            if (identity.IsAuthenticated)
                 return int.Parse(identity.FindFirst("Id").Value);
             else
                 return 0;

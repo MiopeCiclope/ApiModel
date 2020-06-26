@@ -12,12 +12,19 @@ namespace KivalitaAPI.Models
         [JsonIgnore]
         [Sieve(CanFilter = true, CanSort = true)]
         public int Id { get; set; }
+
         [Sieve(CanFilter = true, CanSort = true)]
         public string Title { get; set; }
+
         [Sieve(CanFilter = true, CanSort = true)]
         public string Article { get; set; }
+
+        [Sieve(CanFilter = true, CanSort = false)]
+        public bool Published { get; set; }
+
         [Sieve(CanFilter = true, CanSort = true)]
         public DateTime CreatedAt { get; set; }
+
         [ForeignKey("Image")]
         [JsonIgnore]
         [Sieve(CanFilter = true, CanSort = true)]

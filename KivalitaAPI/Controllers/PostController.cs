@@ -8,6 +8,7 @@ using KivalitaAPI.Common;
 using System.Net;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 namespace KivalitaAPI.Controllers
 {
@@ -25,6 +26,12 @@ namespace KivalitaAPI.Controllers
             try
             {
                 var dataList = service.GetAll();
+
+                if (GetAuditTrailUser() == 0)
+                {
+                    dataList = dataList.Where(post => post.Published == true).ToList();
+                }
+
 
                 return new HttpResponse<List<Post>>
                 {

@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Net;
 using System;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using System.Linq;
 
 namespace KivalitaAPI.Controllers
 {
@@ -25,6 +27,11 @@ namespace KivalitaAPI.Controllers
             try
             {
                 var dataList = service.GetAll();
+
+                if (GetAuditTrailUser() == 0)
+                {
+                    dataList = dataList.Where(job => job.Published == true).ToList();
+                }
 
                 return new HttpResponse<List<Job>>
                 {
