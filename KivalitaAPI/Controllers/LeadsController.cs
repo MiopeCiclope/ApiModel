@@ -11,6 +11,7 @@ using KivalitaAPI.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Sieve.Models;
+using AutoMapper;
 
 namespace KivalitaAPI.Controllers
 {
@@ -22,13 +23,21 @@ namespace KivalitaAPI.Controllers
         public readonly CompanyService companyService;
         public readonly GetEmailService _getEmailService;
         public readonly ILogger<LeadsController> logger;
+        private readonly IMapper _mapper;
 
-        public LeadsController(CompanyService companyService, GetEmailService getEmailService, LeadsService _service, ILogger<LeadsController> logger)
+        public LeadsController(
+                CompanyService companyService
+                , GetEmailService getEmailService
+                , LeadsService _service
+                , ILogger<LeadsController> logger
+                , IMapper mapper
+            )
         {
             this.service = _service;
             this.companyService = companyService;
             this._getEmailService = getEmailService;
             this.logger = logger;
+            this._mapper = mapper;
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
@@ -313,6 +322,79 @@ namespace KivalitaAPI.Controllers
             {
                 logger.LogError(e.Message);
                 return new HttpResponse<List<Leads>>
+                {
+                    IsStatusCodeSuccess = false,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    data = null,
+                    ErrorMessage = "Erro ao realizar a requisição"
+                };
+            }
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize]
+        public virtual HttpResponse<Leads> Delete(int id)
+        {
+            logger.LogInformation($"{this.GetType().Name} - Delete - {id}");
+            try
+            {
+                var userAuditId = GetAuditTrailUser();
+                if (userAuditId == 0) throw new Exception("Token Sem Usuário válido.");
+
+                var statusRequest = HttpStatusCode.OK;
+                var createdData = service.Delete(id, userAuditId);
+
+                return new HttpResponse<Leads>
+                {
+                    IsStatusCodeSuccess = true,
+                    statusCode = statusRequest,
+                    data = createdData
+                };
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.Message);
+                return new HttpResponse<Leads>
+                {
+                    IsStatusCodeSuccess = false,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    data = null,
+                    ErrorMessage = "Erro ao realizar a requisição"
+                };
+            }
+        }
+
+        [HttpDelete]
+        [Authorize]
+        public HttpResponse<string> DeleteList([FromBody] List<Leads> leadList)
+        {
+            logger.LogInformation($"{this.GetType().Name} - Delete Lead List");
+            try
+            {
+                var userAuditId = GetAuditTrailUser();
+                var utfNowTime = DateTime.UtcNow;
+
+                if (userAuditId == 0) throw new Exception("Token Sem Usuário válido.");
+
+                leadList.ForEach(lead => {
+                    lead.Company = null;
+                    lead.UpdatedBy = userAuditId;
+                    lead.UpdatedAt = utfNowTime;
+                });
+
+                List<Leads> deletedLeads = this.service.DeleteRange(leadList);
+
+                return new HttpResponse<string>
+                {
+                    IsStatusCodeSuccess = true,
+                    data = "Leads deletadas com sucesso!",
+                    statusCode = HttpStatusCode.OK
+                };
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.Message);
+                return new HttpResponse<string>
                 {
                     IsStatusCodeSuccess = false,
                     statusCode = HttpStatusCode.InternalServerError,
