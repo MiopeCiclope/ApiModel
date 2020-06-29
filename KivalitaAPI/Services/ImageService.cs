@@ -15,7 +15,17 @@ namespace KivalitaAPI.Services
 
         public List<Image> GetByType(string imageType)
         {
-            return baseRepository.GetBy(i => i.Type == imageType).ToList();
+            return baseRepository.GetListByQuery(
+                $@"Select id
+                        , null as ImageData
+                        , type
+                        , thumbnaildata
+                        , createdat
+                        , CreatedBy
+                        , UpdatedAt
+                        , updatedby 
+                from Image 
+                    where type = '{imageType}'").ToList();
         }
     }
 }
