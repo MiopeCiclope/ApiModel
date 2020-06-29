@@ -31,8 +31,9 @@ namespace KivalitaAPI.Repositories {
 			return entities;
 		}
 
-		public virtual TEntity Delete (int id) {
+		public virtual TEntity Delete (int id, int userId) {
 			var entity = context.Set<TEntity> ().Find (id);
+			entity.UpdatedBy = userId;
 			if (entity == null) {
 				return entity;
 			}
@@ -93,6 +94,13 @@ namespace KivalitaAPI.Repositories {
 			var result = context.Set<TEntity>().AsNoTracking();
 			result = this.filterProcessor.Apply(filterQuery, result);
 			return result.ToList();
+		}
+
+		public virtual List<TEntity> DeleteRange(List<TEntity> entities)
+		{
+			context.Set<TEntity>().RemoveRange(entities);
+			context.SaveChanges();
+			return entities;
 		}
 	}
 }

@@ -177,8 +177,11 @@ namespace KivalitaAPI.Controllers
             logger.LogInformation($"{this.GetType().Name} - Delete - {id}");
             try
             {
+                var userAuditId = GetAuditTrailUser();
+                if (userAuditId == 0) throw new Exception("Token Sem Usuário válido.");
+
                 var statusRequest = HttpStatusCode.OK;
-                var createdData = service.Delete(id);
+                var createdData = service.Delete(id, userAuditId);
 
                 return new HttpResponse<TEntity>
                 {

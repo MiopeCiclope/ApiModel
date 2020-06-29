@@ -28,6 +28,8 @@ namespace KivalitaAPI.Models {
         [Sieve(CanFilter = true, CanSort = true)]
 		public int? CompanyId { get; set; }
 		public Company Company { get; set; }
+		[Sieve(CanFilter = true, CanSort = true)]
+		public bool Deleted {get;set;}
 		[JsonIgnore]
         [Sieve(CanFilter = true, CanSort = true)]
 		public int CreatedBy { get; set; }

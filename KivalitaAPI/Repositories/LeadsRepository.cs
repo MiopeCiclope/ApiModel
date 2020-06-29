@@ -46,6 +46,8 @@ namespace KivalitaAPI.Repositories
             int pageSize = leadQuery.ItemsPerPage ?? DefaultItemsPerPage;
 
             List<Leads> leads = queryable
+                .Where(lead => 
+                    lead.Deleted == false)
                 .Skip((leadQuery.Page - 1) * pageSize)
                 .Take(pageSize)
                 .ToList();
@@ -128,10 +130,25 @@ namespace KivalitaAPI.Repositories
         {
             var result = context.Set<Leads>()
                                 .Include(l => l.Company)
+                                .Where(lead => lead.Deleted == false)
                                 .AsNoTracking();
                                 
             result = this.filterProcessor.Apply(filterQuery, result).WithTranslations();
             return result.ToList();
+        }
+
+        public override Leads Delete(int id, int userId)
+        {
+            var deletedLead = base.Get(id);
+            deletedLead.UpdatedBy = userId;
+            deletedLead.Deleted = true;
+            return base.Update(deletedLead);
+        }
+
+        public override List<Leads> DeleteRange(List<Leads> leads)
+        {
+            leads.ForEach(l => l.Deleted = true);
+            return base.UpdateRange(leads);
         }
     }
 }

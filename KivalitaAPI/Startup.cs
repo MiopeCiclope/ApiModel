@@ -19,6 +19,7 @@ using KivalitaAPI.AuditModels;
 using Microsoft.Extensions.Logging;
 using Sieve.Services;
 using Sieve.Models;
+using KivalitaAPI.DTOs;
 
 namespace KivalitaAPI
 {
@@ -163,6 +164,9 @@ namespace KivalitaAPI
                             .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Id))
                             .ForMember(dest => dest.Id, opt => opt.Ignore());
                 cfg.CreateMap<CompanyHistory, Company>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TableId));
+
+                cfg.CreateMap<Leads, LeadDTO>();
+                cfg.CreateMap<LeadDTO, Leads>();
             });
 
             IMapper mapper = mappingConfig.CreateMapper();

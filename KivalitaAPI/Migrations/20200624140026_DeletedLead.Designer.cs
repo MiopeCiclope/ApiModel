@@ -4,14 +4,16 @@ using KivalitaAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace KivalitaAPI.Migrations
 {
     [DbContext(typeof(KivalitaApiContext))]
-    partial class KivalitaApiContextModelSnapshot : ModelSnapshot
+    [Migration("20200624140026_DeletedLead")]
+    partial class DeletedLead
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -113,9 +115,6 @@ namespace KivalitaAPI.Migrations
                     b.Property<int>("ImageId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Published")
-                        .HasColumnType("bit");
-
                     b.Property<int>("Responsable")
                         .HasColumnType("int");
 
@@ -145,9 +144,6 @@ namespace KivalitaAPI.Migrations
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
-
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
@@ -199,9 +195,6 @@ namespace KivalitaAPI.Migrations
 
                     b.Property<int>("ImageId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("Published")
-                        .HasColumnType("bit");
 
                     b.Property<int>("Responsable")
                         .HasColumnType("int");
@@ -435,9 +428,6 @@ namespace KivalitaAPI.Migrations
                     b.Property<int>("ImageId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Published")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
@@ -528,9 +518,6 @@ namespace KivalitaAPI.Migrations
 
                     b.Property<int>("ImageId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("Published")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");

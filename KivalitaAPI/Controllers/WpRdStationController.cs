@@ -22,6 +22,8 @@ namespace KivalitaAPI.Controllers
     [ApiController]
     public class WpRdStationController : CustomController<WpRdStation, WpRdStationService>
     {
+        private const string formLegislacao = "Formulario Legislacao";
+        private const string formNewsletter = "Newsletter";
         private static readonly HttpClient client = new HttpClient();
         private static readonly string RdUrl = "https://api.rd.services/platform/conversions?api_key=byCzSPWWqGZFIxAutxGBbakVhAMxuxShdzBj";
 
@@ -40,8 +42,16 @@ namespace KivalitaAPI.Controllers
 
                     var json = new WpRdStation();
                     json.FormData = rdData;
-                    return base.Post(json);
 
+                    var createdData = base.service.Add(json);
+
+                    var statusRequest = HttpStatusCode.Created;
+                    return new HttpResponse<WpRdStation>
+                    {
+                        IsStatusCodeSuccess = true,
+                        statusCode = statusRequest,
+                        data = createdData
+                    };
                 }
                 else return null;
             }
@@ -49,7 +59,14 @@ namespace KivalitaAPI.Controllers
             {
                 var json = new WpRdStation();
                 json.FormData = e.Message + '\n' + e.StackTrace;
-                return base.Post(json);
+
+                return new HttpResponse<WpRdStation>
+                {
+                    IsStatusCodeSuccess = false,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    data = null,
+                    ErrorMessage = "Erro ao realizar a requisição"
+                };
             }
         }
 
@@ -67,13 +84,69 @@ namespace KivalitaAPI.Controllers
 
                 var json = new WpRdStation();
                 json.FormData = rdData;
-                return base.Post(json);
+
+                var createdData = base.service.Add(json);
+
+                var statusRequest = HttpStatusCode.Created;
+                return new HttpResponse<WpRdStation>
+                {
+                    IsStatusCodeSuccess = true,
+                    statusCode = statusRequest,
+                    data = createdData
+                };
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 var json = new WpRdStation();
-                json.FormData = e.Message+'\n'+e.StackTrace;
-                return base.Post(json);
+                json.FormData = e.Message + '\n' + e.StackTrace;
+
+                return new HttpResponse<WpRdStation>
+                {
+                    IsStatusCodeSuccess = false,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    data = null,
+                    ErrorMessage = "Erro ao realizar a requisição"
+                };
+            }
+        }
+
+        [HttpPost]
+        [Route("Newsletter")]
+        public async Task<HttpResponse<WpRdStation>> NewsletterAsync()
+        {
+            try
+            {
+                var body = new StreamReader(Request.Body);
+                var requestBody = await body.ReadToEndAsync();
+                var rdData = ParseWordPressData(requestBody, formNewsletter);
+
+                var result = sendRdData(rdData);
+
+                var json = new WpRdStation();
+                json.FormData = rdData;
+
+                var createdData = base.service.Add(json);
+
+                var statusRequest = HttpStatusCode.Created;
+                return new HttpResponse<WpRdStation>
+                {
+                    IsStatusCodeSuccess = true,
+                    statusCode = statusRequest,
+                    data = createdData
+                };
+            }
+            catch (Exception e)
+            {
+                var json = new WpRdStation();
+                json.FormData = e.Message + '\n' + e.StackTrace;
+
+                return new HttpResponse<WpRdStation>
+                {
+                    IsStatusCodeSuccess = false,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    data = null,
+                    ErrorMessage = "Erro ao realizar a requisição"
+                };
             }
         }
 
@@ -98,7 +171,7 @@ namespace KivalitaAPI.Controllers
             return result;
         }
 
-        private string ParseWordPressData(string messyData)
+        private string ParseWordPressData(string messyData, string identifier = formLegislacao)
         {
             var clean = messyData.Replace('+', ' ').Replace('&', ' ').Replace("%40", "@");
             var splited = clean.Split("No Label ");
@@ -114,7 +187,7 @@ namespace KivalitaAPI.Controllers
                 event_family = "CDP",
                 payload = new RdStationLeadPayload
                 {
-                    conversion_identifier = "Formulario Legislacao",
+                    conversion_identifier = identifier,
                     email = email,
                     name = name,
                     job_title = cargo,
