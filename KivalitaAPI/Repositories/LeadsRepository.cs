@@ -13,7 +13,7 @@ namespace KivalitaAPI.Repositories
 {
     public class LeadsRepository : Repository<Leads, DbContext, SieveProcessor>
     {
-        public const int DefaultItemsPerPage = 10;
+        public const int DefaultItemsPerPage = 50;
 
         public LeadsRepository(DbContext context, SieveProcessor filterProcessor) : base(context, filterProcessor) {}
 
