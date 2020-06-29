@@ -17,5 +17,7 @@ namespace KivalitaAPI.Interfaces
         T Delete(int id, int userId);
         List<T> GetBy(Func<T, bool> condition);
         List<T> DeleteRange(List<T> entities);
+        List<T> GetListByQuery(string query);
+        T GetByQuery(string query);
     }
 }

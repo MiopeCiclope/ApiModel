@@ -102,5 +102,15 @@ namespace KivalitaAPI.Repositories {
 			context.SaveChanges();
 			return entities;
 		}
+
+		public List<TEntity> GetListByQuery(string query)
+		{
+			return context.Set<TEntity>().FromSqlRaw(query).ToList();
+		}
+
+		public TEntity GetByQuery(string query)
+		{
+			return context.Set<TEntity>().FromSqlRaw(query)?.First() ?? null;
+		}
 	}
 }

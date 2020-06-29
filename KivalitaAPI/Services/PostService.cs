@@ -66,7 +66,7 @@ namespace KivalitaAPI.Services
             var storedPosts = base.GetAll();
             var authors = storedPosts.Select(post => post.AuthorId);
 
-            var postImages = this._imageRepository.GetBy(image => image.Type == "Blog");
+            var postImages = this._imageRepository.GetListByQuery("Select id, null as ImageData, type, thumbnaildata, createdat, CreatedBy, UpdatedAt, updatedby from Image where type = 'Blog'");
             var postAuthors = this._userRepository.GetBy(user => authors.Contains(user.Id));
 
             storedPosts = storedPosts.Select(post =>
