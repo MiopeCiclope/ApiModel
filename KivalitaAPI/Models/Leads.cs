@@ -24,6 +24,8 @@ namespace KivalitaAPI.Models {
 		public string Phone { get; set; }
         [Sieve(CanFilter = true, CanSort = true)]
 		public string LinkedIn { get; set; }
+		[Sieve(CanFilter = true, CanSort = true)]
+		public string LinkedInPublic { get; set; }
 		[ForeignKey("Company")]
         [Sieve(CanFilter = true, CanSort = true)]
 		public int? CompanyId { get; set; }

@@ -61,7 +61,8 @@ namespace KivalitaAPI.Services {
 
 		public Boolean LeadExists(string linkedInID)
         {
-			var leadSearch = this.baseRepository.GetBy(storedLead => storedLead.LinkedIn == linkedInID);
+			var leadSearch = this.baseRepository.GetBy(
+				storedLead => storedLead.LinkedIn == linkedInID || storedLead.LinkedInPublic == linkedInID);
 
 			return leadSearch.FirstOrDefault() != null ? true : false;
 		}
@@ -93,6 +94,7 @@ namespace KivalitaAPI.Services {
 					Phone = lead.Phone,
 					Position = lead.Position,
 					LinkedIn = lead.LinkedIn,
+					LinkedInPublic = lead.LinkedInPublic,
 					CreatedAt = lead.CreatedAt,
 					CreatedBy = lead.CreatedBy,
 					Company = company

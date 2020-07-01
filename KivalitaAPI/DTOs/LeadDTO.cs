@@ -15,6 +15,7 @@ namespace KivalitaAPI.DTOs
 		public string CompanyLinkedIn { get; set; }
 		public string Phone { get; set; }
 		public string LinkedIn { get; set; }
+		public string LinkedInPublic { get; set; }
 		public int CreatedBy { get; set; }
 		public DateTime CreatedAt { get; set; }
 	}

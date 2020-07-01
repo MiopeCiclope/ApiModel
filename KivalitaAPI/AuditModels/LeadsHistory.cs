@@ -13,6 +13,7 @@ namespace KivalitaAPI.AuditModels
 		public string PersonalEmail { get; set; }
 		public string Phone { get; set; }
 		public string LinkedIn { get; set; }
+		public string LinkedInPublic { get; set; }
 		public int? CompanyId { get; set; }
 		public int TableId { get; set; }
         public ActionEnum Action { get; set; }
