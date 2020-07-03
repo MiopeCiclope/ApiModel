@@ -40,6 +40,7 @@ namespace KivalitaAPI.Data
         public DbSet<CompanyHistory> CompanyHistory { get; set; }
 
         public DbSet<WpRdStation> WpRdStation { get; set; }
+        public DbSet<MicrosoftToken> MicrosoftToken { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

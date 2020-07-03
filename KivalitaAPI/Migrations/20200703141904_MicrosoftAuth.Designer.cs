@@ -4,14 +4,16 @@ using KivalitaAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace KivalitaAPI.Migrations
 {
     [DbContext(typeof(KivalitaApiContext))]
-    partial class KivalitaApiContextModelSnapshot : ModelSnapshot
+    [Migration("20200703141904_MicrosoftAuth")]
+    partial class MicrosoftAuth
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -153,9 +155,6 @@ namespace KivalitaAPI.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LinkedIn")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LinkedInPublic")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -483,9 +482,6 @@ namespace KivalitaAPI.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LinkedIn")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LinkedInPublic")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")

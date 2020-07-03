@@ -20,6 +20,7 @@ using Microsoft.Extensions.Logging;
 using Sieve.Services;
 using Sieve.Models;
 using KivalitaAPI.DTOs;
+using KivalitaAPI.Common;
 
 namespace KivalitaAPI
 {
@@ -35,6 +36,7 @@ namespace KivalitaAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<Settings>(Configuration.GetSection("Settings"));
             services.AddMvc().AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
@@ -127,6 +129,9 @@ namespace KivalitaAPI
             services.AddScoped<WpRdStationRepository>();
             services.AddScoped<WpRdStationService>();
 
+            services.AddScoped<MicrosoftTokenRepository>();
+            services.AddScoped<MicrosoftTokenService>();
+
             var mappingConfig = new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<User, UserHistory>()
@@ -167,6 +172,12 @@ namespace KivalitaAPI
 
                 cfg.CreateMap<Leads, LeadDTO>();
                 cfg.CreateMap<LeadDTO, Leads>();
+
+                cfg.CreateMap<GraphAuthDTO, MicrosoftToken>()
+                            .ForMember(dest => dest.ExpirationDate, opt => opt.MapFrom(src => DateTime.UtcNow.AddSeconds(src.expires_in - 10)))
+                            .ForMember(dest => dest.AccessToken, opt => opt.MapFrom(src => src.access_token))
+                            .ForMember(dest => dest.RefreshToken, opt => opt.MapFrom(src => src.refresh_token));
+                cfg.CreateMap<MicrosoftToken, GraphAuthDTO>();
             });
 
             IMapper mapper = mappingConfig.CreateMapper();
