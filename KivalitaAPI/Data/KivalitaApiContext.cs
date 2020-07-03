@@ -39,6 +39,12 @@ namespace KivalitaAPI.Data
         public DbSet<Company> Company { get; set; }
         public DbSet<CompanyHistory> CompanyHistory { get; set; }
 
+        public DbSet<Category> Category { get; set; }
+        public DbSet<CategoryHistory> CategoryHistory { get; set; }
+
+        public DbSet<Template> Template { get; set; }
+        public DbSet<TemplateHistory> TemplateHistory { get; set; }
+
         public DbSet<WpRdStation> WpRdStation { get; set; }
         public DbSet<MicrosoftToken> MicrosoftToken { get; set; }
 
@@ -63,6 +69,20 @@ namespace KivalitaAPI.Data
                 .HasOne(l => l.User)
                 .WithMany(c => c.Company)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Category>()
+                .HasData(
+                    new Category { Id = 1, Name = "Administração" },
+                    new Category { Id = 2, Name = "Financeiro" },
+                    new Category { Id = 3, Name = "Marketing" },
+                    new Category { Id = 4, Name = "RH" }
+                );
+
+            modelBuilder.Entity<Template>()
+                .HasOne(t => t.Category)
+                .WithMany()
+                .OnDelete(DeleteBehavior.Restrict);
+
         }
 
         public override int SaveChanges()

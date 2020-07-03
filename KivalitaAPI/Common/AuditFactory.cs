@@ -42,6 +42,12 @@ namespace KivalitaAPI.Common
                 case Company company:
                     var companyAudit = _mapper.Map<CompanyHistory>(company);
                     return addAuditComplement(companyAudit, action, responsable);
+                case Category category:
+                    var categoryAudit = _mapper.Map<CategoryHistory>(category);
+                    return addAuditComplement(categoryAudit, action, responsable);
+                case Template template:
+                    var templateAudit = _mapper.Map<TemplateHistory>(template);
+                    return addAuditComplement(templateAudit, action, responsable);
                 default:
                     var defaultAudit = new UserHistory();
                     defaultAudit.FirstName = "default";

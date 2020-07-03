@@ -132,6 +132,12 @@ namespace KivalitaAPI
             services.AddScoped<MicrosoftTokenRepository>();
             services.AddScoped<MicrosoftTokenService>();
 
+            services.AddScoped<CategoryRepository>();
+            services.AddScoped<CategoryService>();
+
+            services.AddScoped<TemplateRepository>();
+            services.AddScoped<TemplateService>();
+
             var mappingConfig = new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<User, UserHistory>()
@@ -178,6 +184,16 @@ namespace KivalitaAPI
                             .ForMember(dest => dest.AccessToken, opt => opt.MapFrom(src => src.access_token))
                             .ForMember(dest => dest.RefreshToken, opt => opt.MapFrom(src => src.refresh_token));
                 cfg.CreateMap<MicrosoftToken, GraphAuthDTO>();
+
+                cfg.CreateMap<Category, CategoryHistory>()
+                            .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Id))
+                            .ForMember(dest => dest.Id, opt => opt.Ignore());
+                cfg.CreateMap<CategoryHistory, Category>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TableId));
+
+                cfg.CreateMap<Template, TemplateHistory>()
+                            .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Id))
+                            .ForMember(dest => dest.Id, opt => opt.Ignore());
+                cfg.CreateMap<TemplateHistory, Template>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TableId));
             });
 
             IMapper mapper = mappingConfig.CreateMapper();
