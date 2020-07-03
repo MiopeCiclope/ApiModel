@@ -21,6 +21,10 @@ using Sieve.Services;
 using Sieve.Models;
 using KivalitaAPI.DTOs;
 using KivalitaAPI.Common;
+using Quartz.Spi;
+using Quartz;
+using Quartz.Impl;
+using KivalitaAPI.Interfaces;
 
 namespace KivalitaAPI
 {
@@ -196,11 +200,23 @@ namespace KivalitaAPI
                 cfg.CreateMap<TemplateHistory, Template>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TableId));
             });
 
+            //Mapper Configured service
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
 
+            //Sieve filter/pagination/sorting for entity framework
             services.Configure<SieveOptions>(Configuration.GetSection("Sieve"));
             services.AddScoped<SieveProcessor>();
+
+            //Quartz services
+            services.AddSingleton<IJobFactory, SingletonJobFactory>();
+            services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
+
+            //Add job as Singleton
+            services.AddSingleton<BaseJob>();
+
+            services.AddHostedService<SchedulerService>();
+            services.AddSingleton<IJobScheduler, SchedulerService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -40,6 +40,7 @@
     <PackageReference Include="Microsoft.Identity.Client" Version="4.15.0" />
     <PackageReference Include="Microsoft.Linq.Translations" Version="2.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.2" />
+    <PackageReference Include="Quartz" Version="3.0.7" />
     <PackageReference Include="runtime.osx.10.10-x64.CoreCompat.System.Drawing" Version="5.8.64" />
     <PackageReference Include="Serilog.Extensions.Logging.File" Version="1.1.0" />
     <PackageReference Include="ServiceStack" Version="5.8.0" />
