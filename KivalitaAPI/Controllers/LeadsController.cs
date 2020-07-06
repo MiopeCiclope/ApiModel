@@ -185,7 +185,6 @@ namespace KivalitaAPI.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         [Route("dailyLeads")]
         public HttpResponse<int> GetDailyLeads()
         {
