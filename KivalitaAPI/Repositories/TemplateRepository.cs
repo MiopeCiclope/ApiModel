@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using KivalitaAPI.Models;
 using Microsoft.EntityFrameworkCore;
+using Sieve.Models;
 using Sieve.Services;
 
 namespace KivalitaAPI.Repositories {
@@ -22,6 +23,16 @@ namespace KivalitaAPI.Repositories {
                 .Where(t => t.Id == id)
                 .Include(t => t.Category)
                 .SingleOrDefault();
+        }
+
+        public override List<Template> GetAll_v2(SieveModel filterQuery)
+        {
+            var result = context.Set<Template>()
+                .Include(t => t.Category)
+                .AsNoTracking();
+
+            result = this.filterProcessor.Apply(filterQuery, result);
+            return result.ToList();
         }
     }
 }

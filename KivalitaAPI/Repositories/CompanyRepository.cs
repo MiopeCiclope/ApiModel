@@ -4,6 +4,7 @@ using System.Linq;
 using KivalitaAPI.Interfaces;
 using KivalitaAPI.Models;
 using Microsoft.EntityFrameworkCore;
+using Sieve.Models;
 using Sieve.Services;
 
 namespace KivalitaAPI.Repositories
@@ -54,6 +55,16 @@ namespace KivalitaAPI.Repositories
         public IQueryable<Company> QueryByUserId(int userId)
         {
             return context.Set<Company>().Where(c => c.UserId == userId);
+        }
+
+        public override List<Company> GetAll_v2(SieveModel filterQuery)
+        {
+            var result = context.Set<Company>()
+                                .Include(c => c.User)
+                                .AsNoTracking();
+
+            result = this.filterProcessor.Apply(filterQuery, result);
+            return result.ToList();
         }
     }
 }

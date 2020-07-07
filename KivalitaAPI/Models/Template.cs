@@ -26,7 +26,7 @@ namespace KivalitaAPI.Models
         [Sieve(CanFilter = true, CanSort = true)]
         [ForeignKey("Category")]
         public int CategoryId { get; set; }
-        public virtual Category Category { get; set; }
+        public Category Category { get; set; }
 
         [Sieve(CanFilter = true, CanSort = true)]
         public DateTime CreatedAt { get; set; }
