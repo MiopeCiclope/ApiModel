@@ -80,6 +80,42 @@ namespace KivalitaAPI.Controllers
             }
         }
 
+        [HttpPut("{id}")]
+        [Authorize]
+        public virtual HttpResponse<Leads> Put(int id, Leads lead)
+        {
+            logger.LogInformation($"{this.GetType().Name} - Put - {id}");
+            try
+            {
+                var userAuditId = GetAuditTrailUser();
+                if (userAuditId == 0) throw new Exception("Token Sem Usuário válido.");
+
+                lead.UpdatedBy = userAuditId;
+                lead.UpdatedAt = DateTime.UtcNow;
+
+                var updatedData = service.Update(lead);
+
+                var statusRequest = (id != lead.Id) ? HttpStatusCode.BadRequest : HttpStatusCode.OK;
+                return new HttpResponse<Leads>
+                {
+                    IsStatusCodeSuccess = (statusRequest == HttpStatusCode.OK),
+                    statusCode = statusRequest,
+                    data = updatedData
+                };
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.Message);
+                return new HttpResponse<Leads>
+                {
+                    IsStatusCodeSuccess = false,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    data = null,
+                    ErrorMessage = "Erro ao realizar a requisição"
+                };
+            }
+        }
+
         [HttpGet]
         [Authorize]
         [Route("{linkedInID}/exists")]

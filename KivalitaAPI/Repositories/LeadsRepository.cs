@@ -17,6 +17,14 @@ namespace KivalitaAPI.Repositories
 
         public LeadsRepository(DbContext context, SieveProcessor filterProcessor) : base(context, filterProcessor) {}
 
+        public override Leads Get(int id)
+        {
+            return context.Set<Leads>()
+                .Where(t => t.Id == id)
+                .Include(t => t.Company)
+                .SingleOrDefault();
+        }
+
         public override Leads Add(Leads entity)
         {
             var leadSearch = this.GetBy(storedLead => storedLead.LinkedIn == entity.LinkedIn);

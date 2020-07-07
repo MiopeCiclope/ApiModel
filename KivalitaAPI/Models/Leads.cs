@@ -1,15 +1,13 @@
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq.Expressions;
-using System.Text.Json.Serialization;
 using KivalitaAPI.Interfaces;
 using Microsoft.Linq.Translations;
+using Newtonsoft.Json;
 using Sieve.Attributes;
 
 namespace KivalitaAPI.Models {
 	public class Leads : IEntity
 	{
-		[JsonIgnore]
         [Sieve(CanFilter = true, CanSort = true)]
 		public int Id { get; set; }
         [Sieve(CanFilter = true, CanSort = true)]
