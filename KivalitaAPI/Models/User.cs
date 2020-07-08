@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using KivalitaAPI.Interfaces;
-using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using Sieve.Attributes;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace KivalitaAPI.Models
 {
@@ -20,6 +20,12 @@ namespace KivalitaAPI.Models
         public string Email { get; set; }
         [Sieve(CanFilter = true, CanSort = true)]
         public string Role { get; set; }
+
+        public string Timezone { get; set; }
+
+        [NotMapped]
+        public bool? LinkedMicrosoftGraph { get; set; }
+
         public virtual ICollection<Filter> Filters { get; set; }
 
         [JsonIgnore]

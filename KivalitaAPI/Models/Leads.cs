@@ -10,33 +10,46 @@ namespace KivalitaAPI.Models {
 	{
         [Sieve(CanFilter = true, CanSort = true)]
 		public int Id { get; set; }
+
         [Sieve(CanFilter = true, CanSort = true)]
 		public string Name { get; set; }
+
         [Sieve(CanFilter = true, CanSort = true)]
 		public string Position { get; set; }
+
         [Sieve(CanFilter = true, CanSort = true)]
 		public string Email { get; set; }
+
         [Sieve(CanFilter = true, CanSort = true)]
 		public string PersonalEmail { get; set; }
+
 		[Sieve(CanFilter = true, CanSort = true)]
 		public string Phone { get; set; }
+
         [Sieve(CanFilter = true, CanSort = true)]
 		public string LinkedIn { get; set; }
+
 		[Sieve(CanFilter = true, CanSort = true)]
 		public string LinkedInPublic { get; set; }
+
 		[ForeignKey("Company")]
         [Sieve(CanFilter = true, CanSort = true)]
 		public int? CompanyId { get; set; }
 		public Company Company { get; set; }
+
 		[Sieve(CanFilter = true, CanSort = true)]
 		public bool Deleted {get;set;}
+
 		[JsonIgnore]
         [Sieve(CanFilter = true, CanSort = true)]
 		public int CreatedBy { get; set; }
+
 		[JsonIgnore]
 		public int UpdatedBy { get; set; }
+
 		[JsonIgnore]
 		public DateTime CreatedAt { get; set; }
+
 		[JsonIgnore]
 		public DateTime UpdatedAt { get; set; }
 

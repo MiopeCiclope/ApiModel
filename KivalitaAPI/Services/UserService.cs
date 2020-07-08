@@ -13,10 +13,26 @@ namespace KivalitaAPI.Services
     public class UserService : Service<User, KivalitaApiContext, UserRepository>
     {
         CompanyRepository companyRepository;
+        MicrosoftTokenRepository microsoftTokenRepository;
 
-        public UserService(KivalitaApiContext context, UserRepository baseRepository, CompanyRepository companyRepository) : base(context, baseRepository)
+        public UserService(
+            KivalitaApiContext context,
+            UserRepository baseRepository,
+            CompanyRepository companyRepository,
+            MicrosoftTokenRepository microsoftTokenRepository
+        ) : base(context, baseRepository)
         {
             this.companyRepository = companyRepository;
+            this.microsoftTokenRepository = microsoftTokenRepository;
+        }
+
+        public override User Get(int id)
+        {
+            var user = baseRepository.Get(id);
+            var microsoftToken = this.microsoftTokenRepository.GetBy(m => m.UserId == user.Id)
+                .FirstOrDefault();
+            user.LinkedMicrosoftGraph = microsoftToken != null ? true : false;
+            return user;
         }
 
         public override User Add(User user)
