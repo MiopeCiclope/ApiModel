@@ -16,6 +16,7 @@ namespace KivalitaAPI.AuditModels
         public string Email { get; set; }
         public string Role { get; set; }
         public string Password { get; set; }
+        public string Timezone { get; set; }
         public ActionEnum Action { get; set; }
         public int Responsable { get; set; }
         public DateTime Date { get; set; }
