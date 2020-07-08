@@ -6,6 +6,7 @@ using KivalitaAPI.Data;
 using KivalitaAPI.DTOs;
 using KivalitaAPI.Models;
 using KivalitaAPI.Repositories;
+using Sieve.Models;
 
 namespace KivalitaAPI.Services {
 
@@ -167,6 +168,11 @@ namespace KivalitaAPI.Services {
 				.GroupBy(x => x.Index / number)
 				.Select(x => x.Select(v => v.Value).ToList())
 				.ToList();
+		}
+
+		public new QueryResult<Leads> GetAll_v2(SieveModel filterQuery)
+		{
+			return this.baseRepository.GetAll_v2(filterQuery);
 		}
 	}
 }

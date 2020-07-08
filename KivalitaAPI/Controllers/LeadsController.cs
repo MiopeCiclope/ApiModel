@@ -349,8 +349,8 @@ namespace KivalitaAPI.Controllers
                 {
                     IsStatusCodeSuccess = true,
                     statusCode = HttpStatusCode.OK,
-                    data = dataList,
-                    Total = dataList.Count
+                    data = dataList.Items,
+                    Total = dataList.TotalItems
                 };
             }
             catch (Exception e)

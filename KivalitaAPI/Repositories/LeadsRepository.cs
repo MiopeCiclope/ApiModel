@@ -53,6 +53,8 @@ namespace KivalitaAPI.Repositories
             int totalItems = queryable.Count();
             int pageSize = leadQuery.ItemsPerPage ?? DefaultItemsPerPage;
 
+            if (leadQuery.ItemsPerPage == 0) pageSize = totalItems;
+
             List<Leads> leads = queryable
                 .Where(lead => 
                     lead.Deleted == false)
@@ -134,16 +136,22 @@ namespace KivalitaAPI.Repositories
             return queryable;
         }
 
-        public override List<Leads> GetAll_v2(SieveModel filterQuery)
+        public new QueryResult<Leads> GetAll_v2(SieveModel filterQuery)
         {
             var result = context.Set<Leads>()
                                 .Include(l => l.Company)
                                 .ThenInclude(c => c.User)
                                 .Where(lead => lead.Deleted == false)
                                 .AsNoTracking();
-                                
+
+            var total = result.Count();
             result = this.filterProcessor.Apply(filterQuery, result).WithTranslations();
-            return result.ToList();
+
+            return new QueryResult<Leads>
+            {
+                Items = result.ToList(),
+                TotalItems = total,
+            };
         }
 
         public override Leads Delete(int id, int userId)
