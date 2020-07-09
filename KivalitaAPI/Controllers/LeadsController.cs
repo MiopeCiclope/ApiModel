@@ -80,6 +80,39 @@ namespace KivalitaAPI.Controllers
             }
         }
 
+        [HttpGet("{id}")]
+        [Authorize]
+        public virtual HttpResponse<Leads> Put(int id)
+        {
+            logger.LogInformation($"{this.GetType().Name} - Get - {id}");
+            try
+            {
+                var userAuditId = GetAuditTrailUser();
+                if (userAuditId == 0) throw new Exception("Token Sem Usuário válido.");
+
+                var lead = service.Get(id);
+
+                var statusRequest = (id != lead.Id) ? HttpStatusCode.BadRequest : HttpStatusCode.OK;
+                return new HttpResponse<Leads>
+                {
+                    IsStatusCodeSuccess = (statusRequest == HttpStatusCode.OK),
+                    statusCode = statusRequest,
+                    data = lead
+                };
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.Message);
+                return new HttpResponse<Leads>
+                {
+                    IsStatusCodeSuccess = false,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    data = null,
+                    ErrorMessage = "Erro ao realizar a requisição"
+                };
+            }
+        }
+
         [HttpPut("{id}")]
         [Authorize]
         public virtual HttpResponse<Leads> Put(int id, Leads lead)
