@@ -14,6 +14,8 @@
     <Compile Remove="Migrations\20200703141513_MicrosoftAuth.Designer.cs" />
     <Compile Remove="Migrations\20200703141623_MicrosoftAuth.cs" />
     <Compile Remove="Migrations\20200703141623_MicrosoftAuth.Designer.cs" />
+    <Compile Remove="Migrations\20200709144319_Fluxo.cs" />
+    <Compile Remove="Migrations\20200709144319_Fluxo.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
