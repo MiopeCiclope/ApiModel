@@ -95,8 +95,11 @@ namespace KivalitaAPI.Data
                 dataChanges.ToList().ForEach(data => {
                     var baseObject = data.Entity as IEntity;
                     var auditData = _auditFactory.GetAuditObject(baseObject, data.State, data.State == EntityState.Added ? baseObject.CreatedBy: baseObject.UpdatedBy);
-                    auditData.TableId = baseObject.Id;
-                    this.Add(auditData);
+                    if(auditData != null)
+                    {
+                        auditData.TableId = baseObject.Id;
+                        this.Add(auditData);
+                    }
                 });
             }
             return base.SaveChanges();
