@@ -48,6 +48,9 @@ namespace KivalitaAPI.Data
         public DbSet<WpRdStation> WpRdStation { get; set; }
         public DbSet<MicrosoftToken> MicrosoftToken { get; set; }
 
+        public DbSet<Flow> Flow { get; set; }
+        public DbSet<FlowHistory> FlowHistory { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Post>()
