@@ -142,6 +142,7 @@ namespace KivalitaAPI
             services.AddScoped<TemplateRepository>();
             services.AddScoped<TemplateService>();
 
+            services.AddScoped<FlowActionRepository>();
             services.AddScoped<FlowRepository>();
             services.AddScoped<FlowService>();
 
@@ -206,6 +207,11 @@ namespace KivalitaAPI
                             .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Id))
                             .ForMember(dest => dest.Id, opt => opt.Ignore());
                 cfg.CreateMap<FlowHistory, Flow>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TableId));
+
+                cfg.CreateMap<FlowAction, FlowActionHistory>()
+                            .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Id))
+                            .ForMember(dest => dest.Id, opt => opt.Ignore());
+                cfg.CreateMap<FlowActionHistory, FlowAction>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TableId));
             });
 
             //Mapper Configured service
