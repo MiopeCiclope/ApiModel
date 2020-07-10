@@ -52,11 +52,13 @@ namespace KivalitaAPI.Services {
 			var positions = leads.Select(lead => lead.Position).Distinct().OrderBy(value => value).ToList();
 			var sector = leads.Select(lead => lead.Company?.Sector).Distinct().OrderBy(value => value).ToList();
 			var companies = leads.Select(lead => lead.Company?.Name).Distinct().OrderBy(value => value).ToList();
+			var userId = leads.Select(lead => lead.Company?.UserId).Distinct().OrderBy(value => value).ToList();
 			return new LeadFilterDTO
 			{
 				Position = positions,
 				Sector = sector,
-				Company = companies
+				Company = companies,
+				UserId = userId
 			};
 		}
 
