@@ -6,6 +6,7 @@ using KivalitaAPI.DTOs;
 using KivalitaAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using KivalitaAPI.Models;
 
 namespace KivalitaAPI.Controllers
 {
@@ -22,13 +23,13 @@ namespace KivalitaAPI.Controllers
         [HttpPost]
         [Authorize]
         [Route("Auth")]
-        public HttpResponse<bool> Auth([FromBody] MicrosoftAuthDTO authObject)
+        public HttpResponse<MicrosoftToken> Auth([FromBody] MicrosoftAuthDTO authObject)
         {
             try
             {
                 var user = GetAuditTrailUser();
                 var didLogin = service.Auth(authObject, user);
-                return new HttpResponse<bool>
+                return new HttpResponse<MicrosoftToken>
                 {
                     IsStatusCodeSuccess = true,
                     statusCode = HttpStatusCode.OK,
@@ -38,11 +39,11 @@ namespace KivalitaAPI.Controllers
             }
             catch (Exception e)
             {
-                return new HttpResponse<bool>
+                return new HttpResponse<MicrosoftToken>
                 {
                     IsStatusCodeSuccess = false,
                     statusCode = HttpStatusCode.InternalServerError,
-                    data = false,
+                    data = null,
                     ErrorMessage = "Erro ao realizar a requisição"
                 };
             }
@@ -51,13 +52,13 @@ namespace KivalitaAPI.Controllers
         [HttpPost]
         [Authorize]
         [Route("RefreshToken")]
-        public HttpResponse<bool> RefreshToken()
+        public HttpResponse<MicrosoftToken> RefreshToken()
         {
             try
             {
                 var user = GetAuditTrailUser();
                 var didLogin = service.RefreshToken(user);
-                return new HttpResponse<bool>
+                return new HttpResponse<MicrosoftToken>
                 {
                     IsStatusCodeSuccess = true,
                     statusCode = HttpStatusCode.OK,
@@ -67,11 +68,11 @@ namespace KivalitaAPI.Controllers
             }
             catch (Exception e)
             {
-                return new HttpResponse<bool>
+                return new HttpResponse<MicrosoftToken>
                 {
                     IsStatusCodeSuccess = false,
                     statusCode = HttpStatusCode.InternalServerError,
-                    data = false,
+                    data = null,
                     ErrorMessage = "Erro ao realizar a requisição"
                 };
             }

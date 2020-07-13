@@ -62,7 +62,12 @@ namespace KivalitaAPI.Services {
 			};
 		}
 
-		public Boolean LeadExists(string linkedInID)
+        public List<string> GetMailFromFlow(int flowId)
+        {
+			return new List<string> { "romulo.carvalho@kivalita.com.br", "rootcarvalho@gmail.com" };
+        }
+
+        public Boolean LeadExists(string linkedInID)
         {
 			var leadSearch = this.baseRepository.GetBy(
 				storedLead => storedLead.LinkedIn == linkedInID || storedLead.LinkedInPublic == linkedInID);

@@ -5,8 +5,10 @@ using KivalitaAPI.Data;
 using KivalitaAPI.DTOs;
 using KivalitaAPI.Models;
 using KivalitaAPI.Repositories;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Graph;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
@@ -19,18 +21,21 @@ namespace KivalitaAPI.Services
         private readonly Settings _myConfiguration;
         private readonly string authUrl = "/oauth2/v2.0/token";
         private readonly IMapper _mapper;
+        private readonly ILogger<MicrosoftTokenService> _logger;
 
         public MicrosoftTokenService(
             KivalitaApiContext context
             , MicrosoftTokenRepository baseRepository
             , IOptions<Settings> settings
             , IMapper mapper
+            , ILogger<MicrosoftTokenService> logger
         ) : base(context, baseRepository) {
             _myConfiguration = settings.Value;
             _mapper = mapper;
+            _logger = logger;
         }
 
-        public bool Auth(MicrosoftAuthDTO auth, int userId)
+        public MicrosoftToken Auth(MicrosoftAuthDTO auth, int userId)
         {
             Dictionary<string, string> dict = new Dictionary<string, string>();
             dict.Add("grant_type", "password");
@@ -45,10 +50,10 @@ namespace KivalitaAPI.Services
             entity.UserId = userId;
             base.Add(entity);
 
-            return true;
+            return entity;
         }
 
-        public bool RefreshToken(int userId)
+        public MicrosoftToken RefreshToken(int userId)
         {
             var tokenQuery = base.baseRepository.GetBy(token => token.UserId == userId);
             if (tokenQuery.Any())
@@ -70,10 +75,62 @@ namespace KivalitaAPI.Services
                 storedToken.ExpirationDate = entity.ExpirationDate;
 
                 base.Update(storedToken);
-                return true;
+                return storedToken;
             }
             else
+                return null;
+        }
+
+        public GraphServiceClient GetTokenClient(int userId)
+        {
+            var graphToken = this.baseRepository.GetBy(token => token.UserId == userId).First();
+            var token = (graphToken.ExpirationDate <= DateTime.UtcNow) ? this.RefreshToken(userId).AccessToken : graphToken.AccessToken;
+
+            return new GraphServiceClient(new DelegateAuthenticationProvider(async request => {
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }));
+        }
+
+        public bool SendMail(GraphServiceClient client, Message email, int userId)
+        {
+            try
+            {
+                client.Me
+                    .SendMail(email, null)
+                    .Request()
+                    .PostAsync()
+                    .Wait();
+
+                return true;
+            }
+            catch(Exception e)
+            {
+                _logger.LogError(e.Message);
                 return false;
+            }
+        }
+
+        public bool ShoulSendMail(GraphServiceClient client, string leadMail, int userId) 
+        {
+            try
+            {
+                var leadDidAnswor = client.Me
+                    .MailFolders
+                    .Inbox
+                    .Messages
+                    .Request()
+                    .Filter($"(from/emailAddress/address) eq '{leadMail}'")
+                    .GetAsync()
+                    .Result
+                    .Any();
+
+                return !leadDidAnswor;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message);
+                return false;
+            }
         }
     }
 }

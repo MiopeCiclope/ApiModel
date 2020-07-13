@@ -60,12 +60,23 @@ public class SchedulerService : IJobScheduler
     private static ITrigger CreateTrigger(JobScheduleDTO schedule)
     {
         var triggerIdentity = $"{schedule.JobType.FullName}{DateTime.Now.Ticks.ToString()}.trigger";
-        return TriggerBuilder
-            .Create()
-            .WithIdentity(triggerIdentity)
-            .WithCronSchedule(schedule.CronExpression)
-            .WithDescription(schedule.CronExpression)
-            .Build();
+        if (schedule.JobStart == null)
+        {
+            return TriggerBuilder
+                .Create()
+                .WithIdentity(triggerIdentity)
+                .WithCronSchedule(schedule.CronExpression)
+                .WithDescription(schedule.CronExpression)
+                .Build();
+        }
+        else
+        {
+            return TriggerBuilder.Create()
+                .WithIdentity(triggerIdentity)
+                .StartAt(schedule.JobStart.GetValueOrDefault(DateTimeOffset.UtcNow))
+                .WithDescription(schedule.CronExpression)
+                .Build();
+        }
     }
 
     public async Task<DateTimeOffset> ScheduleJob(CancellationToken cancellationToken, JobScheduleDTO newJob)
@@ -74,6 +85,7 @@ public class SchedulerService : IJobScheduler
         Scheduler.JobFactory = _jobFactory;
 
         var job = CreateJob(newJob);
+        job.JobDataMap["userId"] = newJob.userId;
         var trigger = CreateTrigger(newJob);
 
         return await Scheduler.ScheduleJob(job, trigger, cancellationToken);
