@@ -20,7 +20,7 @@ public class SendMailJob : IJob
     private Semaphore semaphore;
     private MicrosoftTokenService graphService;
     private GraphServiceClient client;
-    private int templateId = 1;
+    private int templateId = 4;
 
     public SendMailJob(ILogger<SendMailJob> logger, IServiceProvider serviceProvider)
     {
@@ -107,7 +107,7 @@ public class SendMailJob : IJob
         {
             return new Message
             {
-                Subject = template.Subject,
+                Subject = ReplaceVariables(template.Subject, lead),
                 Body = new ItemBody
                 {
                     ContentType = BodyType.Html,
@@ -141,15 +141,18 @@ public class SendMailJob : IJob
 
             MatchCollection variables = variableRegex.Matches(text);
 
-            foreach (Match variable in variables)
+            if(variables.Any())
             {
-                var entity = variable.Groups[2].Value;
-                var property = variable.Groups[3].Value;
+                foreach (Match variable in variables)
+                {
+                    var entity = variable.Groups[2].Value;
+                    var property = variable.Groups[3].Value;
 
-                if(entity == "lead")
-                    text = text.Replace(variable.Value, lead.GetType().GetProperty(property).GetValue(lead, null).ToString());
-                if(entity == "company")
-                    text = text.Replace(variable.Value, lead.Company.GetType().GetProperty(property).GetValue(lead.Company, null).ToString());
+                    if(entity == "lead")
+                        text = text.Replace(variable.Value, lead.GetType().GetProperty(property).GetValue(lead, null)?.ToString()) ?? "";
+                    if(entity == "company")
+                        text = text.Replace(variable.Value, lead.Company.GetType().GetProperty(property).GetValue(lead.Company, null)?.ToString()) ?? "";
+                }
             }
             return text;
         }
