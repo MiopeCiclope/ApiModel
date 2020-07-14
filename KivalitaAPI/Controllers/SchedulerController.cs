@@ -4,11 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using KivalitaAPI.Common;
 using System;
-using Microsoft.Extensions.Hosting;
 using System.Threading;
 using System.Threading.Tasks;
 using KivalitaAPI.Interfaces;
 using System.Security.Claims;
+using System.Collections.Generic;
 
 namespace KivalitaAPI.Controllers
 {
@@ -16,10 +16,10 @@ namespace KivalitaAPI.Controllers
     [ApiController]
     public class SchedulerController : ControllerBase
     {
-        public readonly ILogger<LeadsController> logger;
+        public readonly ILogger<SchedulerController> logger;
         public readonly IJobScheduler _scheduler;
 
-        public SchedulerController(ILogger<LeadsController> logger, IJobScheduler scheduler)
+        public SchedulerController(ILogger<SchedulerController> logger, IJobScheduler scheduler)
         {
             this.logger = logger;
             this._scheduler = scheduler;
@@ -46,6 +46,35 @@ namespace KivalitaAPI.Controllers
             {
                 logger.LogError(e.Message);
                 return new HttpResponse<string>
+                {
+                    IsStatusCodeSuccess = false,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    data = null,
+                    ErrorMessage = "Erro ao realizar a requisição"
+                };
+            }
+        }
+
+        [HttpGet]
+        [Authorize]
+        public HttpResponse<List<JobScheduleDTO>> Get()
+        {
+            logger.LogInformation($"{this.GetType().Name} - Schedule Job - Get All Jobs");
+            try
+            {
+                var jobs = _scheduler.GetScheduledJobs();
+                return new HttpResponse<List<JobScheduleDTO>>
+                {
+                    IsStatusCodeSuccess = true,
+                    statusCode = HttpStatusCode.Created,
+                    data = jobs,
+                    ErrorMessage = null
+                };
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.Message);
+                return new HttpResponse<List<JobScheduleDTO>>
                 {
                     IsStatusCodeSuccess = false,
                     statusCode = HttpStatusCode.InternalServerError,

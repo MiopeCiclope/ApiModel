@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using KivalitaAPI.Interfaces;
 using Microsoft.Extensions.Hosting;
 using Quartz;
+using Quartz.Impl.Matchers;
 using Quartz.Spi;
 
 public class SchedulerService : IJobScheduler
@@ -48,7 +50,7 @@ public class SchedulerService : IJobScheduler
     private static IJobDetail CreateJob(JobScheduleDTO schedule)
     {
         var jobType = schedule.JobType;
-        var jobIdentity = jobType.FullName + DateTime.Now.Ticks.ToString();
+        var jobIdentity = $"{jobType.FullName}_{schedule.TaskId}";
 
         return JobBuilder
             .Create(jobType)
@@ -86,8 +88,37 @@ public class SchedulerService : IJobScheduler
 
         var job = CreateJob(newJob);
         job.JobDataMap["userId"] = newJob.userId;
+        job.JobDataMap["taskId"] = newJob.TaskId;
         var trigger = CreateTrigger(newJob);
 
         return await Scheduler.ScheduleJob(job, trigger, cancellationToken);
+    }
+
+    public List<JobScheduleDTO> GetScheduledJobs()
+    {
+        var jobGroups = Scheduler.GetJobGroupNames().Result;
+        if (!jobGroups.Any()) return null;
+
+        List<JobScheduleDTO> scheludedJobs = new List<JobScheduleDTO>();
+        foreach (string group in jobGroups)
+        {
+            var groupMatcher = GroupMatcher<JobKey>.GroupContains(group);
+            var jobKeys = Scheduler.GetJobKeys(groupMatcher).Result;
+            foreach (var jobKey in jobKeys)
+            {
+                var detail = Scheduler.GetJobDetail(jobKey).Result;
+                var triggers = Scheduler.GetTriggersOfJob(jobKey).Result;
+                foreach (ITrigger trigger in triggers)
+                {
+                    DateTimeOffset? nextFireTime = trigger.GetNextFireTimeUtc();
+                    if (nextFireTime.HasValue)
+                    {
+                        var nameSplit = jobKey.Name.Split("_");
+                        scheludedJobs.Add(new JobScheduleDTO(nameSplit[0], "", nextFireTime.Value.LocalDateTime, int.Parse(nameSplit[1])));
+                    }
+                }
+            }
+        }
+        return scheludedJobs;
     }
 }
