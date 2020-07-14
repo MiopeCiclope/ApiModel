@@ -21,6 +21,7 @@ public class SendMailJob : IJob
     private MicrosoftTokenService graphService;
     private GraphServiceClient client;
     private int templateId = 4;
+    private string userSignature = "";
 
     public SendMailJob(ILogger<SendMailJob> logger, IServiceProvider serviceProvider)
     {
@@ -50,6 +51,7 @@ public class SendMailJob : IJob
 
             this.graphService = scope.ServiceProvider.GetService<MicrosoftTokenService>();
             this.client = graphService.GetTokenClient(userId);
+            this.userSignature = GetSignature(userId);
 
             var mailList = GetMailList(userId);
 
@@ -73,6 +75,12 @@ public class SendMailJob : IJob
         }
     }
 
+    private string GetSignature(int id)
+    {
+        var userService = scope.ServiceProvider.GetService<UserService>();
+        return userService.Get(id)?.Signature ?? "";
+    }
+
     private List<Message> GetMailList(int userId)
     {
         try
@@ -84,7 +92,7 @@ public class SendMailJob : IJob
             if (template == null) return null;
 
             return leadList
-                    .Where(lead => this.graphService.ShoulSendMail(this.client, lead.Email, userId))
+                    //.Where(lead => this.graphService.ShoulSendMail(this.client, lead.Email, userId))
                     .Select(lead => BuildEmail(lead, template)).ToList();
         }
         catch (Exception e)
@@ -111,7 +119,7 @@ public class SendMailJob : IJob
                 Body = new ItemBody
                 {
                     ContentType = BodyType.Html,
-                    Content = ReplaceVariables(template.Content, lead)
+                    Content = $"{ReplaceVariables(template.Content, lead)}{this.userSignature}"
                 },
                 ToRecipients = new List<Recipient>() {
                     new Recipient

@@ -4,14 +4,16 @@ using KivalitaAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace KivalitaAPI.Migrations
 {
     [DbContext(typeof(KivalitaApiContext))]
-    partial class KivalitaApiContextModelSnapshot : ModelSnapshot
+    [Migration("20200714160152_Signature")]
+    partial class Signature
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -83,87 +85,6 @@ namespace KivalitaAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("CompanyHistory");
-                });
-
-            modelBuilder.Entity("KivalitaAPI.AuditModels.FlowActionHistory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("Action")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("Done")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("Responsable")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TableId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TemplateId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("FlowActionHistory");
-                });
-
-            modelBuilder.Entity("KivalitaAPI.AuditModels.FlowHistory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("Action")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DaysOfTheWeek")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("EndLead")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Responsable")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("SendMoskit")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("SendRdStation")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("TableId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("TagAsLost")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("actionForAllLeads")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("isAutomatic")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("leadGroupSize")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("FlowHistory");
                 });
 
             modelBuilder.Entity("KivalitaAPI.AuditModels.ImageHistory", b =>
@@ -598,95 +519,6 @@ namespace KivalitaAPI.Migrations
                     b.ToTable("Filter");
                 });
 
-            modelBuilder.Entity("KivalitaAPI.Models.Flow", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<string>("DaysOfTheWeek")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("EndLead")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("SendMoskit")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("SendRdStation")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("TagAsLost")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("actionForAllLeads")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("isAutomatic")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("leadGroupSize")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Flow");
-                });
-
-            modelBuilder.Entity("KivalitaAPI.Models.FlowAction", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("Done")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("FlowId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TemplateId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FlowId");
-
-                    b.ToTable("FlowAction");
-                });
-
             modelBuilder.Entity("KivalitaAPI.Models.Image", b =>
                 {
                     b.Property<int>("Id")
@@ -1068,14 +900,6 @@ namespace KivalitaAPI.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("KivalitaAPI.Models.FlowAction", b =>
-                {
-                    b.HasOne("KivalitaAPI.Models.Flow", null)
-                        .WithMany("FlowAction")
-                        .HasForeignKey("FlowId")
-                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("KivalitaAPI.Models.Job", b =>

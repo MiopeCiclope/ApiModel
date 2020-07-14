@@ -46,5 +46,6 @@ namespace KivalitaAPI.Models
 
         [JsonIgnore]
         public ICollection<Company> Company { get; set; }
+        public string? Signature { get; set; }
     }
 }
