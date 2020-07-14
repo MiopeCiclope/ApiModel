@@ -62,9 +62,9 @@ namespace KivalitaAPI.Services {
 			};
 		}
 
-        public List<string> GetMailFromFlow(int flowId)
+        public List<Leads> GetMailFromFlow(int flowId)
         {
-			return new List<string> { "romulo.carvalho@kivalita.com.br", "rootcarvalho@gmail.com" };
+			return new List<Leads> { baseRepository.Get(19890) };
         }
 
         public Boolean LeadExists(string linkedInID)

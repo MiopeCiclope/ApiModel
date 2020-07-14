@@ -1,4 +1,4 @@
-﻿using KivalitaAPI.Repositories;
+﻿using KivalitaAPI.Models;
 using KivalitaAPI.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -7,7 +7,7 @@ using Quartz;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http.Headers;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,6 +18,9 @@ public class SendMailJob : IJob
     IServiceProvider _serviceProvider;
     IServiceScope scope;
     private Semaphore semaphore;
+    private MicrosoftTokenService graphService;
+    private GraphServiceClient client;
+    private int templateId = 1;
 
     public SendMailJob(ILogger<SendMailJob> logger, IServiceProvider serviceProvider)
     {
@@ -45,45 +48,116 @@ public class SendMailJob : IJob
                 scope = this._serviceProvider.CreateScope();
             }
 
-            var graphService = scope.ServiceProvider.GetService<MicrosoftTokenService>();
-            var leadService = scope.ServiceProvider.GetService<LeadsService>();
+            this.graphService = scope.ServiceProvider.GetService<MicrosoftTokenService>();
+            this.client = graphService.GetTokenClient(userId);
 
-            var client = graphService.GetTokenClient(userId);
+            var mailList = GetMailList(userId);
 
-            var mailList = leadService.GetMailFromFlow(1);
-            var mailsToSend = mailList
-                .Where<string>(mail => graphService.ShoulSendMail(client, mail, userId))
-                .Select(mail => new Recipient
-                {
-                    EmailAddress = new EmailAddress
-                    {
-                        Address = mail
-                    }
-                });
-
-            if (!mailsToSend.Any())
+            if (!mailList.Any())
                 _logger.LogInformation($"Nenhum e-mail na lista");
             else
-            {
-                var message = new Message
+                mailList.ForEach(mail =>
                 {
-                    Subject = "Meet for lunch?",
-                    Body = new ItemBody
-                    {
-                        ContentType = BodyType.Text,
-                        Content = "The new cafeteria is open."
-                    },
-                    ToRecipients = mailsToSend
-                };
-
-                var logMessage = graphService.SendMail(client, message, userId) ? "Mail Sent" : "Faild Send Mail";
-
-                _logger.LogInformation($"{logMessage}");
-            }
+                    var logMessage = graphService.SendMail(client, mail, userId) ? "Mail Sent" : "Faild Send Mail";
+                    _logger.LogInformation($"{logMessage}: {mail.ToRecipients.First().EmailAddress.Address}");
+                });
+        }
+        catch(Exception e)
+        {
+            _logger.LogError($"Erro ao enviar e-mail");
+            _logger.LogError($"{e.Message}");
         }
         finally
         {
             semaphore.Release();
+        }
+    }
+
+    private List<Message> GetMailList(int userId)
+    {
+        try
+        {
+            var leadService = scope.ServiceProvider.GetService<LeadsService>();
+            var leadList = leadService.GetMailFromFlow(1);
+
+            var template = GetTemplate(templateId);
+            if (template == null) return null;
+
+            return leadList
+                    .Where(lead => this.graphService.ShoulSendMail(this.client, lead.Email, userId))
+                    .Select(lead => BuildEmail(lead, template)).ToList();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError($"Erro ao buscar lista de e-mails");
+            _logger.LogError($"{e.Message}");
+            throw e;
+        }
+    }
+
+    private Template GetTemplate(int id)
+    {
+        var templateService = scope.ServiceProvider.GetService<TemplateService>();
+        return templateService.Get(id);
+    }
+
+    private Message BuildEmail(Leads lead, Template template)
+    {
+        try
+        {
+            return new Message
+            {
+                Subject = template.Subject,
+                Body = new ItemBody
+                {
+                    ContentType = BodyType.Html,
+                    Content = ReplaceVariables(template.Content, lead)
+                },
+                ToRecipients = new List<Recipient>() {
+                    new Recipient
+                    {
+                        EmailAddress = new EmailAddress
+                        {
+                            Address = lead.Email
+                        }
+                    } 
+                }
+            };
+        }
+        catch(Exception e)
+        {
+            _logger.LogError($"Erro ao criar e-mails");
+            _logger.LogError($"{e.Message}");
+            throw e;
+        }
+    }
+    
+    private string ReplaceVariables(string text, Leads lead)
+    {
+        try
+        {
+            string pattern = @"({{ (\w+)\.(\w+) }})";
+            Regex variableRegex = new Regex(pattern);
+
+            MatchCollection variables = variableRegex.Matches(text);
+
+            foreach (Match variable in variables)
+            {
+                var entity = variable.Groups[2].Value;
+                var property = variable.Groups[3].Value;
+
+                if(entity == "lead")
+                    text = text.Replace(variable.Value, lead.GetType().GetProperty(property).GetValue(lead, null).ToString());
+                if(entity == "company")
+                    text = text.Replace(variable.Value, lead.Company.GetType().GetProperty(property).GetValue(lead.Company, null).ToString());
+            }
+            return text;
+        }
+        catch(Exception e)
+        {
+            _logger.LogError($"Erro ao substituir variáveis");
+            _logger.LogError($"{e.Message}");
+            throw e;
         }
     }
 }
