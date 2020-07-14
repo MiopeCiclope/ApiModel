@@ -48,10 +48,14 @@ namespace KivalitaAPI.Common
                 case Template template:
                     var templateAudit = _mapper.Map<TemplateHistory>(template);
                     return addAuditComplement(templateAudit, action, responsable);
+                case Flow flow:
+                    var flowAudit = _mapper.Map<FlowHistory>(flow);
+                    return addAuditComplement(flowAudit, action, responsable);
+                case FlowAction flowAction:
+                    var flowActionAudit = _mapper.Map<FlowActionHistory>(flowAction);
+                    return addAuditComplement(flowActionAudit, action, responsable);
                 default:
-                    var defaultAudit = new UserHistory();
-                    defaultAudit.FirstName = "default";
-                    return addAuditComplement(defaultAudit, action, responsable);
+                    return null;
             }
         }
 

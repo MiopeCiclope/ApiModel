@@ -48,6 +48,12 @@ namespace KivalitaAPI.Data
         public DbSet<WpRdStation> WpRdStation { get; set; }
         public DbSet<MicrosoftToken> MicrosoftToken { get; set; }
 
+        public DbSet<Flow> Flow { get; set; }
+        public DbSet<FlowHistory> FlowHistory { get; set; }
+
+        public DbSet<FlowAction> FlowAction { get; set; }
+        public DbSet<FlowActionHistory> FlowActionHistory { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Post>()
@@ -83,6 +89,18 @@ namespace KivalitaAPI.Data
                 .WithMany()
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Flow>()
+                .HasMany(f => f.FlowAction)
+                .WithOne(f => f.Flow)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<FlowLeads>()
+                .HasKey(c => new { c.LeadsId, c.FlowId });
+
+            modelBuilder.Entity<Flow>()
+                .HasMany(f => f.FlowLeads)
+                .WithOne()
+                .HasForeignKey(f => f.FlowId);
         }
 
         public override int SaveChanges()
@@ -95,8 +113,11 @@ namespace KivalitaAPI.Data
                 dataChanges.ToList().ForEach(data => {
                     var baseObject = data.Entity as IEntity;
                     var auditData = _auditFactory.GetAuditObject(baseObject, data.State, data.State == EntityState.Added ? baseObject.CreatedBy: baseObject.UpdatedBy);
-                    auditData.TableId = baseObject.Id;
-                    this.Add(auditData);
+                    if(auditData != null)
+                    {
+                        auditData.TableId = baseObject.Id;
+                        this.Add(auditData);
+                    }
                 });
             }
             return base.SaveChanges();
