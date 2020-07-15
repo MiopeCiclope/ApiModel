@@ -12,6 +12,9 @@ namespace KivalitaAPI.Models
 		public int Id { get; set; }
 
 		[Sieve(CanFilter = true, CanSort = true)]
+		public string Type { get; set; }
+
+		[Sieve(CanFilter = true, CanSort = true)]
 		public int TemplateId { get; set; }
 
 		[Sieve(CanFilter = true, CanSort = true)]

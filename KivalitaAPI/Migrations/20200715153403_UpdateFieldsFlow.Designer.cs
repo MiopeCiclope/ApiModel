@@ -4,14 +4,16 @@ using KivalitaAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace KivalitaAPI.Migrations
 {
     [DbContext(typeof(KivalitaApiContext))]
-    partial class KivalitaApiContextModelSnapshot : ModelSnapshot
+    [Migration("20200715153403_UpdateFieldsFlow")]
+    partial class UpdateFieldsFlow
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -133,9 +135,6 @@ namespace KivalitaAPI.Migrations
 
                     b.Property<string>("DaysOfTheWeek")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("FilterId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -608,9 +607,6 @@ namespace KivalitaAPI.Migrations
                     b.Property<string>("DaysOfTheWeek")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("FilterId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -630,8 +626,6 @@ namespace KivalitaAPI.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("FilterId");
 
                     b.ToTable("Flow");
                 });
@@ -999,9 +993,6 @@ namespace KivalitaAPI.Migrations
                     b.Property<string>("Role")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Signature")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Timezone")
                         .HasColumnType("nvarchar(max)");
 
@@ -1057,15 +1048,6 @@ namespace KivalitaAPI.Migrations
                         .WithMany("Filters")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("KivalitaAPI.Models.Flow", b =>
-                {
-                    b.HasOne("KivalitaAPI.Models.Filter", "Filter")
-                        .WithMany()
-                        .HasForeignKey("FilterId")
-                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 

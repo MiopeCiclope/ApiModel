@@ -7,6 +7,7 @@ namespace KivalitaAPI.AuditModels
     public class FlowActionHistory : IAuditTable
     {
 		public int Id { get; set; }
+        public string Type { get; set; }
         public int TemplateId { get; set; }
         public bool Done { get; set; }
 

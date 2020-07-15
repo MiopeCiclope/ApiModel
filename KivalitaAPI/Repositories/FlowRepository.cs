@@ -24,6 +24,7 @@ namespace KivalitaAPI.Repositories
             return context.Set<Flow>()
                 .Where(f => f.Id == id)
                 .Include(f => f.FlowAction)
+                .Include(f => f.Filter)
                 .SingleOrDefault();
         }
     }

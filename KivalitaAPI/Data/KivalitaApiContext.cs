@@ -90,17 +90,14 @@ namespace KivalitaAPI.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Flow>()
+                .HasOne(t => t.Filter)
+                .WithMany()
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Flow>()
                 .HasMany(f => f.FlowAction)
                 .WithOne(f => f.Flow)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<FlowLeads>()
-                .HasKey(c => new { c.LeadsId, c.FlowId });
-
-            modelBuilder.Entity<Flow>()
-                .HasMany(f => f.FlowLeads)
-                .WithOne()
-                .HasForeignKey(f => f.FlowId);
         }
 
         public override int SaveChanges()
