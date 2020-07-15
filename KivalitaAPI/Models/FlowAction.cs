@@ -15,7 +15,7 @@ namespace KivalitaAPI.Models
 		public string Type { get; set; }
 
 		[Sieve(CanFilter = true, CanSort = true)]
-		public int TemplateId { get; set; }
+		public int? TemplateId { get; set; }
 
 		[Sieve(CanFilter = true, CanSort = true)]
 		public int afterDays { get; set; }
