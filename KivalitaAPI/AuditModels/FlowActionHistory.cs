@@ -10,6 +10,7 @@ namespace KivalitaAPI.AuditModels
         public string Type { get; set; }
         public int TemplateId { get; set; }
         public bool Done { get; set; }
+        public int afterDays { get; set; }
 
         public int TableId { get; set; }
         public ActionEnum Action { get; set; }
