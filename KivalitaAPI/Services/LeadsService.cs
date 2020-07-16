@@ -67,7 +67,7 @@ namespace KivalitaAPI.Services {
 			return new List<Leads> { baseRepository.Get(19890) };
         }
 
-        public Boolean LeadExists(string linkedInID)
+        public bool LeadExists(string linkedInID)
         {
 			var leadSearch = this.baseRepository.GetBy(
 				storedLead => storedLead.LinkedIn == linkedInID || storedLead.LinkedInPublic == linkedInID);

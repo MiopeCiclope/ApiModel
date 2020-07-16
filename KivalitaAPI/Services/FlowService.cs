@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using KivalitaAPI.Data;
+using KivalitaAPI.DTOs;
 using KivalitaAPI.Models;
 using KivalitaAPI.Repositories;
 
@@ -13,18 +14,59 @@ namespace KivalitaAPI.Services
     {
 
         FlowActionRepository _flowActionRepository;
+        FlowTaskRepository _flowTaskRepository;
+        FilterRepository _filterRepository;
+        LeadsRepository _leadsRepository;
 
         public FlowService(
             KivalitaApiContext context,
             FlowRepository baseRepository,
-            FlowActionRepository flowActionRepository
+            FlowActionRepository flowActionRepository,
+            FlowTaskRepository flowTaskRepository,
+            FilterRepository filterRepository,
+            LeadsRepository leadsRepository
         ) : base(context, baseRepository) {
             _flowActionRepository = flowActionRepository;
+            _flowTaskRepository = flowTaskRepository;
+            _filterRepository = filterRepository;
+            _leadsRepository = leadsRepository;
         }
 
         public override Flow Add(Flow flow)
         {
-            return base.Add(flow);
+            var flowCreated = base.Add(flow);
+
+            var filter = _filterRepository.Get(flow.FilterId);
+            LeadQueryDTO leadQuery = new LeadQueryDTO
+            {
+                ItemsPerPage = 0,
+                Page = 1,
+                Sector = filter.Sector,
+                Position = filter.Position,
+                Company = filter.Company,
+                WithEmail = filter.Email == "withEmail",
+                WithoutEmail = filter.Email == "withoutEmail"
+            };
+
+            var leads = _leadsRepository.FetchFilterAll(leadQuery);
+
+            foreach( var action in flow.FlowAction )
+            {
+                foreach (var lead in leads)
+                {
+                    var task = new FlowTask
+                    {
+                        Status = "pending",
+                        LeadId = lead.Id,
+                        FlowActionId = action.Id
+                    };
+
+                    _flowTaskRepository.Add(task);
+                }
+            }
+
+            return flowCreated;
+
         }
 
         public override Flow Update(Flow flow)

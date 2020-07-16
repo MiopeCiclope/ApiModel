@@ -142,6 +142,7 @@ namespace KivalitaAPI
             services.AddScoped<TemplateRepository>();
             services.AddScoped<TemplateService>();
 
+            services.AddScoped<FlowTaskRepository>();
             services.AddScoped<FlowActionRepository>();
             services.AddScoped<FlowRepository>();
             services.AddScoped<FlowService>();

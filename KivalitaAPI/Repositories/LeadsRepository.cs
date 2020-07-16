@@ -102,7 +102,6 @@ namespace KivalitaAPI.Repositories
             }
             if (!String.IsNullOrEmpty(leadQuery.Sector))
             {
-                Console.WriteLine($"Sector: {leadQuery.Sector}");
                 queryable = queryable.Where(lead => lead.Company.Sector == leadQuery.Sector);
             }
             if (!String.IsNullOrEmpty(leadQuery.Company))
