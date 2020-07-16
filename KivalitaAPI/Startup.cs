@@ -146,6 +146,10 @@ namespace KivalitaAPI
             services.AddScoped<FlowRepository>();
             services.AddScoped<FlowService>();
 
+            services.AddScoped<MailTrackRepository>();
+            services.AddScoped<MailTrackService>();
+
+
             var mappingConfig = new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<User, UserHistory>()
@@ -217,6 +221,11 @@ namespace KivalitaAPI
                             .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Id))
                             .ForMember(dest => dest.Id, opt => opt.Ignore());
                 cfg.CreateMap<FlowTaskHistory, FlowTask>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TableId));
+
+                cfg.CreateMap<MailTrack, MailTrackHistory>()
+                            .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Id))
+                            .ForMember(dest => dest.Id, opt => opt.Ignore());
+                cfg.CreateMap<MailTrackHistory, MailTrack>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TableId));
             });
 
             //Mapper Configured service
