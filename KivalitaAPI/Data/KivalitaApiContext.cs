@@ -54,6 +54,9 @@ namespace KivalitaAPI.Data
         public DbSet<FlowAction> FlowAction { get; set; }
         public DbSet<FlowActionHistory> FlowActionHistory { get; set; }
 
+        public DbSet<FlowTask> FlowTask { get; set; }
+        public DbSet<FlowTaskHistory> FlowTaskHistory { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Post>()
@@ -98,6 +101,16 @@ namespace KivalitaAPI.Data
                 .HasMany(f => f.FlowAction)
                 .WithOne(f => f.Flow)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<FlowTask>()
+                .HasOne(f => f.Leads)
+                .WithMany()
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<FlowTask>()
+                .HasOne(f => f.FlowAction)
+                .WithMany()
+                .OnDelete(DeleteBehavior.Cascade);
         }
 
         public override int SaveChanges()

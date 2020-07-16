@@ -212,6 +212,11 @@ namespace KivalitaAPI
                             .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Id))
                             .ForMember(dest => dest.Id, opt => opt.Ignore());
                 cfg.CreateMap<FlowActionHistory, FlowAction>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TableId));
+
+                cfg.CreateMap<FlowTask, FlowTaskHistory>()
+                            .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Id))
+                            .ForMember(dest => dest.Id, opt => opt.Ignore());
+                cfg.CreateMap<FlowTaskHistory, FlowTask>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TableId));
             });
 
             //Mapper Configured service

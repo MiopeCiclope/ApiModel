@@ -54,6 +54,9 @@ namespace KivalitaAPI.Common
                 case FlowAction flowAction:
                     var flowActionAudit = _mapper.Map<FlowActionHistory>(flowAction);
                     return addAuditComplement(flowActionAudit, action, responsable);
+                case FlowTask flowTask:
+                    var flowTaskAudit = _mapper.Map<FlowTaskHistory>(flowTask);
+                    return addAuditComplement(flowTaskAudit, action, responsable);
                 default:
                     return null;
             }
