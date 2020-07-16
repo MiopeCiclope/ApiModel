@@ -10,6 +10,10 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using KivalitaAPI.Common;
+using KivalitaAPI;
+using System.Web;
+using System.Text;
 
 [DisallowConcurrentExecution]
 public class SendMailJob : IJob
@@ -22,6 +26,7 @@ public class SendMailJob : IJob
     private GraphServiceClient client;
     private int templateId = 4;
     private string userSignature = "";
+    private int taskId = 0;
 
     public SendMailJob(ILogger<SendMailJob> logger, IServiceProvider serviceProvider)
     {
@@ -33,6 +38,8 @@ public class SendMailJob : IJob
     public Task Execute(IJobExecutionContext context)
     {
         var userId = context.JobDetail.JobDataMap.GetInt("userId");
+        this.taskId = context.JobDetail.JobDataMap.GetInt("taskId");
+
         var thread = new Thread(() => { workerTask(userId); });
         thread.Start();
         return Task.CompletedTask;
@@ -119,7 +126,7 @@ public class SendMailJob : IJob
                 Body = new ItemBody
                 {
                     ContentType = BodyType.Html,
-                    Content = $"{ReplaceVariables(template.Content, lead)}{this.userSignature}"
+                    Content = $"{ReplaceVariables(template.Content, lead)}{GetTracker(lead)}{this.userSignature}"
                 },
                 ToRecipients = new List<Recipient>() {
                     new Recipient
@@ -139,7 +146,15 @@ public class SendMailJob : IJob
             throw e;
         }
     }
-    
+
+    private string GetTracker(Leads lead)
+    {
+        var text = $"{this.taskId}-{lead.Id}";
+        var encriptKey = HttpUtility.UrlEncode(AesCripty.EncryptString(Setting.MailTrackSecret, text), Encoding.UTF8);
+        var url = $"<img src = \"https://localhost:5001/api/tracker/track?key={encriptKey}\" width=1 height=1 style=\"mso-hide:all; display:none; line-height: 0; font-size: 0; height: 0; padding: 0; visibility:hidden;\"/>";
+        return url;
+    }
+
     private string ReplaceVariables(string text, Leads lead)
     {
         try

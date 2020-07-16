@@ -54,6 +54,10 @@ namespace KivalitaAPI.Data
         public DbSet<FlowAction> FlowAction { get; set; }
         public DbSet<FlowActionHistory> FlowActionHistory { get; set; }
 
+        public DbSet<MailTrack> MailTrack { get; set; }
+        public DbSet<MailTrackHistory> MailTrackHistory { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Post>()

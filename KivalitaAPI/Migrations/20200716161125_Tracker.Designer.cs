@@ -4,14 +4,16 @@ using KivalitaAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace KivalitaAPI.Migrations
 {
     [DbContext(typeof(KivalitaApiContext))]
-    partial class KivalitaApiContextModelSnapshot : ModelSnapshot
+    [Migration("20200716161125_Tracker")]
+    partial class Tracker
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -110,12 +112,6 @@ namespace KivalitaAPI.Migrations
                     b.Property<int>("TemplateId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("afterDays")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.ToTable("FlowActionHistory");
@@ -137,8 +133,8 @@ namespace KivalitaAPI.Migrations
                     b.Property<string>("DaysOfTheWeek")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("FilterId")
-                        .HasColumnType("int");
+                    b.Property<bool>("EndLead")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -146,8 +142,17 @@ namespace KivalitaAPI.Migrations
                     b.Property<int>("Responsable")
                         .HasColumnType("int");
 
+                    b.Property<bool>("SendMoskit")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("SendRdStation")
+                        .HasColumnType("bit");
+
                     b.Property<int>("TableId")
                         .HasColumnType("int");
+
+                    b.Property<bool>("TagAsLost")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("actionForAllLeads")
                         .HasColumnType("bit");
@@ -641,11 +646,20 @@ namespace KivalitaAPI.Migrations
                     b.Property<string>("DaysOfTheWeek")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("FilterId")
-                        .HasColumnType("int");
+                    b.Property<bool>("EndLead")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("SendMoskit")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("SendRdStation")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("TagAsLost")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -664,8 +678,6 @@ namespace KivalitaAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FilterId");
-
                     b.ToTable("Flow");
                 });
 
@@ -682,25 +694,22 @@ namespace KivalitaAPI.Migrations
                     b.Property<int>("CreatedBy")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("Done")
                         .HasColumnType("bit");
 
                     b.Property<int>("FlowId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TemplateId")
+                    b.Property<int>("TemplateId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<int>("afterDays")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -1145,21 +1154,31 @@ namespace KivalitaAPI.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("KivalitaAPI.Models.Flow", b =>
+            modelBuilder.Entity("KivalitaAPI.Models.FlowAction", b =>
                 {
-                    b.HasOne("KivalitaAPI.Models.Filter", "Filter")
-                        .WithMany()
-                        .HasForeignKey("FilterId")
+                    b.HasOne("KivalitaAPI.Models.Flow", "Flow")
+                        .WithMany("FlowAction")
+                        .HasForeignKey("FlowId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("KivalitaAPI.Models.FlowAction", b =>
+            modelBuilder.Entity("KivalitaAPI.Models.FlowLeads", b =>
                 {
-                    b.HasOne("KivalitaAPI.Models.Flow", "Flow")
+                    b.HasOne("KivalitaAPI.Models.Flow", null)
                         .WithMany("FlowLeads")
                         .HasForeignKey("FlowId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("KivalitaAPI.Models.Flow", "Flow")
+                        .WithMany()
+                        .HasForeignKey("FlowId1");
+
+                    b.HasOne("KivalitaAPI.Models.Leads", "Leads")
+                        .WithMany()
+                        .HasForeignKey("LeadsId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 

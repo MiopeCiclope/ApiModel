@@ -16,6 +16,8 @@
     <Compile Remove="Migrations\20200703141623_MicrosoftAuth.Designer.cs" />
     <Compile Remove="Migrations\20200709144319_Fluxo.cs" />
     <Compile Remove="Migrations\20200709144319_Fluxo.Designer.cs" />
+    <Compile Remove="Migrations\20200716155809_Tracker.cs" />
+    <Compile Remove="Migrations\20200716155809_Tracker.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -58,5 +60,5 @@
   </ItemGroup>
 
 
-  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="https://json.schemastore.org/babelrc" /></VisualStudio></ProjectExtensions>
 </Project>
