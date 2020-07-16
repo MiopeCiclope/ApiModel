@@ -36,5 +36,9 @@ namespace KivalitaAPI.Models
 
         [IgnoreDataMember]
         public ICollection<Leads> Leads { get; set; }
+
+        [JsonIgnore]
+        [NotMapped]
+        public bool shouldUpdateAllSectors { get; set; }
     }
 }
