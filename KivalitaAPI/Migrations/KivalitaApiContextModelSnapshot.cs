@@ -784,548 +784,549 @@ namespace KivalitaAPI.Migrations
                     b.HasIndex("LeadId");
 
                     b.ToTable("FlowTask");
-            modelBuilder.Entity("KivalitaAPI.Models.FlowLeads", b =>
-                {
-                    b.Property<int>("LeadsId")
-                        .HasColumnType("int");
+                    modelBuilder.Entity("KivalitaAPI.Models.FlowLeads", b =>
+                        {
+                            b.Property<int>("LeadsId")
+                                .HasColumnType("int");
 
-                    b.Property<int>("FlowId")
-                        .HasColumnType("int");
+                            b.Property<int>("FlowId")
+                                .HasColumnType("int");
 
-                    b.Property<int?>("FlowId1")
-                        .HasColumnType("int");
+                            b.Property<int?>("FlowId1")
+                                .HasColumnType("int");
 
-                    b.HasKey("LeadsId", "FlowId");
+                            b.HasKey("LeadsId", "FlowId");
 
-                    b.HasIndex("FlowId");
+                            b.HasIndex("FlowId");
 
-                    b.HasIndex("FlowId1");
+                            b.HasIndex("FlowId1");
 
-                    b.ToTable("FlowLeads");
-                });
+                            b.ToTable("FlowLeads");
+                        });
 
-            modelBuilder.Entity("KivalitaAPI.Models.Image", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    modelBuilder.Entity("KivalitaAPI.Models.Image", b =>
+                        {
+                            b.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int")
+                                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                            b.Property<DateTime>("CreatedAt")
+                                .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                            b.Property<int>("CreatedBy")
+                                .HasColumnType("int");
 
-                    b.Property<byte[]>("ImageData")
-                        .HasColumnType("varbinary(max)");
+                            b.Property<byte[]>("ImageData")
+                                .HasColumnType("varbinary(max)");
 
-                    b.Property<byte[]>("ThumbnailData")
-                        .HasColumnType("varbinary(max)");
+                            b.Property<byte[]>("ThumbnailData")
+                                .HasColumnType("varbinary(max)");
 
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
+                            b.Property<string>("Type")
+                                .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                            b.Property<DateTime>("UpdatedAt")
+                                .HasColumnType("datetime2");
 
-                    b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
+                            b.Property<int>("UpdatedBy")
+                                .HasColumnType("int");
 
-                    b.HasKey("Id");
+                            b.HasKey("Id");
 
-                    b.ToTable("Image");
-                });
+                            b.ToTable("Image");
+                        });
 
-            modelBuilder.Entity("KivalitaAPI.Models.Job", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    modelBuilder.Entity("KivalitaAPI.Models.Job", b =>
+                        {
+                            b.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int")
+                                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("AuthorId")
-                        .HasColumnType("int");
+                            b.Property<int>("AuthorId")
+                                .HasColumnType("int");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                            b.Property<DateTime>("CreatedAt")
+                                .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                            b.Property<int>("CreatedBy")
+                                .HasColumnType("int");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                            b.Property<string>("Description")
+                                .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ImageId")
-                        .HasColumnType("int");
+                            b.Property<int>("ImageId")
+                                .HasColumnType("int");
 
-                    b.Property<bool>("Published")
-                        .HasColumnType("bit");
+                            b.Property<bool>("Published")
+                                .HasColumnType("bit");
 
-                    b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
+                            b.Property<string>("Title")
+                                .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                            b.Property<DateTime>("UpdatedAt")
+                                .HasColumnType("datetime2");
 
-                    b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
+                            b.Property<int>("UpdatedBy")
+                                .HasColumnType("int");
 
-                    b.HasKey("Id");
+                            b.HasKey("Id");
 
-                    b.HasIndex("AuthorId");
+                            b.HasIndex("AuthorId");
 
-                    b.HasIndex("ImageId")
-                        .IsUnique();
+                            b.HasIndex("ImageId")
+                                .IsUnique();
 
-                    b.ToTable("Job");
-                });
+                            b.ToTable("Job");
+                        });
 
-            modelBuilder.Entity("KivalitaAPI.Models.Leads", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    modelBuilder.Entity("KivalitaAPI.Models.Leads", b =>
+                        {
+                            b.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int")
+                                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("CompanyId")
-                        .HasColumnType("int");
+                            b.Property<int?>("CompanyId")
+                                .HasColumnType("int");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                            b.Property<DateTime>("CreatedAt")
+                                .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                            b.Property<int>("CreatedBy")
+                                .HasColumnType("int");
 
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("bit");
+                            b.Property<bool>("Deleted")
+                                .HasColumnType("bit");
 
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
+                            b.Property<string>("Email")
+                                .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("LinkedIn")
-                        .HasColumnType("nvarchar(max)");
+                            b.Property<string>("LinkedIn")
+                                .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("LinkedInPublic")
-                        .HasColumnType("nvarchar(max)");
+                            b.Property<string>("LinkedInPublic")
+                                .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                            b.Property<string>("Name")
+                                .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PersonalEmail")
-                        .HasColumnType("nvarchar(max)");
+                            b.Property<string>("PersonalEmail")
+                                .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Phone")
-                        .HasColumnType("nvarchar(max)");
+                            b.Property<string>("Phone")
+                                .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Position")
-                        .HasColumnType("nvarchar(max)");
+                            b.Property<string>("Position")
+                                .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                            b.Property<DateTime>("UpdatedAt")
+                                .HasColumnType("datetime2");
 
-                    b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
+                            b.Property<int>("UpdatedBy")
+                                .HasColumnType("int");
 
-                    b.HasKey("Id");
+                            b.HasKey("Id");
 
-                    b.HasIndex("CompanyId");
+                            b.HasIndex("CompanyId");
 
-                    b.ToTable("Leads");
-                });
+                            b.ToTable("Leads");
+                        });
 
-            modelBuilder.Entity("KivalitaAPI.Models.MailTrack", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    modelBuilder.Entity("KivalitaAPI.Models.MailTrack", b =>
+                        {
+                            b.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int")
+                                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                            b.Property<DateTime>("CreatedAt")
+                                .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                            b.Property<int>("CreatedBy")
+                                .HasColumnType("int");
 
-                    b.Property<int>("LeadId")
-                        .HasColumnType("int");
+                            b.Property<int>("LeadId")
+                                .HasColumnType("int");
 
-                    b.Property<int>("TaskId")
-                        .HasColumnType("int");
+                            b.Property<int>("TaskId")
+                                .HasColumnType("int");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                            b.Property<DateTime>("UpdatedAt")
+                                .HasColumnType("datetime2");
 
-                    b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
+                            b.Property<int>("UpdatedBy")
+                                .HasColumnType("int");
 
-                    b.HasKey("Id");
+                            b.HasKey("Id");
 
-                    b.HasIndex("LeadId");
+                            b.HasIndex("LeadId");
 
-                    b.ToTable("MailTrack");
-                });
+                            b.ToTable("MailTrack");
+                        });
 
-            modelBuilder.Entity("KivalitaAPI.Models.MicrosoftToken", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    modelBuilder.Entity("KivalitaAPI.Models.MicrosoftToken", b =>
+                        {
+                            b.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int")
+                                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("AccessToken")
-                        .HasColumnType("nvarchar(max)");
+                            b.Property<string>("AccessToken")
+                                .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                            b.Property<DateTime>("CreatedAt")
+                                .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                            b.Property<int>("CreatedBy")
+                                .HasColumnType("int");
 
-                    b.Property<DateTime>("ExpirationDate")
-                        .HasColumnType("datetime2");
+                            b.Property<DateTime>("ExpirationDate")
+                                .HasColumnType("datetime2");
 
-                    b.Property<string>("RefreshToken")
-                        .HasColumnType("nvarchar(max)");
+                            b.Property<string>("RefreshToken")
+                                .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                            b.Property<DateTime>("UpdatedAt")
+                                .HasColumnType("datetime2");
 
-                    b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
+                            b.Property<int>("UpdatedBy")
+                                .HasColumnType("int");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                            b.Property<int>("UserId")
+                                .HasColumnType("int");
 
-                    b.HasKey("Id");
+                            b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                            b.HasIndex("UserId");
 
-                    b.ToTable("MicrosoftToken");
-                });
+                            b.ToTable("MicrosoftToken");
+                        });
 
-            modelBuilder.Entity("KivalitaAPI.Models.Post", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    modelBuilder.Entity("KivalitaAPI.Models.Post", b =>
+                        {
+                            b.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int")
+                                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Article")
-                        .HasColumnType("nvarchar(max)");
+                            b.Property<string>("Article")
+                                .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("AuthorId")
-                        .HasColumnType("int");
+                            b.Property<int>("AuthorId")
+                                .HasColumnType("int");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                            b.Property<DateTime>("CreatedAt")
+                                .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                            b.Property<int>("CreatedBy")
+                                .HasColumnType("int");
 
-                    b.Property<int>("ImageId")
-                        .HasColumnType("int");
+                            b.Property<int>("ImageId")
+                                .HasColumnType("int");
 
-                    b.Property<bool>("Published")
-                        .HasColumnType("bit");
+                            b.Property<bool>("Published")
+                                .HasColumnType("bit");
 
-                    b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
+                            b.Property<string>("Title")
+                                .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                            b.Property<DateTime>("UpdatedAt")
+                                .HasColumnType("datetime2");
 
-                    b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
+                            b.Property<int>("UpdatedBy")
+                                .HasColumnType("int");
 
-                    b.HasKey("Id");
+                            b.HasKey("Id");
 
-                    b.HasIndex("AuthorId");
+                            b.HasIndex("AuthorId");
 
-                    b.HasIndex("ImageId")
-                        .IsUnique();
+                            b.HasIndex("ImageId")
+                                .IsUnique();
 
-                    b.ToTable("Post");
-                });
+                            b.ToTable("Post");
+                        });
 
-            modelBuilder.Entity("KivalitaAPI.Models.Template", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    modelBuilder.Entity("KivalitaAPI.Models.Template", b =>
+                        {
+                            b.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int")
+                                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
+                            b.Property<int>("CategoryId")
+                                .HasColumnType("int");
 
-                    b.Property<string>("Content")
-                        .HasColumnType("nvarchar(max)");
+                            b.Property<string>("Content")
+                                .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                            b.Property<DateTime>("CreatedAt")
+                                .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                            b.Property<int>("CreatedBy")
+                                .HasColumnType("int");
 
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                            b.Property<string>("Name")
+                                .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Subject")
-                        .HasColumnType("nvarchar(max)");
+                            b.Property<string>("Subject")
+                                .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
+                            b.Property<string>("Type")
+                                .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                            b.Property<DateTime>("UpdatedAt")
+                                .HasColumnType("datetime2");
 
-                    b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
+                            b.Property<int>("UpdatedBy")
+                                .HasColumnType("int");
 
-                    b.HasKey("Id");
+                            b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
+                            b.HasIndex("CategoryId");
 
-                    b.ToTable("Template");
-                });
+                            b.ToTable("Template");
+                        });
 
-            modelBuilder.Entity("KivalitaAPI.Models.Token", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    modelBuilder.Entity("KivalitaAPI.Models.Token", b =>
+                        {
+                            b.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int")
+                                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("AccessToken")
-                        .HasColumnType("nvarchar(max)");
+                            b.Property<string>("AccessToken")
+                                .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                            b.Property<DateTime>("CreatedAt")
+                                .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                            b.Property<int>("CreatedBy")
+                                .HasColumnType("int");
 
-                    b.Property<DateTime>("ExpirationDate")
-                        .HasColumnType("datetime2");
+                            b.Property<DateTime>("ExpirationDate")
+                                .HasColumnType("datetime2");
 
-                    b.Property<int>("LoginClient")
-                        .HasColumnType("int");
+                            b.Property<int>("LoginClient")
+                                .HasColumnType("int");
 
-                    b.Property<string>("RefreshToken")
-                        .HasColumnType("nvarchar(max)");
+                            b.Property<string>("RefreshToken")
+                                .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                            b.Property<DateTime>("UpdatedAt")
+                                .HasColumnType("datetime2");
 
-                    b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
+                            b.Property<int>("UpdatedBy")
+                                .HasColumnType("int");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                            b.Property<int>("UserId")
+                                .HasColumnType("int");
 
-                    b.HasKey("Id");
+                            b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                            b.HasIndex("UserId");
 
-                    b.ToTable("Token");
-                });
+                            b.ToTable("Token");
+                        });
 
-            modelBuilder.Entity("KivalitaAPI.Models.User", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    modelBuilder.Entity("KivalitaAPI.Models.User", b =>
+                        {
+                            b.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int")
+                                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                            b.Property<DateTime>("CreatedAt")
+                                .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                            b.Property<int>("CreatedBy")
+                                .HasColumnType("int");
 
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
+                            b.Property<string>("Email")
+                                .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
+                            b.Property<string>("FirstName")
+                                .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
+                            b.Property<string>("LastName")
+                                .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
-                        .HasColumnType("nvarchar(max)");
+                            b.Property<string>("Password")
+                                .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Role")
-                        .HasColumnType("nvarchar(max)");
+                            b.Property<string>("Role")
+                                .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Signature")
-                        .HasColumnType("nvarchar(max)");
+                            b.Property<string>("Signature")
+                                .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Timezone")
-                        .HasColumnType("nvarchar(max)");
+                            b.Property<string>("Timezone")
+                                .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                            b.Property<DateTime>("UpdatedAt")
+                                .HasColumnType("datetime2");
 
-                    b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
+                            b.Property<int>("UpdatedBy")
+                                .HasColumnType("int");
 
-                    b.HasKey("Id");
+                            b.HasKey("Id");
 
-                    b.ToTable("User");
-                });
+                            b.ToTable("User");
+                        });
 
-            modelBuilder.Entity("KivalitaAPI.Models.WpRdStation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    modelBuilder.Entity("KivalitaAPI.Models.WpRdStation", b =>
+                        {
+                            b.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int")
+                                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                            b.Property<DateTime>("CreatedAt")
+                                .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                            b.Property<int>("CreatedBy")
+                                .HasColumnType("int");
 
-                    b.Property<string>("FormData")
-                        .HasColumnType("nvarchar(max)");
+                            b.Property<string>("FormData")
+                                .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                            b.Property<DateTime>("UpdatedAt")
+                                .HasColumnType("datetime2");
 
-                    b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
+                            b.Property<int>("UpdatedBy")
+                                .HasColumnType("int");
 
-                    b.HasKey("Id");
+                            b.HasKey("Id");
 
-                    b.ToTable("WpRdStation");
-                });
+                            b.ToTable("WpRdStation");
+                        });
 
-            modelBuilder.Entity("KivalitaAPI.Models.Company", b =>
-                {
-                    b.HasOne("KivalitaAPI.Models.User", "User")
-                        .WithMany("Company")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.SetNull);
-                });
+                    modelBuilder.Entity("KivalitaAPI.Models.Company", b =>
+                        {
+                            b.HasOne("KivalitaAPI.Models.User", "User")
+                                .WithMany("Company")
+                                .HasForeignKey("UserId")
+                                .OnDelete(DeleteBehavior.SetNull);
+                        });
 
-            modelBuilder.Entity("KivalitaAPI.Models.Filter", b =>
-                {
-                    b.HasOne("KivalitaAPI.Models.User", "User")
-                        .WithMany("Filters")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
+                    modelBuilder.Entity("KivalitaAPI.Models.Filter", b =>
+                        {
+                            b.HasOne("KivalitaAPI.Models.User", "User")
+                                .WithMany("Filters")
+                                .HasForeignKey("UserId")
+                                .OnDelete(DeleteBehavior.Cascade)
+                                .IsRequired();
+                        });
 
-            modelBuilder.Entity("KivalitaAPI.Models.Flow", b =>
-                {
-                    b.HasOne("KivalitaAPI.Models.Filter", "Filter")
-                        .WithMany()
-                        .HasForeignKey("FilterId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
+                    modelBuilder.Entity("KivalitaAPI.Models.Flow", b =>
+                        {
+                            b.HasOne("KivalitaAPI.Models.Filter", "Filter")
+                                .WithMany()
+                                .HasForeignKey("FilterId")
+                                .OnDelete(DeleteBehavior.Restrict)
+                                .IsRequired();
+                        });
 
-            modelBuilder.Entity("KivalitaAPI.Models.FlowAction", b =>
-                {
-                    b.HasOne("KivalitaAPI.Models.Flow", "Flow")
-                        .WithMany("FlowLeads")
-                        .HasForeignKey("FlowId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
+                    modelBuilder.Entity("KivalitaAPI.Models.FlowAction", b =>
+                        {
+                            b.HasOne("KivalitaAPI.Models.Flow", "Flow")
+                                .WithMany("FlowLeads")
+                                .HasForeignKey("FlowId")
+                                .OnDelete(DeleteBehavior.Restrict)
+                                .IsRequired();
+                        });
 
-            modelBuilder.Entity("KivalitaAPI.Models.FlowTask", b =>
-                {
-                    b.HasOne("KivalitaAPI.Models.FlowAction", "FlowAction")
-                        .WithMany()
-                        .HasForeignKey("FlowActionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    modelBuilder.Entity("KivalitaAPI.Models.FlowTask", b =>
+                        {
+                            b.HasOne("KivalitaAPI.Models.FlowAction", "FlowAction")
+                                .WithMany()
+                                .HasForeignKey("FlowActionId")
+                                .OnDelete(DeleteBehavior.Cascade)
+                                .IsRequired();
 
-                    b.HasOne("KivalitaAPI.Models.Leads", "Leads")
-                        .WithMany()
-                        .HasForeignKey("LeadId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
+                            b.HasOne("KivalitaAPI.Models.Leads", "Leads")
+                                .WithMany()
+                                .HasForeignKey("LeadId")
+                                .OnDelete(DeleteBehavior.Cascade)
+                                .IsRequired();
+                        });
 
-            modelBuilder.Entity("KivalitaAPI.Models.Job", b =>
-                {
-                    b.HasOne("KivalitaAPI.Models.User", "Author")
-                        .WithMany()
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    modelBuilder.Entity("KivalitaAPI.Models.Job", b =>
+                        {
+                            b.HasOne("KivalitaAPI.Models.User", "Author")
+                                .WithMany()
+                                .HasForeignKey("AuthorId")
+                                .OnDelete(DeleteBehavior.Cascade)
+                                .IsRequired();
 
-                    b.HasOne("KivalitaAPI.Models.Image", "JobImage")
-                        .WithOne()
-                        .HasForeignKey("KivalitaAPI.Models.Job", "ImageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
+                            b.HasOne("KivalitaAPI.Models.Image", "JobImage")
+                                .WithOne()
+                                .HasForeignKey("KivalitaAPI.Models.Job", "ImageId")
+                                .OnDelete(DeleteBehavior.Cascade)
+                                .IsRequired();
+                        });
 
-            modelBuilder.Entity("KivalitaAPI.Models.Leads", b =>
-                {
-                    b.HasOne("KivalitaAPI.Models.Company", "Company")
-                        .WithMany("Leads")
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Restrict);
-                });
+                    modelBuilder.Entity("KivalitaAPI.Models.Leads", b =>
+                        {
+                            b.HasOne("KivalitaAPI.Models.Company", "Company")
+                                .WithMany("Leads")
+                                .HasForeignKey("CompanyId")
+                                .OnDelete(DeleteBehavior.Restrict);
+                        });
 
-            modelBuilder.Entity("KivalitaAPI.Models.MailTrack", b =>
-                {
-                    b.HasOne("KivalitaAPI.Models.Leads", "Lead")
-                        .WithMany()
-                        .HasForeignKey("LeadId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
+                    modelBuilder.Entity("KivalitaAPI.Models.MailTrack", b =>
+                        {
+                            b.HasOne("KivalitaAPI.Models.Leads", "Lead")
+                                .WithMany()
+                                .HasForeignKey("LeadId")
+                                .OnDelete(DeleteBehavior.Cascade)
+                                .IsRequired();
+                        });
 
-            modelBuilder.Entity("KivalitaAPI.Models.MicrosoftToken", b =>
-                {
-                    b.HasOne("KivalitaAPI.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
+                    modelBuilder.Entity("KivalitaAPI.Models.MicrosoftToken", b =>
+                        {
+                            b.HasOne("KivalitaAPI.Models.User", "User")
+                                .WithMany()
+                                .HasForeignKey("UserId")
+                                .OnDelete(DeleteBehavior.Cascade)
+                                .IsRequired();
+                        });
 
-            modelBuilder.Entity("KivalitaAPI.Models.Post", b =>
-                {
-                    b.HasOne("KivalitaAPI.Models.User", "Author")
-                        .WithMany()
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    modelBuilder.Entity("KivalitaAPI.Models.Post", b =>
+                        {
+                            b.HasOne("KivalitaAPI.Models.User", "Author")
+                                .WithMany()
+                                .HasForeignKey("AuthorId")
+                                .OnDelete(DeleteBehavior.Cascade)
+                                .IsRequired();
 
-                    b.HasOne("KivalitaAPI.Models.Image", "PostImage")
-                        .WithOne()
-                        .HasForeignKey("KivalitaAPI.Models.Post", "ImageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
+                            b.HasOne("KivalitaAPI.Models.Image", "PostImage")
+                                .WithOne()
+                                .HasForeignKey("KivalitaAPI.Models.Post", "ImageId")
+                                .OnDelete(DeleteBehavior.Cascade)
+                                .IsRequired();
+                        });
 
-            modelBuilder.Entity("KivalitaAPI.Models.Template", b =>
-                {
-                    b.HasOne("KivalitaAPI.Models.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
+                    modelBuilder.Entity("KivalitaAPI.Models.Template", b =>
+                        {
+                            b.HasOne("KivalitaAPI.Models.Category", "Category")
+                                .WithMany()
+                                .HasForeignKey("CategoryId")
+                                .OnDelete(DeleteBehavior.Restrict)
+                                .IsRequired();
+                        });
 
-            modelBuilder.Entity("KivalitaAPI.Models.Token", b =>
-                {
-                    b.HasOne("KivalitaAPI.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
+                    modelBuilder.Entity("KivalitaAPI.Models.Token", b =>
+                        {
+                            b.HasOne("KivalitaAPI.Models.User", "User")
+                                .WithMany()
+                                .HasForeignKey("UserId")
+                                .OnDelete(DeleteBehavior.Cascade)
+                                .IsRequired();
+                        });
 #pragma warning restore 612, 618
+                });
         }
-    }
-}
+    };
+};
