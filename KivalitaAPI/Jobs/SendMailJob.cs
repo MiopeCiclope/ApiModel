@@ -95,12 +95,12 @@ public class SendMailJob : IJob
             var leadService = scope.ServiceProvider.GetService<LeadsService>();
             var leadList = leadService.GetMailFromFlow(1);
 
-            var template = GetTemplate(templateId);
-            if (template == null) return null;
+            //var template = GetTemplate(templateId);
+            //if (template == null) return null;
 
             return leadList
                     //.Where(lead => this.graphService.ShoulSendMail(this.client, lead.Email, userId))
-                    .Select(lead => BuildEmail(lead, template)).ToList();
+                    .Select(lead => BuildEmail(lead, null)).ToList();
         }
         catch (Exception e)
         {
@@ -116,24 +116,24 @@ public class SendMailJob : IJob
         return templateService.Get(id);
     }
 
-    private Message BuildEmail(Leads lead, Template template)
+    private Message BuildEmail(Leads lead, Template? template)
     {
         try
         {
             return new Message
             {
-                Subject = ReplaceVariables(template.Subject, lead),
+                Subject = "teste",
                 Body = new ItemBody
                 {
                     ContentType = BodyType.Html,
-                    Content = $"{ReplaceVariables(template.Content, lead)}{GetTracker(lead)}{this.userSignature}"
+                    Content = $"teste{GetTracker(lead)}{this.userSignature}"
                 },
                 ToRecipients = new List<Recipient>() {
                     new Recipient
                     {
                         EmailAddress = new EmailAddress
                         {
-                            Address = lead.Email
+                            Address = "romulo.carvalho@kivalita.com.br"
                         }
                     } 
                 }

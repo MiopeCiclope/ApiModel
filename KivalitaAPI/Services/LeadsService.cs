@@ -64,7 +64,7 @@ namespace KivalitaAPI.Services {
 
         public List<Leads> GetMailFromFlow(int flowId)
         {
-			return new List<Leads> { baseRepository.Get(19890) };
+			return new List<Leads> { baseRepository.GetAll().First() };
         }
 
         public bool LeadExists(string linkedInID)
