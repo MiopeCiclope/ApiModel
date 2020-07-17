@@ -244,6 +244,7 @@ namespace KivalitaAPI
             //Add job as Singleton
             services.AddSingleton<BaseJob>();
             services.AddSingleton<SendMailJob>();
+            services.AddSingleton<TaskJob>();
 
             services.AddHostedService<SchedulerService>();
             services.AddSingleton<IJobScheduler, SchedulerService>();
