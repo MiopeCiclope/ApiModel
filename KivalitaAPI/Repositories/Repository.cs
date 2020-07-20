@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using KivalitaAPI.Common;
 using KivalitaAPI.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Sieve.Models;
@@ -89,11 +90,17 @@ namespace KivalitaAPI.Repositories {
 				context.Entry (local).State = EntityState.Detached;
 		}
 
-		public virtual List<TEntity> GetAll_v2(SieveModel filterQuery)
+		public virtual QueryResult<TEntity> GetAll_v2(SieveModel filterQuery)
 		{
 			var result = context.Set<TEntity>().AsNoTracking();
+			var total = result.Count();
 			result = this.filterProcessor.Apply(filterQuery, result);
-			return result.ToList();
+
+			return new QueryResult<TEntity>
+			{
+				Items = result.ToList(),
+				TotalItems = total,
+			};
 		}
 
 		public virtual List<TEntity> DeleteRange(List<TEntity> entities)

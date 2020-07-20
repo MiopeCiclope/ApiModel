@@ -1,4 +1,5 @@
-﻿using Sieve.Models;
+﻿using KivalitaAPI.Common;
+using Sieve.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace KivalitaAPI.Interfaces
         where T : class, IEntity
     {
         List<T> GetAll();
-        List<T> GetAll_v2(SieveModel filterQuery);
+        QueryResult<T> GetAll_v2(SieveModel filterQuery);
         T Get(int id);
         T Add(T entity);
         List<T> AddRange(List<T> entities);

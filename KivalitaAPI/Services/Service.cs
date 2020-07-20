@@ -2,6 +2,7 @@
 using KivalitaAPI.Interfaces;
 using System.Collections.Generic;
 using Sieve.Models;
+using KivalitaAPI.Common;
 
 namespace KivalitaAPI.Services
 {
@@ -49,7 +50,7 @@ namespace KivalitaAPI.Services
             return baseRepository.GetAll();
         }
 
-        public List<TEntity> GetAll_v2(SieveModel filterQuery)
+        public QueryResult<TEntity> GetAll_v2(SieveModel filterQuery)
         {
             return baseRepository.GetAll_v2(filterQuery);
         }

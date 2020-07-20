@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using KivalitaAPI.Common;
 using KivalitaAPI.Interfaces;
 using KivalitaAPI.Models;
 using Microsoft.EntityFrameworkCore;
@@ -57,14 +58,20 @@ namespace KivalitaAPI.Repositories
             return context.Set<Company>().Where(c => c.UserId == userId);
         }
 
-        public override List<Company> GetAll_v2(SieveModel filterQuery)
+        public override QueryResult<Company> GetAll_v2(SieveModel filterQuery)
         {
             var result = context.Set<Company>()
                                 .Include(c => c.User)
                                 .AsNoTracking();
+            var total = result.Count();
 
             result = this.filterProcessor.Apply(filterQuery, result);
-            return result.ToList();
+
+            return new QueryResult<Company>
+            {
+                Items = result.ToList(),
+                TotalItems = total,
+            };
         }
     }
 }

@@ -143,8 +143,8 @@ namespace KivalitaAPI.Repositories
                                 .Where(lead => lead.Deleted == false)
                                 .AsNoTracking();
 
-            result = this.filterProcessor.Apply(filterQuery, result).WithTranslations();
             var total = result.Count();
+            result = this.filterProcessor.Apply(filterQuery, result).WithTranslations();
 
             return new QueryResult<Leads>
             {
