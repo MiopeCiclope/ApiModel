@@ -7,6 +7,7 @@ using KivalitaAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using KivalitaAPI.Models;
+using Microsoft.Extensions.Logging;
 
 namespace KivalitaAPI.Controllers
 {
@@ -15,9 +16,11 @@ namespace KivalitaAPI.Controllers
     public class GraphController : ControllerBase
     {
         private readonly MicrosoftTokenService service;
+        private readonly ILogger<GraphController> logger;
 
-        public GraphController(MicrosoftTokenService tokenService) {
+        public GraphController(MicrosoftTokenService tokenService, ILogger<GraphController> _logger) {
             service = tokenService;
+            logger = _logger;
         }
 
         [HttpPost]
@@ -25,6 +28,7 @@ namespace KivalitaAPI.Controllers
         [Route("Auth")]
         public HttpResponse<MicrosoftToken> Auth([FromBody] MicrosoftAuthDTO authObject)
         {
+            logger.LogInformation($"{this.GetType().Name} - Auth Microsoft");
             try
             {
                 var user = GetAuditTrailUser();
@@ -39,6 +43,7 @@ namespace KivalitaAPI.Controllers
             }
             catch (Exception e)
             {
+                logger.LogError($"{e.Message}");
                 return new HttpResponse<MicrosoftToken>
                 {
                     IsStatusCodeSuccess = false,
@@ -54,6 +59,7 @@ namespace KivalitaAPI.Controllers
         [Route("RefreshToken")]
         public HttpResponse<MicrosoftToken> RefreshToken()
         {
+            logger.LogInformation($"{this.GetType().Name} - Refresh Token Microsoft");
             try
             {
                 var user = GetAuditTrailUser();
@@ -68,6 +74,7 @@ namespace KivalitaAPI.Controllers
             }
             catch (Exception e)
             {
+                logger.LogError($"{e.Message}");
                 return new HttpResponse<MicrosoftToken>
                 {
                     IsStatusCodeSuccess = false,
@@ -78,6 +85,38 @@ namespace KivalitaAPI.Controllers
             }
         }
 
+        [HttpDelete("{id}")]
+        [Authorize]
+        public virtual HttpResponse<MicrosoftToken> Delete(int id)
+        {
+            logger.LogInformation($"{this.GetType().Name} - Delete - {id}");
+            try
+            {
+                var userAuditId = GetAuditTrailUser();
+                if (userAuditId == 0) throw new Exception("Token Sem Usuário válido.");
+
+                var statusRequest = HttpStatusCode.OK;
+                var createdData = service.Delete(id, userAuditId);
+
+                return new HttpResponse<MicrosoftToken>
+                {
+                    IsStatusCodeSuccess = true,
+                    statusCode = statusRequest,
+                    data = createdData
+                };
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.Message);
+                return new HttpResponse<MicrosoftToken>
+                {
+                    IsStatusCodeSuccess = false,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    data = null,
+                    ErrorMessage = "Erro ao realizar a requisição"
+                };
+            }
+        }
         [ApiExplorerSettings(IgnoreApi = true)]
         public virtual int GetAuditTrailUser()
         {

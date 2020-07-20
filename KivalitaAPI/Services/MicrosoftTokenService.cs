@@ -132,6 +132,12 @@ namespace KivalitaAPI.Services
                 return false;
             }
         }
+
+        public override MicrosoftToken Delete(int userId, int responsableId)
+        {
+            var tokenUser = base.GetAll().Where(token => token.UserId == userId).First();
+            return base.Delete(tokenUser.Id, responsableId);
+        }
     }
 }
 
