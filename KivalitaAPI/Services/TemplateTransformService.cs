@@ -1,28 +1,21 @@
+using System.Linq;
 using DotLiquid;
-using KivalitaAPI.Repositories;
 
 namespace KivalitaAPI.Services
 {
     public class TemplateTransformService
     {
-        private readonly TemplateRepository _baseRepository;
+        public TemplateTransformService() { }
 
-        public TemplateTransformService(TemplateRepository repository)
+        public string TransformLead(string text, Models.Leads leadData)
         {
-            this._baseRepository = repository;
-        }
+            Template.RegisterSafeType(typeof(Models.Leads),
+                typeof(Models.Leads).GetProperties().Select(x => x.Name).ToArray());
 
-        public string Transform(int templateId)
-        {
-            Models.Template template = this._baseRepository.Get(templateId);
-
-            // Example - {{ lead.name }}
-            var model = new Models.Leads { Name = "john" };
-
-            var templateParse = Template.Parse(template.Content);
+            var templateParse = Template.Parse(text);
             var templateRender = templateParse.Render(Hash.FromAnonymousObject(new
             {
-                lead = model
+                leads = leadData
             }));
 
             return templateRender;

@@ -82,7 +82,7 @@ namespace KivalitaAPI.Services
                     {
                         DateTimeOffset dateTimeOffset = new DateTimeOffset((DateTime)task.ScheduledTo);
                         var job = new JobScheduleDTO("TaskJob", "0/2 * * * * ?", dateTimeOffset, task.Id);
-
+                        job.userId = flow.CreatedBy;
                         _scheduler.ScheduleJob(cancellationToken, job);
                     }
                 }

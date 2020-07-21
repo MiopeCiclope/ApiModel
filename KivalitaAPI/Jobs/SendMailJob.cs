@@ -7,13 +7,13 @@ using Quartz;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using KivalitaAPI.Common;
 using KivalitaAPI;
 using System.Web;
 using System.Text;
+using KivalitaAPI.Repositories;
 
 [DisallowConcurrentExecution]
 public class SendMailJob : IJob
@@ -24,9 +24,9 @@ public class SendMailJob : IJob
     private Semaphore semaphore;
     private MicrosoftTokenService graphService;
     private GraphServiceClient client;
+    private FlowTaskRepository taskRepository;
     private int templateId = 4;
     private string userSignature = "";
-    private int taskId = 0;
 
     public SendMailJob(ILogger<SendMailJob> logger, IServiceProvider serviceProvider)
     {
@@ -38,14 +38,14 @@ public class SendMailJob : IJob
     public Task Execute(IJobExecutionContext context)
     {
         var userId = context.JobDetail.JobDataMap.GetInt("userId");
-        this.taskId = context.JobDetail.JobDataMap.GetInt("taskId");
+        var taskId = context.JobDetail.JobDataMap.GetInt("taskId");
 
-        var thread = new Thread(() => { workerTask(userId); });
+        var thread = new Thread(() => { workerTask(userId, taskId); });
         thread.Start();
         return Task.CompletedTask;
     }
 
-    public void workerTask(int userId)
+    public void workerTask(int userId, int taskId)
     {
         try
         {
@@ -57,10 +57,14 @@ public class SendMailJob : IJob
             }
 
             this.graphService = scope.ServiceProvider.GetService<MicrosoftTokenService>();
+            this.taskRepository = scope.ServiceProvider.GetService<FlowTaskRepository>();
             this.client = graphService.GetTokenClient(userId);
             this.userSignature = GetSignature(userId);
 
-            var mailList = GetMailList(userId);
+            var flowTask = this.taskRepository.Get(taskId);
+            this.templateId = (int)flowTask.FlowAction.TemplateId;
+
+            var mailList = GetMailList(userId, flowTask);
 
             if (!mailList.Any())
                 _logger.LogInformation($"Nenhum e-mail na lista");
@@ -88,19 +92,19 @@ public class SendMailJob : IJob
         return userService.Get(id)?.Signature ?? "";
     }
 
-    private List<Message> GetMailList(int userId)
+    private List<Message> GetMailList(int userId, FlowTask flowTask)
     {
         try
         {
             var leadService = scope.ServiceProvider.GetService<LeadsService>();
-            var leadList = leadService.GetMailFromFlow(1);
+            var leadList = new List<Leads> { leadService.Get(flowTask.LeadId) };
 
-            //var template = GetTemplate(templateId);
-            //if (template == null) return null;
+            var template = GetTemplate(templateId);
+            if (template == null) return null;
 
             return leadList
-                    //.Where(lead => this.graphService.ShoulSendMail(this.client, lead.Email, userId))
-                    .Select(lead => BuildEmail(lead, null)).ToList();
+                    .Where(lead => this.graphService.ShoulSendMail(this.client, lead.Email, userId))
+                    .Select(lead => BuildEmail(lead, template, flowTask.Id)).ToList();
         }
         catch (Exception e)
         {
@@ -116,17 +120,17 @@ public class SendMailJob : IJob
         return templateService.Get(id);
     }
 
-    private Message BuildEmail(Leads lead, Template? template)
+    private Message BuildEmail(Leads lead, Template template, int taskId)
     {
         try
         {
             return new Message
             {
-                Subject = "teste",
+                Subject = ReplaceVariables(template.Subject, lead),
                 Body = new ItemBody
                 {
                     ContentType = BodyType.Html,
-                    Content = $"teste{GetTracker(lead)}{this.userSignature}"
+                    Content = $"{ReplaceVariables(template.Content, lead)}{GetTracker(lead, taskId)}{this.userSignature}"
                 },
                 ToRecipients = new List<Recipient>() {
                     new Recipient
@@ -147,9 +151,9 @@ public class SendMailJob : IJob
         }
     }
 
-    private string GetTracker(Leads lead)
+    private string GetTracker(Leads lead, int taskId)
     {
-        var text = $"{this.taskId}-{lead.Id}";
+        var text = $"{taskId}-{lead.Id}";
         var encriptKey = HttpUtility.UrlEncode(AesCripty.EncryptString(Setting.MailTrackSecret, text), Encoding.UTF8);
         var url = $"<img src = \"http://api.kivalita.com.br.asp.hostazul.com.br/api/tracker/track?key={encriptKey}\" width=1 height=1 style=\"mso-hide:all; display:none; line-height: 0; font-size: 0; height: 0; padding: 0; visibility:hidden;\"/>";
         return url;
@@ -159,25 +163,9 @@ public class SendMailJob : IJob
     {
         try
         {
-            string pattern = @"({{ (\w+)\.(\w+) }})";
-            Regex variableRegex = new Regex(pattern);
+            var templateTransformService = scope.ServiceProvider.GetService<TemplateTransformService>();
 
-            MatchCollection variables = variableRegex.Matches(text);
-
-            if(variables.Any())
-            {
-                foreach (Match variable in variables)
-                {
-                    var entity = variable.Groups[2].Value;
-                    var property = variable.Groups[3].Value;
-
-                    if(entity == "lead")
-                        text = text.Replace(variable.Value, lead.GetType().GetProperty(property).GetValue(lead, null)?.ToString()) ?? "";
-                    if(entity == "company")
-                        text = text.Replace(variable.Value, lead.Company.GetType().GetProperty(property).GetValue(lead.Company, null)?.ToString()) ?? "";
-                }
-            }
-            return text;
+            return templateTransformService.TransformLead(text, lead);
         }
         catch(Exception e)
         {

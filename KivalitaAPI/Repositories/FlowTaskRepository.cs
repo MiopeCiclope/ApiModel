@@ -15,7 +15,20 @@ namespace KivalitaAPI.Repositories
             return context.Set<FlowTask>()
                 .Where(f => f.Id == id)
                 .Include(f => f.FlowAction)
+                .AsNoTracking()
                 .SingleOrDefault();
+        }
+
+        public FlowTask GetNextTask(FlowTask currentTask)
+        {
+            return context.Set<FlowTask>()
+                .Where(
+                    f => f.Status == "pending" &&
+                    f.LeadId == currentTask.LeadId &&
+                    f.Id != currentTask.Id
+                )
+                .Include(f => f.FlowAction)
+                .FirstOrDefault();
         }
     }
 }

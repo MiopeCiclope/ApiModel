@@ -1,6 +1,7 @@
 ﻿using KivalitaAPI.Interfaces;
 using KivalitaAPI.Models;
 using KivalitaAPI.Repositories;
+using KivalitaAPI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -33,41 +34,30 @@ public class TaskJob : IJob
         var userId = context.JobDetail.JobDataMap.GetInt("userId");
         var taskId = context.JobDetail.JobDataMap.GetInt("taskId");
 
-        var thread = new Thread(() => { workerTask(taskId); });
+        var thread = new Thread(() => { workerTask(taskId, userId); });
         thread.Start();
         return Task.CompletedTask;
     }
 
-    public void workerTask(int taskId)
+    public void workerTask(int taskId, int userId)
     {
         CancellationToken cancellationToken = new CancellationToken();
 
         var scope = this._serviceProvider.CreateScope();
-
         var flowTaskRepository = scope.ServiceProvider.GetService<FlowTaskRepository>();
-        var flowActionRepository = scope.ServiceProvider.GetService<FlowActionRepository>();
+        var flowTaskService = scope.ServiceProvider.GetService<FlowTaskService>();
 
         var flowTask = flowTaskRepository.Get(taskId);
-        flowTask.Status = "finished";
-        flowTaskRepository.Update(flowTask);
 
-        var nextFlowTask = flowTaskRepository.context.Set<FlowTask>()
-            .Where(f => f.Status == "pending" && f.LeadId == flowTask.LeadId)
-            .Include(f => f.FlowAction)
-            .FirstOrDefault();
-
-        if (nextFlowTask != null)
+        if (flowTaskService.isJobAutomatic(flowTask.FlowAction))
         {
-            var nextFlowAction = nextFlowTask.FlowAction;
-
-            nextFlowTask.ScheduledTo = DateTime.Now.AddMinutes(nextFlowAction.afterDays);
-            flowTaskRepository.Update(nextFlowTask);
-
-            DateTimeOffset dateTimeOffset = new DateTimeOffset((DateTime)nextFlowTask.ScheduledTo);
-            var job = new JobScheduleDTO("TaskJob", "0/2 * * * * ?", dateTimeOffset, nextFlowTask.Id);
-
+            DateTimeOffset dateTime = new DateTimeOffset(DateTime.Now);
+            var job = new JobScheduleDTO("SendMailJob", "0/2 * * * * ?", dateTime, flowTask.Id);
+            job.userId = userId;
             _scheduler.ScheduleJob(cancellationToken, job);
-        }
 
+            flowTask.Status = "finished";
+            flowTaskService.Update(flowTask);
+        }
     }
 }
