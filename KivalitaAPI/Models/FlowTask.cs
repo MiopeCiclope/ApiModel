@@ -1,4 +1,5 @@
 ﻿using KivalitaAPI.Interfaces;
+using Sieve.Attributes;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
@@ -8,7 +9,11 @@ namespace KivalitaAPI.Models
 	public class FlowTask : IEntity
     {
 		public int Id { get; set; }
+
+		[Sieve(CanFilter = true, CanSort = true)]
 		public string Status { get; set; } // pending, finished, error
+
+		[Sieve(CanFilter = true, CanSort = true)]
 		public DateTime? ScheduledTo { get; set; }
 
 		[ForeignKey("Leads")]

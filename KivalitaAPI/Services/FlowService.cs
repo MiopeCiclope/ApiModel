@@ -73,7 +73,7 @@ namespace KivalitaAPI.Services
 
                     if (flow.FlowAction.First() == action)
                     {
-                        taskPayload.ScheduledTo = DateTime.Now.AddMinutes(action.afterDays);
+                        taskPayload.ScheduledTo = DateTime.Now.AddDays(action.afterDays);
                     }
 
                     var task = _flowTaskRepository.Add(taskPayload);

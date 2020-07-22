@@ -45,11 +45,12 @@ namespace KivalitaAPI.Services
             {
                 var nextFlowAction = nextFlowTask.FlowAction;
 
-                nextFlowTask.ScheduledTo = DateTime.Now.AddMinutes(nextFlowAction.afterDays);
+                nextFlowTask.ScheduledTo = DateTime.Now.AddDays(nextFlowAction.afterDays);
                 baseRepository.Update(nextFlowTask);
 
                 if (isJobAutomatic(nextFlowAction))
                 {
+
                     DateTimeOffset dateTimeOffset = new DateTimeOffset((DateTime)nextFlowTask.ScheduledTo);
                     var job = new JobScheduleDTO("TaskJob", "0/2 * * * * ?", dateTimeOffset, nextFlowTask.Id);
 
