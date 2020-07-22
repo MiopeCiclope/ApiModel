@@ -142,7 +142,7 @@ namespace KivalitaAPI.Repositories
 
             filterQuery.Page = 1;
             filterQuery.PageSize = int.MaxValue;
-            
+
             var result = context.Set<Leads>()
                                 .Include(l => l.Company)
                                 .ThenInclude(c => c.User)

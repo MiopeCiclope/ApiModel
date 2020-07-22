@@ -49,5 +49,16 @@ namespace KivalitaAPI.Models {
 		[JsonIgnore]
 		public DateTime UpdatedAt { get; set; }
 
+		public string GetSieveFilter()
+		{
+			string filter = string.Empty;
+
+			if (this.Company != null) filter += $"CompanyName == {this.Company}";
+			if (this.Sector != null) filter += $",CompanySector == {this.Sector}";
+			if (this.Position != null) filter += $",Position == {this.Position}";
+			if (this.Email != null && this.Email != "bothEmail") filter += $",WithEmail == {(this.Email == "withEmail")}";
+
+			return filter;
+		}
 	}
 }

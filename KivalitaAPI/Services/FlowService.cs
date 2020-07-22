@@ -8,6 +8,7 @@ using KivalitaAPI.DTOs;
 using KivalitaAPI.Interfaces;
 using KivalitaAPI.Models;
 using KivalitaAPI.Repositories;
+using Sieve.Models;
 
 namespace KivalitaAPI.Services
 {
@@ -43,21 +44,12 @@ namespace KivalitaAPI.Services
             var flowCreated = base.Add(flow);
 
             var filter = _filterRepository.Get(flow.FilterId);
-            LeadQueryDTO leadQuery = new LeadQueryDTO
-            {
-                ItemsPerPage = 0,
-                Page = 1,
-                Sector = filter.Sector,
-                Position = filter.Position,
-                Company = filter.Company,
-                WithEmail = filter.Email == "withEmail",
-                WithoutEmail = filter.Email == "withoutEmail",
-                UserId = filter.UserId
-            };
+            var filterModel = new SieveModel();
+            filterModel.Filters = filter.GetSieveFilter();
 
-            var leads = _leadsRepository.FetchFilterAll(leadQuery);
+            var leads = _leadsRepository.GetAll_v2(filterModel).Items;
 
-            foreach( var action in flow.FlowAction )
+            foreach ( var action in flow.FlowAction )
             {
                 foreach (var lead in leads)
                 {
