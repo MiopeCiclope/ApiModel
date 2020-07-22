@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using KivalitaAPI.Enum;
 using KivalitaAPI.Interfaces;
 using Newtonsoft.Json;
 using Sieve.Attributes;
@@ -24,6 +25,9 @@ namespace KivalitaAPI.Models {
 
         [Sieve(CanFilter = true, CanSort = true)]
 		public string Email { get; set; }
+
+		[Sieve(CanFilter = true, CanSort = true)]
+		public FilterTypeEnum type { get; set; }
 
 		[ForeignKey ("User")]
         [Sieve(CanFilter = true, CanSort = true)]

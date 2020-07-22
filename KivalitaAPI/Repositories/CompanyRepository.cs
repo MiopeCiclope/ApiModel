@@ -60,12 +60,21 @@ namespace KivalitaAPI.Repositories
 
         public override QueryResult<Company> GetAll_v2(SieveModel filterQuery)
         {
+            int page = filterQuery?.Page ?? 1;
+            int pageSize = filterQuery?.PageSize ?? 10;
+
+            filterQuery.Page = 1;
+            filterQuery.PageSize = int.MaxValue;
+
             var result = context.Set<Company>()
                                 .Include(c => c.User)
                                 .AsNoTracking();
-            var total = result.Count();
 
             result = this.filterProcessor.Apply(filterQuery, result);
+
+            var total = result.Count();
+            var skip = (page - 1) * pageSize;
+            var take = pageSize;
 
             return new QueryResult<Company>
             {
