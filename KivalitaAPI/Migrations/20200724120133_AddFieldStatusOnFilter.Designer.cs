@@ -4,14 +4,16 @@ using KivalitaAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace KivalitaAPI.Migrations
 {
     [DbContext(typeof(KivalitaApiContext))]
-    partial class KivalitaApiContextModelSnapshot : ModelSnapshot
+    [Migration("20200724120133_AddFieldStatusOnFilter")]
+    partial class AddFieldStatusOnFilter
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -312,9 +314,6 @@ namespace KivalitaAPI.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Responsable")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.Property<int>("TableId")
@@ -692,9 +691,6 @@ namespace KivalitaAPI.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("Owner")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -713,8 +709,6 @@ namespace KivalitaAPI.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("FilterId");
-
-                    b.HasIndex("Owner");
 
                     b.ToTable("Flow");
                 });
@@ -1069,9 +1063,6 @@ namespace KivalitaAPI.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("Owner")
-                        .HasColumnType("int");
-
                     b.Property<string>("Subject")
                         .HasColumnType("nvarchar(max)");
 
@@ -1087,8 +1078,6 @@ namespace KivalitaAPI.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("Owner");
 
                     b.ToTable("Template");
                 });
@@ -1230,10 +1219,6 @@ namespace KivalitaAPI.Migrations
                         .HasForeignKey("FilterId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("KivalitaAPI.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("Owner");
                 });
 
             modelBuilder.Entity("KivalitaAPI.Models.FlowAction", b =>
@@ -1323,10 +1308,6 @@ namespace KivalitaAPI.Migrations
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("KivalitaAPI.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("Owner");
                 });
 
             modelBuilder.Entity("KivalitaAPI.Models.Token", b =>

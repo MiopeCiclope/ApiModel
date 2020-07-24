@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using KivalitaAPI.Enum;
 using KivalitaAPI.Interfaces;
 using Microsoft.Linq.Translations;
 using Newtonsoft.Json;
@@ -32,6 +33,9 @@ namespace KivalitaAPI.Models {
 
 		[Sieve(CanFilter = true, CanSort = true)]
 		public string LinkedInPublic { get; set; }
+
+		[Sieve(CanFilter = true, CanSort = true)]
+		public LeadStatusEnum Status { get; set; }
 
 		[ForeignKey("Company")]
         [Sieve(CanFilter = true, CanSort = true)]

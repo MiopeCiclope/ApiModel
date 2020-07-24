@@ -4,6 +4,7 @@ using System.Linq;
 using KivalitaAPI.Common;
 using KivalitaAPI.Data;
 using KivalitaAPI.DTOs;
+using KivalitaAPI.Enum;
 using KivalitaAPI.Models;
 using KivalitaAPI.Repositories;
 using Sieve.Models;
@@ -103,6 +104,8 @@ namespace KivalitaAPI.Services {
 					Position = lead.Position,
 					LinkedIn = lead.LinkedIn,
 					LinkedInPublic = lead.LinkedInPublic,
+					Status = LeadStatusEnum.ColdLead,
+
 					CreatedAt = lead.CreatedAt,
 					CreatedBy = lead.CreatedBy,
 					Company = company

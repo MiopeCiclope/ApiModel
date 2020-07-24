@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using KivalitaAPI.Data;
 using KivalitaAPI.DTOs;
+using KivalitaAPI.Enum;
 using KivalitaAPI.Interfaces;
 using KivalitaAPI.Models;
 using KivalitaAPI.Repositories;
@@ -53,6 +54,10 @@ namespace KivalitaAPI.Services
             {
                 foreach (var lead in leads)
                 {
+
+                    lead.Status = LeadStatusEnum.Flow;
+                    _leadsRepository.Update(lead);
+
                     var taskPayload = new FlowTask
                     {
                         Status = "pending",
