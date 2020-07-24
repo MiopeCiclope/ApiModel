@@ -133,6 +133,36 @@ namespace KivalitaAPI.Services
             }
         }
 
+        public bool DidReply(GraphServiceClient client, string leadMail)
+        {
+            try
+            {
+                var leadDidAnswor = client.Me
+                    .MailFolders
+                    .Inbox
+                    .Messages
+                    .Request()
+                    .Filter($"receivedDateTime ge 1900-01-01T00:00:00Z and (from/emailAddress/address) eq '{leadMail}'")
+                    .OrderBy($"ReceivedDateTime desc")
+                    .Select("internetMessageHeaders")
+                    .GetAsync()
+                    .Result
+                    .ToList();
+
+                var hasReplyEmail = leadDidAnswor?
+                                    .Where(mail => mail.InternetMessageHeaders
+                                                    .Where(header => header.Name == "In-Reply-To")
+                                                    .Any()
+                                                    )?.Any() ?? false;
+                return hasReplyEmail;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message);
+                return false;
+            }
+        }
+
         public override MicrosoftToken Delete(int userId, int responsableId)
         {
             var tokenUser = base.GetAll().Where(token => token.UserId == userId).First();

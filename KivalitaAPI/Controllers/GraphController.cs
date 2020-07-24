@@ -117,6 +117,7 @@ namespace KivalitaAPI.Controllers
                 };
             }
         }
+
         [ApiExplorerSettings(IgnoreApi = true)]
         public virtual int GetAuditTrailUser()
         {

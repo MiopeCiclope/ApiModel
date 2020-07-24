@@ -103,7 +103,7 @@ public class SendMailJob : IJob
             if (template == null) return null;
 
             return leadList
-                    .Where(lead => this.graphService.ShoulSendMail(this.client, lead.Email, userId))
+                    .Where(lead => !this.graphService.DidReply(this.client, lead.Email))
                     .Select(lead => BuildEmail(lead, template, flowTask.Id)).ToList();
         }
         catch (Exception e)
