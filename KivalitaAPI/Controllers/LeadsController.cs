@@ -376,6 +376,8 @@ namespace KivalitaAPI.Controllers
             logger.LogInformation($"{this.GetType().Name} - GetAll_v2");
             try
             {
+                if (isColaborador()) filterQuery.Filters = $"{filterQuery.Filters},Owner=={GetAuditTrailUser()}";
+
                 var dataList = service.GetAll_v2(filterQuery);
 
                 return new HttpResponse<List<Leads>>
@@ -470,6 +472,13 @@ namespace KivalitaAPI.Controllers
                     ErrorMessage = "Erro ao realizar a requisição"
                 };
             }
+        }
+
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public virtual bool isColaborador()
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            return identity.FindFirst("Role").Value == "Colaborador";
         }
     }
 }

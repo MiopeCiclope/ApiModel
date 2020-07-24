@@ -6,6 +6,7 @@ using System.Linq;
 using System.Collections.Generic;
 using KivalitaAPI.Common;
 using Sieve.Models;
+using Microsoft.Linq.Translations;
 
 namespace KivalitaAPI.Repositories
 {
@@ -30,7 +31,8 @@ namespace KivalitaAPI.Repositories
                 .Include(f => f.FlowAction)
                 .AsNoTracking();
             var total = result.Count();
-            result = this.filterProcessor.Apply(filterQuery, result);
+
+            result = this.filterProcessor.Apply(filterQuery, result).WithTranslations();
 
             return new QueryResult<FlowTask>
             {

@@ -1,4 +1,5 @@
 ﻿using KivalitaAPI.Interfaces;
+using Microsoft.Linq.Translations;
 using Sieve.Attributes;
 using System;
 using System.Collections.Generic;
@@ -40,5 +41,14 @@ namespace KivalitaAPI.Models
         [JsonIgnore]
         [NotMapped]
         public bool shouldUpdateAllSectors { get; set; }
+
+        [JsonIgnore]
+        [Sieve(CanFilter = true, CanSort = true)]
+        public int? Owner
+        {
+            get { return ownerExpression.Evaluate(this); }
+        }
+        private static readonly CompiledExpression<Company, int?> ownerExpression
+                = DefaultTranslationOf<Company>.Property(company => company.Owner).Is(company => company.UserId != null ? company.UserId : 0);
     }
 }

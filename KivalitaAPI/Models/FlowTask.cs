@@ -1,4 +1,5 @@
 ﻿using KivalitaAPI.Interfaces;
+using Microsoft.Linq.Translations;
 using Sieve.Attributes;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -25,6 +26,13 @@ namespace KivalitaAPI.Models
 		public FlowAction FlowAction { get; set; }
 
 		[JsonIgnore]
+		[Sieve(CanFilter = true, CanSort = true)]
+		public int? Owner
+		{
+			get { return ownerExpression.Evaluate(this); }
+		}
+
+		[JsonIgnore]
 		public int CreatedBy { get; set; }
 		[JsonIgnore]
 		public int UpdatedBy { get; set; }
@@ -32,5 +40,8 @@ namespace KivalitaAPI.Models
 		public DateTime CreatedAt { get; set; }
 		[JsonIgnore]
 		public DateTime UpdatedAt { get; set; }
+
+		private static readonly CompiledExpression<FlowTask, int?> ownerExpression
+				= DefaultTranslationOf<FlowTask>.Property(task => task.Owner).Is(task => task.Leads.Company.UserId != null ? task.Leads.Company.UserId : 0);
 	}
 }

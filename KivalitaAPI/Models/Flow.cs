@@ -1,4 +1,5 @@
 ﻿using KivalitaAPI.Interfaces;
+using Microsoft.Linq.Translations;
 using Sieve.Attributes;
 using System;
 using System.Collections.Generic;
@@ -32,9 +33,11 @@ namespace KivalitaAPI.Models
 		[ForeignKey("Filter")]
 		public int FilterId { get; set; }
 		public Filter Filter { get; set; }
-
+		[ForeignKey("User")]
+		[Sieve(CanFilter = true, CanSort = true)]
+		public int? Owner { get; set; }
+		public User User { get; set; }
 		public List<FlowAction> FlowAction { get; set; }
-
 		[JsonIgnore]
 		public int CreatedBy { get; set; }
 		[JsonIgnore]

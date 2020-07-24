@@ -27,7 +27,10 @@ namespace KivalitaAPI.Models
         [ForeignKey("Category")]
         public int CategoryId { get; set; }
         public Category Category { get; set; }
-
+        [ForeignKey("User")]
+        [Sieve(CanFilter = true, CanSort = true)]
+        public int? Owner { get; set; }
+        public User User { get; set; }
         [Sieve(CanFilter = true, CanSort = true)]
         public DateTime CreatedAt { get; set; }
 

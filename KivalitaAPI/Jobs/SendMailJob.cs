@@ -137,7 +137,7 @@ public class SendMailJob : IJob
                     {
                         EmailAddress = new EmailAddress
                         {
-                            Address = "douglas.bosco@kivalita.com.br"
+                            Address = "romulo.carvalho@kivalita.com.br"
                         }
                     } 
                 }

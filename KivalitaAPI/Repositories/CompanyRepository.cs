@@ -5,6 +5,7 @@ using KivalitaAPI.Common;
 using KivalitaAPI.Interfaces;
 using KivalitaAPI.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Linq.Translations;
 using Sieve.Models;
 using Sieve.Services;
 
@@ -70,7 +71,7 @@ namespace KivalitaAPI.Repositories
                                 .Include(c => c.User)
                                 .AsNoTracking();
 
-            result = this.filterProcessor.Apply(filterQuery, result);
+            result = this.filterProcessor.Apply(filterQuery, result).WithTranslations();
 
             var total = result.Count();
             var skip = (page - 1) * pageSize;

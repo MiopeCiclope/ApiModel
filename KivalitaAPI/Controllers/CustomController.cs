@@ -8,6 +8,7 @@ using KivalitaAPI.Interfaces;
 using System;
 using System.Security.Claims;
 using Sieve.Models;
+using System.Linq;
 
 namespace KivalitaAPI.Controllers
 {
@@ -19,7 +20,7 @@ namespace KivalitaAPI.Controllers
     {
         public readonly TService service;
         public readonly ILogger logger;
-
+        private readonly string[] hasOwnerProperty = { "Company", "Flow", "Template", "FlowTask" };
 
         public CustomController(TService _service, ILogger _logger)
         {
@@ -36,6 +37,26 @@ namespace KivalitaAPI.Controllers
                 return int.Parse(identity.FindFirst("Id").Value);
             else
                 return 0;
+        }
+
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public virtual bool isColaborador()
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            return identity.FindFirst("Role").Value == "Colaborador";
+        }
+
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public virtual bool isMarketing()
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            return identity.FindFirst("Role").Value == "Marketing";
+        }
+        
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public virtual bool hasOwner()
+        {
+            return this.hasOwnerProperty.Contains(typeof(TEntity).Name);
         }
 
         [HttpGet]
@@ -211,6 +232,9 @@ namespace KivalitaAPI.Controllers
             logger.LogInformation($"{this.GetType().Name} - GetAll_v2");
             try
             {
+                if(hasOwner() && isColaborador()) filterQuery.Filters = $"{filterQuery.Filters},Owner=={GetAuditTrailUser()}";
+                if(hasOwner() && isMarketing() && typeof(TEntity).Name != "Company") filterQuery.Filters = $"{filterQuery.Filters},Owner=={GetAuditTrailUser()}";
+
                 var dataList = service.GetAll_v2(filterQuery);
 
                 return new HttpResponse<List<TEntity>>
