@@ -29,6 +29,7 @@ namespace KivalitaAPI.Controllers
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
         public virtual int GetAuditTrailUser()
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
@@ -40,6 +41,7 @@ namespace KivalitaAPI.Controllers
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
         public virtual bool isColaborador()
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
@@ -47,6 +49,7 @@ namespace KivalitaAPI.Controllers
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
         public virtual bool isMarketing()
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
@@ -54,6 +57,7 @@ namespace KivalitaAPI.Controllers
         }
         
         [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
         public virtual bool hasOwner()
         {
             return this.hasOwnerProperty.Contains(typeof(TEntity).Name);

@@ -45,7 +45,10 @@ namespace KivalitaAPI.Repositories
         {
             return context.Set<FlowTask>()
                 .Where(f => f.Id == id)
+                .Include(f => f.TaskNote)
+                .Include(f => f.Leads)
                 .Include(f => f.FlowAction)
+                    .ThenInclude(fa => fa.Flow)
                 .AsNoTracking()
                 .SingleOrDefault();
         }

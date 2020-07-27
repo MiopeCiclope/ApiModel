@@ -6,7 +6,7 @@ using KivalitaAPI.Repositories;
 namespace KivalitaAPI.Services
 {
 
-    public class TemplateService: Service<Template, KivalitaApiContext, TemplateRepository>
+    public class TemplateService : Service<Template, KivalitaApiContext, TemplateRepository>
     {
         CategoryRepository _categoryRepository;
 
@@ -14,7 +14,8 @@ namespace KivalitaAPI.Services
             KivalitaApiContext context,
             TemplateRepository baseRepository,
             CategoryRepository categoryRepository
-        ) : base(context, baseRepository) {
+        ) : base(context, baseRepository)
+        {
             _categoryRepository = categoryRepository;
         }
 

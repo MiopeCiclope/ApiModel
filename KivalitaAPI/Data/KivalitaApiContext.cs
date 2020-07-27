@@ -58,6 +58,9 @@ namespace KivalitaAPI.Data
         public DbSet<FlowTask> FlowTask { get; set; }
         public DbSet<FlowTaskHistory> FlowTaskHistory { get; set; }
 
+        public DbSet<TaskNote> TaskNote { get; set; }
+        public DbSet<TaskNoteHistory> TaskNoteHistory { get; set; }
+
         public DbSet<MailTrack> MailTrack { get; set; }
         public DbSet<MailTrackHistory> MailTrackHistory { get; set; }
         public DbSet<TaskDTO> TaskDTO { get; set; }
@@ -116,6 +119,11 @@ namespace KivalitaAPI.Data
             modelBuilder.Entity<FlowTask>()
                 .HasOne(f => f.FlowAction)
                 .WithMany()
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<TaskNote>()
+                .HasOne(f => f.FlowTask)
+                .WithMany(ft => ft.TaskNote)
                 .OnDelete(DeleteBehavior.Cascade);
         }
 

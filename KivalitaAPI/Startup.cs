@@ -146,6 +146,9 @@ namespace KivalitaAPI
             services.AddScoped<FlowTaskRepository>();
             services.AddScoped<FlowTaskService>();
 
+            services.AddScoped<TaskNoteRepository>();
+            services.AddScoped<TaskNoteService>();
+
             services.AddScoped<FlowActionRepository>();
             services.AddScoped<FlowRepository>();
             services.AddScoped<FlowService>();
@@ -225,6 +228,11 @@ namespace KivalitaAPI
                             .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Id))
                             .ForMember(dest => dest.Id, opt => opt.Ignore());
                 cfg.CreateMap<FlowTaskHistory, FlowTask>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TableId));
+
+                cfg.CreateMap<TaskNote, TaskNoteHistory>()
+                            .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Id))
+                            .ForMember(dest => dest.Id, opt => opt.Ignore());
+                cfg.CreateMap<TaskNoteHistory, TaskNote>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TableId));
 
                 cfg.CreateMap<MailTrack, MailTrackHistory>()
                             .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Id))
