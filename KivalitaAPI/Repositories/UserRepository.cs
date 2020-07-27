@@ -99,7 +99,8 @@ namespace KivalitaAPI.Repositories
                                                FROM   leads
                                                WHERE  Status = {(int) LeadStatusEnum.Flow}) L 
                                            ON L.id = FT.leadid 
-                            WHERE  ft.status = 'finished'";
+                            WHERE  ft.status = 'finished'
+                                    and f.owner in (select UseriD FROM MicrosoftToken WHERE AccessToken IS NOT NULL)";
 
             return context.Set<TaskDTO>().FromSqlRaw(query).ToList();
         }

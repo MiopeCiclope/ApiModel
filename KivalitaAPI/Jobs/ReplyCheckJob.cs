@@ -47,26 +47,30 @@ public class ReplyCheckJob : IJob
             var leadRepository = scope.ServiceProvider.GetService<LeadsRepository>();
 
             var taskData = userRepository.GetTaskData();
-            var usersWithTask = taskData.Select(t => t.UserId).Distinct();
 
-            var LeadsToUpdateStatus = new List<int>();
-            foreach (var user in usersWithTask)
+            if(taskData.Any())
             {
-                var client = service.GetTokenClient(user);
-                var emailToCheck = taskData.Where(t => t.UserId == user);
+                var usersWithTask = taskData.Select(t => t.UserId).Distinct();
 
-                foreach (var task in emailToCheck)
+                var LeadsToUpdateStatus = new List<int>();
+                foreach (var user in usersWithTask)
                 {
-                    var hasReply = service.DidReply(client, task.Email);
-                    if (hasReply) LeadsToUpdateStatus.Add(task.LeadId);
+                    var client = service.GetTokenClient(user);
+                    var emailToCheck = taskData.Where(t => t.UserId == user);
 
-                    _logger.LogInformation($"UserId: {user} - {task.Email}: DidReply {hasReply}");
+                    foreach (var task in emailToCheck)
+                    {
+                        var hasReply = service.DidReply(client, task.Email);
+                        if (hasReply) LeadsToUpdateStatus.Add(task.LeadId);
+
+                        _logger.LogInformation($"UserId: {user} - {task.Email}: DidReply {hasReply}");
+                    }
                 }
-            }
 
-            if (LeadsToUpdateStatus.Any())
-            {
-                leadRepository.UpdateStatusList(LeadsToUpdateStatus);
+                if (LeadsToUpdateStatus.Any())
+                {
+                    leadRepository.UpdateStatusList(LeadsToUpdateStatus);
+                }
             }
         }
         finally
