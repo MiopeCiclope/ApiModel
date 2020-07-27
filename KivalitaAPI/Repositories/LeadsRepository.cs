@@ -1,5 +1,6 @@
 using KivalitaAPI.Common;
 using KivalitaAPI.DTOs;
+using KivalitaAPI.Enum;
 using KivalitaAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Linq.Translations;
@@ -176,6 +177,12 @@ namespace KivalitaAPI.Repositories
         {
             leads.ForEach(l => l.Deleted = true);
             return base.UpdateRange(leads);
+        }
+
+        public void UpdateStatusList(List<int> Ids)
+        {
+            var query = $@"Update Leads set Status = {(int) LeadStatusEnum.Paused} where id in ({String.Join(',', Ids)})";
+            context.Database.ExecuteSqlCommand(query);
         }
     }
 }

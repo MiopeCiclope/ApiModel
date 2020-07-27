@@ -5,6 +5,8 @@ using System.Linq;
 using System.Collections.Generic;
 using System;
 using Sieve.Services;
+using KivalitaAPI.DTOs;
+using KivalitaAPI.Enum;
 
 namespace KivalitaAPI.Repositories
 {
@@ -74,6 +76,32 @@ namespace KivalitaAPI.Repositories
             user.Password = "";
             base.ReverseUpdateState(user);
             return user;
+        }
+
+        public List<TaskDTO> GetTaskData()
+        {
+            var query = $@"SELECT DISTINCT f.owner as UserId, 
+                                            ft.leadid as LeadId, 
+                                            L.email as Email, 
+                                            ft.id as TaskId
+                            FROM   flowtask ft 
+                                   INNER JOIN(SELECT id, 
+                                                     flowid 
+                                              FROM   flowaction 
+                                              WHERE  type = 'email') fa 
+                                           ON fa.id = ft.flowactionid 
+                                   INNER JOIN(SELECT id, 
+                                                     owner 
+                                              FROM   flow) f 
+                                           ON f.id = fa.flowid 
+                                   INNER JOIN (SELECT id, 
+                                                      email 
+                                               FROM   leads
+                                               WHERE  Status = {(int) LeadStatusEnum.Flow}) L 
+                                           ON L.id = FT.leadid 
+                            WHERE  ft.status = 'finished'";
+
+            return context.Set<TaskDTO>().FromSqlRaw(query).ToList();
         }
     }
 }

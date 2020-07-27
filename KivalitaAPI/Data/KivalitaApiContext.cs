@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using KivalitaAPI.AuditModels;
 using KivalitaAPI.Common;
+using KivalitaAPI.DTOs;
 using KivalitaAPI.Interfaces;
 using KivalitaAPI.Models;
 using Microsoft.EntityFrameworkCore;
@@ -59,6 +60,7 @@ namespace KivalitaAPI.Data
 
         public DbSet<MailTrack> MailTrack { get; set; }
         public DbSet<MailTrackHistory> MailTrackHistory { get; set; }
+        public DbSet<TaskDTO> TaskDTO { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

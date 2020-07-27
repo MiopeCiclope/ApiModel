@@ -79,7 +79,9 @@ namespace KivalitaAPI.Repositories
 
             return new QueryResult<Company>
             {
-                Items = result.ToList(),
+                Items = result.Skip(skip)
+                                .Take(take)
+                                .ToList(),
                 TotalItems = total,
             };
         }
