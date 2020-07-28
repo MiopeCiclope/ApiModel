@@ -23,15 +23,14 @@ namespace KivalitaAPI.Services
 
         public override TaskNote Add(TaskNote entity)
         {
-            var existingTask = _flowTaskRepository.context.Set<FlowTask>()
-                .Where(f => f.Id == entity.FlowTaskId)
-                .AsNoTracking()
+            var existingTask = _flowTaskRepository
+                .GetBy(f => f.Id == entity.FlowTaskId)
                 .SingleOrDefault();
 
             if (existingTask == null)
                 throw new Exception("Tarefa não encontrada");
 
-            entity.FlowTask = existingTask;
+            entity.FlowTaskId = existingTask.Id;
 
             return base.Add(entity);
         }

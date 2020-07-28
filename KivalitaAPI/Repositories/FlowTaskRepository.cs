@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using KivalitaAPI.Common;
 using Sieve.Models;
 using Microsoft.Linq.Translations;
+using System;
 
 namespace KivalitaAPI.Repositories
 {
@@ -18,7 +19,9 @@ namespace KivalitaAPI.Repositories
         {
             return context.Set<FlowTask>()
                 .Include(f => f.Leads)
+                    .ThenInclude(l => l.Company)
                 .Include(f => f.FlowAction)
+                .WithTranslations()
                 .AsNoTracking()
                 .ToList();
         }
@@ -47,8 +50,10 @@ namespace KivalitaAPI.Repositories
                 .Where(f => f.Id == id)
                 .Include(f => f.TaskNote)
                 .Include(f => f.Leads)
+                    .ThenInclude(l => l.Company)
                 .Include(f => f.FlowAction)
                     .ThenInclude(fa => fa.Flow)
+                .WithTranslations()
                 .AsNoTracking()
                 .SingleOrDefault();
         }
@@ -63,6 +68,20 @@ namespace KivalitaAPI.Repositories
                 )
                 .Include(f => f.FlowAction)
                 .FirstOrDefault();
+        }
+
+        public override List<FlowTask> GetBy(Func<FlowTask, bool> condition)
+        {
+            return context.Set<FlowTask>()
+                            .Include(f => f.TaskNote)
+                            .Include(f => f.Leads)
+                                .ThenInclude(l => l.Company)
+                            .Include(f => f.FlowAction)
+                                .ThenInclude(fa => fa.Flow)
+                            .WithTranslations()
+                            .AsNoTracking()
+                            .Where(condition)
+                            .ToList();
         }
     }
 }

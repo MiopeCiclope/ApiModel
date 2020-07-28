@@ -29,7 +29,12 @@ namespace KivalitaAPI.Models
 		public FlowAction FlowAction { get; set; }
 
 		public List<TaskNote> TaskNote { get; set; }
-
+		[JsonIgnore]
+		[Sieve(CanFilter = true, CanSort = true)]
+		public int? Owner
+		{
+			get { return ownerExpression.Evaluate(this); }
+		}
 		[JsonIgnore]
 		public int CreatedBy { get; set; }
 		[JsonIgnore]
@@ -39,5 +44,7 @@ namespace KivalitaAPI.Models
 		[JsonIgnore]
 		public DateTime UpdatedAt { get; set; }
 
+		private static readonly CompiledExpression<FlowTask, int?> ownerExpression
+				= DefaultTranslationOf<FlowTask>.Property(task => task.Owner).Is(task => task.Leads.Company.UserId != null ? task.Leads.Company.UserId : 0);
 	}
 }
