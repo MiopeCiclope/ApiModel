@@ -2,6 +2,7 @@
 using Microsoft.Linq.Translations;
 using Sieve.Attributes;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
@@ -17,20 +18,17 @@ namespace KivalitaAPI.Models
 		[Sieve(CanFilter = true, CanSort = true)]
 		public DateTime? ScheduledTo { get; set; }
 
+		[Sieve(CanFilter = true, CanSort = true)]
 		[ForeignKey("Leads")]
 		public int LeadId { get; set; }
 		public Leads Leads { get; set; }
 
+		[Sieve(CanFilter = true, CanSort = true)]
 		[ForeignKey("FlowAction")]
 		public int FlowActionId { get; set; }
 		public FlowAction FlowAction { get; set; }
 
-		[JsonIgnore]
-		[Sieve(CanFilter = true, CanSort = true)]
-		public int? Owner
-		{
-			get { return ownerExpression.Evaluate(this); }
-		}
+		public List<TaskNote> TaskNote { get; set; }
 
 		[JsonIgnore]
 		public int CreatedBy { get; set; }
@@ -41,7 +39,5 @@ namespace KivalitaAPI.Models
 		[JsonIgnore]
 		public DateTime UpdatedAt { get; set; }
 
-		private static readonly CompiledExpression<FlowTask, int?> ownerExpression
-				= DefaultTranslationOf<FlowTask>.Property(task => task.Owner).Is(task => task.Leads.Company.UserId != null ? task.Leads.Company.UserId : 0);
 	}
 }

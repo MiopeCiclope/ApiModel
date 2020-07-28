@@ -57,6 +57,9 @@ namespace KivalitaAPI.Common
                 case FlowTask flowTask:
                     var flowTaskAudit = _mapper.Map<FlowTaskHistory>(flowTask);
                     return addAuditComplement(flowTaskAudit, action, responsable);
+                case TaskNote taskNote:
+                    var taskNoteAudit = _mapper.Map<TaskNoteHistory>(taskNote);
+                    return addAuditComplement(taskNoteAudit, action, responsable);
                 default:
                     return null;
             }
