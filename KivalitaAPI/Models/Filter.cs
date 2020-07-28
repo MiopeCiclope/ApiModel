@@ -32,6 +32,9 @@ namespace KivalitaAPI.Models {
 		[Sieve(CanFilter = true, CanSort = true)]
 		public LeadStatusEnum? Status { get; set; }
 
+		[Sieve(CanFilter = true, CanSort = true)]
+		public int Owner { get; set; }
+
 		[ForeignKey ("User")]
         [Sieve(CanFilter = true, CanSort = true)]
 		public int UserId { get; set; }
@@ -59,6 +62,7 @@ namespace KivalitaAPI.Models {
 			if (this.Company != null) filter += $"CompanyName == {this.Company}";
 			if (this.Sector != null) filter += $",CompanySector == {this.Sector}";
 			if (this.Position != null) filter += $",Position == {this.Position}";
+			if (this.UserId != null) filter += $",Owner == {this.UserId}";
 			if (this.Email != null && this.Email != "bothEmail") filter += $",WithEmail == {(this.Email == "withEmail")}";
 
 			return filter;
