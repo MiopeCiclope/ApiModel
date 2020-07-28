@@ -61,7 +61,7 @@ namespace KivalitaAPI.Services
 
         public bool isJobAutomatic(FlowAction flowAction)
         {
-            return flowAction.Type == "email";
+            return flowAction.Type == "email" && flowAction.Flow.isAutomatic;
         }
     }
 }
