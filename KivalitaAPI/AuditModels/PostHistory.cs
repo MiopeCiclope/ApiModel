@@ -12,6 +12,7 @@ namespace KivalitaAPI.AuditModels
         public bool Published { get; set; }
         public int ImageId { get; set; }
         public int AuthorId { get; set; }
+        public LanguageEnum Language { get; set; }
         public int TableId { get; set; }
         public ActionEnum Action { get; set; }
         public int Responsable { get; set; }
