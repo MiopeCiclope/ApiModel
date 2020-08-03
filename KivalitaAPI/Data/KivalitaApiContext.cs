@@ -65,6 +65,9 @@ namespace KivalitaAPI.Data
         public DbSet<MailTrackHistory> MailTrackHistory { get; set; }
         public DbSet<TaskDTO> TaskDTO { get; set; }
 
+        public DbSet<LogTask> LogTasks {get;set;}
+        public DbSet<LogTaskHistory> LogTasksHistory {get;set;}
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

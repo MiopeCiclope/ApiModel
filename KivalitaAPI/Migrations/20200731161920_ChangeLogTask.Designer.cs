@@ -4,14 +4,16 @@ using KivalitaAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace KivalitaAPI.Migrations
 {
     [DbContext(typeof(KivalitaApiContext))]
-    partial class KivalitaApiContextModelSnapshot : ModelSnapshot
+    [Migration("20200731161920_ChangeLogTask")]
+    partial class ChangeLogTask
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -293,9 +295,6 @@ namespace KivalitaAPI.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("FlowId")
-                        .HasColumnType("int");
-
                     b.Property<string>("LinkedIn")
                         .HasColumnType("nvarchar(max)");
 
@@ -380,9 +379,6 @@ namespace KivalitaAPI.Migrations
                     b.Property<int>("ImageId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Language")
-                        .HasColumnType("int");
-
                     b.Property<bool>("Published")
                         .HasColumnType("bit");
 
@@ -394,9 +390,6 @@ namespace KivalitaAPI.Migrations
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("isNews")
-                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -932,9 +925,6 @@ namespace KivalitaAPI.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("FlowId")
-                        .HasColumnType("int");
-
                     b.Property<string>("LinkedIn")
                         .HasColumnType("nvarchar(max)");
 
@@ -965,8 +955,6 @@ namespace KivalitaAPI.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CompanyId");
-
-                    b.HasIndex("FlowId");
 
                     b.ToTable("Leads");
                 });
@@ -1134,9 +1122,6 @@ namespace KivalitaAPI.Migrations
                     b.Property<int>("ImageId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Language")
-                        .HasColumnType("int");
-
                     b.Property<bool>("Published")
                         .HasColumnType("bit");
 
@@ -1148,9 +1133,6 @@ namespace KivalitaAPI.Migrations
 
                     b.Property<int>("UpdatedBy")
                         .HasColumnType("int");
-
-                    b.Property<bool>("isNews")
-                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -1458,11 +1440,6 @@ namespace KivalitaAPI.Migrations
                         .WithMany("Leads")
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("KivalitaAPI.Models.Flow", "Flow")
-                        .WithMany()
-                        .HasForeignKey("FlowId")
-                        .OnDelete(DeleteBehavior.SetNull);
                 });
 
             modelBuilder.Entity("KivalitaAPI.Models.LogTask", b =>

@@ -157,6 +157,9 @@ namespace KivalitaAPI
             services.AddScoped<MailTrackRepository>();
             services.AddScoped<MailTrackService>();
 
+            services.AddScoped<LogTaskRepository>();
+            services.AddScoped<LogTaskService>();
+
 
             var mappingConfig = new MapperConfiguration(cfg =>
             {
