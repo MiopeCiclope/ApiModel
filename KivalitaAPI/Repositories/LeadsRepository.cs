@@ -181,7 +181,7 @@ namespace KivalitaAPI.Repositories
 
         public void UpdateStatusList(List<int> Ids)
         {
-            var query = $@"Update Leads set Status = {(int) LeadStatusEnum.Paused} where id in ({String.Join(',', Ids)})";
+            var query = $@"Update Leads set Status = {(int) LeadStatusEnum.Pending} where id in ({String.Join(',', Ids)})";
             context.Database.ExecuteSqlCommand(query);
         }
     }

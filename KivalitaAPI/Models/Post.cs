@@ -1,4 +1,5 @@
-﻿using KivalitaAPI.Interfaces;
+﻿using KivalitaAPI.Enum;
+using KivalitaAPI.Interfaces;
 using Sieve.Attributes;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -39,6 +40,10 @@ namespace KivalitaAPI.Models
         public User Author { get; set; }
         [NotMapped]
         public string ImageData { get; set; }
+        [Sieve(CanFilter = true, CanSort = true)]
+        public LanguageEnum Language { get; set; }
+        [Sieve(CanFilter = true, CanSort = true)]
+        public bool isNews { get; set; }
         [JsonIgnore]
         public int CreatedBy { get; set; }
         [JsonIgnore]
