@@ -53,6 +53,8 @@ namespace KivalitaAPI.Models {
 		public int UpdatedBy { get; set; }
 
 		[JsonIgnore]
+		[Sieve(CanFilter = true, CanSort = true)]
+
 		public DateTime CreatedAt { get; set; }
 
 		[JsonIgnore]
