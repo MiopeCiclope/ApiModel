@@ -13,15 +13,11 @@ namespace KivalitaAPI.Services
     public class LogTaskService : Service<LogTask, KivalitaApiContext, LogTaskRepository>
     {
 
-        public readonly IJobScheduler _scheduler;
-
         public LogTaskService(
             KivalitaApiContext context,
-            LogTaskRepository baseRepository,
-            IJobScheduler scheduler
+            LogTaskRepository baseRepository
         ) : base(context, baseRepository)
         {
-            _scheduler = scheduler;
         }
     }
 }

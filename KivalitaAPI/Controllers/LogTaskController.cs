@@ -11,5 +11,6 @@ namespace KivalitaAPI.Controllers
     public class LogTaskController : CustomController<LogTask, LogTaskService>
     {
         public LogTaskController(LogTaskService service, ILogger<LogTaskController> logger) : base(service, logger) { }
+    
     }
 }
