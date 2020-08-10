@@ -5,8 +5,10 @@ using KivalitaAPI.Common;
 using KivalitaAPI.Data;
 using KivalitaAPI.DTOs;
 using KivalitaAPI.Enum;
+using KivalitaAPI.Interfaces;
 using KivalitaAPI.Models;
 using KivalitaAPI.Repositories;
+using Quartz;
 using Sieve.Models;
 
 namespace KivalitaAPI.Services {
@@ -14,9 +16,47 @@ namespace KivalitaAPI.Services {
 	public class LeadsService : Service<Leads, KivalitaApiContext, LeadsRepository> {
 
 		CompanyRepository companyRepository;
+		FlowRepository flowRepository;
+		FlowTaskRepository flowTaskRepository;
+		ScheduleTasksService scheduleTasksService;
+		public readonly IJobScheduler scheduler;
 
-		public LeadsService (KivalitaApiContext context, LeadsRepository baseRepository, CompanyRepository companyRepository) : base (context, baseRepository) {
+		public LeadsService (
+			KivalitaApiContext context,
+			LeadsRepository baseRepository,
+			CompanyRepository companyRepository,
+			FlowRepository flowRepository,
+			FlowTaskRepository flowTaskRepository,
+			ScheduleTasksService scheduleTasksService,
+			IJobScheduler scheduler
+		) : base (context, baseRepository) {
 			this.companyRepository = companyRepository;
+			this.flowRepository = flowRepository;
+			this.flowTaskRepository = flowTaskRepository;
+			this.scheduleTasksService = scheduleTasksService;
+			this.scheduler = scheduler;
+		}
+
+		public override Leads Update(Leads lead)
+		{
+			var oldLead = baseRepository.GetAsNoTracking(lead.Id);
+
+			if (lead.FlowId.HasValue && lead.FlowId != oldLead.FlowId)
+			{
+				var tasks = flowTaskRepository.GetPendingByLead(lead.Id);
+				foreach (var task in tasks)
+				{
+					var job = new JobKey($"TaskJob_{task.Id}", "DEFAULT");
+					scheduler.DeleteJob(job);
+				}
+
+				flowTaskRepository.DeleteRange(tasks);
+
+				var flow = flowRepository.Get((int)lead.FlowId);
+				scheduleTasksService.Execute(flow, new List<Leads> { lead });
+			}
+
+			return baseRepository.Update(lead);
 		}
 
 		public QueryResult<Leads> FetchAll(LeadQueryDTO leadQuery)

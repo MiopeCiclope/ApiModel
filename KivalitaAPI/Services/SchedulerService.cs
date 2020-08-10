@@ -121,4 +121,12 @@ public class SchedulerService : IJobScheduler
         }
         return scheludedJobs;
     }
+
+    public async Task DeleteJob(JobKey jobKey)
+    {
+        if (await Scheduler.CheckExists(jobKey))
+        {
+            await Scheduler.DeleteJob(jobKey);
+        }
+    }
 }

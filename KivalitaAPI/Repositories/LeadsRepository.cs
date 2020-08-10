@@ -21,8 +21,18 @@ namespace KivalitaAPI.Repositories
         public override Leads Get(int id)
         {
             return context.Set<Leads>()
-                .Where(t => t.Id == id)
-                .Include(t => t.Company)
+                .Where(l => l.Id == id)
+                .Include(l => l.Flow)
+                    .ThenInclude(f => f.User)
+                .Include(l => l.Company)
+                .SingleOrDefault();
+        }
+
+        public Leads GetAsNoTracking(int id)
+        {
+            return context.Set<Leads>()
+                .Where(l => l.Id == id)
+                .AsNoTracking()
                 .SingleOrDefault();
         }
 

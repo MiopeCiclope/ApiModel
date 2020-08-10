@@ -16,6 +16,7 @@ namespace KivalitaAPI.AuditModels
 		public string LinkedInPublic { get; set; }
 		public LeadStatusEnum Status { get; set; }
 		public int? CompanyId { get; set; }
+		public int? FlowId { get; set; }
 		public int TableId { get; set; }
         public ActionEnum Action { get; set; }
         public int Responsable { get; set; }

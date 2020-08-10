@@ -14,29 +14,23 @@ namespace KivalitaAPI.Services
     public class ScheduleTasksService
     {
         LeadsRepository _leadsRepository;
-        FilterRepository _filterRepository;
         FlowTaskRepository _flowTaskRepository;
         public readonly IJobScheduler _scheduler;
 
         public ScheduleTasksService (
             FlowTaskRepository flowTaskRepository,
-            FilterRepository filterRepository,
             LeadsRepository leadsRepository,
             IJobScheduler scheduler
         )
         { 
             _flowTaskRepository = flowTaskRepository;
-            _filterRepository = filterRepository;
             _leadsRepository = leadsRepository;
             _scheduler = scheduler;
         }
 
-        public void Execute(Flow flow)
+        public void Execute(Flow flow, List<Leads> leads)
         {
             CancellationToken cancellationToken = new CancellationToken();
-
-            var leads = GetLeadsByFilter(flow.FilterId);
-            leads = leads.Where(l => l.Status == LeadStatusEnum.ColdLead).ToList();
 
             var leadGroup = SplitLeadGroupByDay(leads, flow);
 
@@ -50,6 +44,7 @@ namespace KivalitaAPI.Services
                     {
 
                         lead.Status = LeadStatusEnum.Flow;
+                        lead.FlowId = flow.Id;
                         _leadsRepository.Update(lead);
 
                         var taskPayload = new FlowTask
@@ -90,15 +85,6 @@ namespace KivalitaAPI.Services
             return flow.actionForAllLeads
                 ? SplitList(leads, flow.leadGroupSize)
                 : SplitList(leads, 1);
-        }
-
-        private List<Leads> GetLeadsByFilter(int filterId)
-        {
-            var filter = _filterRepository.Get(filterId);
-            var filterModel = new SieveModel();
-            filterModel.Filters = filter.GetSieveFilter();
-
-            return _leadsRepository.GetAll_v2(filterModel).Items;
         }
 
         private List<List<T>> SplitList<T>(List<T> list, int number)

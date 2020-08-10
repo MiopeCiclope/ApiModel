@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Hosting;
+using Quartz;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -10,5 +11,6 @@ namespace KivalitaAPI.Interfaces
     {
         Task<DateTimeOffset> ScheduleJob(CancellationToken cancellationToken, JobScheduleDTO newJob);
         List<JobScheduleDTO> GetScheduledJobs();
+        Task DeleteJob(JobKey jobKey);
     }
 }

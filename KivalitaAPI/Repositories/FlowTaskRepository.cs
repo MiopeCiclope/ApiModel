@@ -70,6 +70,17 @@ namespace KivalitaAPI.Repositories
                 .FirstOrDefault();
         }
 
+        public List<FlowTask> GetPendingByLead(int leadId)
+        {
+            return context.Set<FlowTask>()
+                .Where(
+                    f => f.LeadId == leadId &&
+                    f.Status == "pending"
+                )
+                .AsNoTracking()
+                .ToList();
+        }
+
         public override List<FlowTask> GetBy(Func<FlowTask, bool> condition)
         {
             return context.Set<FlowTask>()

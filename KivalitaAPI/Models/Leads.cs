@@ -42,6 +42,11 @@ namespace KivalitaAPI.Models {
 		public int? CompanyId { get; set; }
 		public Company Company { get; set; }
 
+		[ForeignKey("Flow")]
+		[Sieve(CanFilter = true, CanSort = true)]
+		public int? FlowId { get; set; }
+		public Flow Flow { get; set; }
+
 		[Sieve(CanFilter = true, CanSort = true)]
 		public bool Deleted {get;set;}
 

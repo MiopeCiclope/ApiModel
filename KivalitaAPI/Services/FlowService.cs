@@ -1,36 +1,58 @@
 ﻿
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using KivalitaAPI.Data;
+using KivalitaAPI.Enum;
 using KivalitaAPI.Models;
 using KivalitaAPI.Repositories;
+using Sieve.Models;
 
 namespace KivalitaAPI.Services
 {
 
     public class FlowService : Service<Flow, KivalitaApiContext, FlowRepository>
     {
-
+        LeadsRepository leadsRepository;
         FlowActionRepository flowActionRepository;
+        FilterRepository filterRepository;
         ScheduleTasksService scheduleTasksService;
 
         public FlowService(
             KivalitaApiContext context,
             FlowRepository baseRepository,
+            LeadsRepository _leadsRepository,
             FlowActionRepository _flowActionRepository,
+            FilterRepository _filterRepository,
             ScheduleTasksService _scheduleTasksService
         ) : base(context, baseRepository) {
+            leadsRepository = _leadsRepository;
             flowActionRepository = _flowActionRepository;
+            filterRepository = _filterRepository;
             scheduleTasksService = _scheduleTasksService;
         }
 
         public override Flow Add(Flow flow)
         {
             var flowCreated = base.Add(flow);
-            scheduleTasksService.Execute(flowCreated);
+
+            var leads = GetLeadsByFilter(flow.FilterId);
+            leads = leads.Where(l => l.Status == LeadStatusEnum.ColdLead).ToList();
+
+            scheduleTasksService.Execute(flowCreated, leads);
 
             return flowCreated;
         }
+
+        private List<Leads> GetLeadsByFilter(int filterId)
+        {
+            var filter = filterRepository.Get(filterId);
+            var filterModel = new SieveModel();
+            filterModel.Filters = filter.GetSieveFilter();
+
+            return leadsRepository.GetAll_v2(filterModel).Items;
+        }
+
 
         public override Flow Update(Flow flow)
         {

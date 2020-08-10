@@ -83,6 +83,11 @@ namespace KivalitaAPI.Data
                 .WithMany(c => c.Leads)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Leads>()
+                .HasOne(l => l.Flow)
+                .WithMany()
+                .OnDelete(DeleteBehavior.SetNull);
+
             modelBuilder.Entity<Company>()
                 .HasOne(l => l.User)
                 .WithMany(c => c.Company)
