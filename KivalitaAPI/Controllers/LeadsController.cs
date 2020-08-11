@@ -49,7 +49,6 @@ namespace KivalitaAPI.Controllers
             else
                 return 0;
         }
-
         [HttpGet]
         [Authorize]
         public HttpResponse<List<Leads>> Get([FromQuery] LeadQueryDTO leadQuery)
@@ -244,6 +243,40 @@ namespace KivalitaAPI.Controllers
             {
                 logger.LogError(e.Message);
                 return new HttpResponse<string>
+                {
+                    IsStatusCodeSuccess = false,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    data = null,
+                    ErrorMessage = "Erro ao realizar a requisição"
+                };
+            }
+        }
+
+        [HttpPost]
+        [Authorize]
+        public HttpResponse<Leads> Post([FromBody] Leads lead)
+        {
+            logger.LogInformation($"{this.GetType().Name} - Post Lead");
+            try
+            {
+                var userAuditId = GetAuditTrailUser();
+                var utfNowTime = DateTime.UtcNow;
+
+                if (userAuditId == 0) throw new Exception("Token Sem Usuário válido.");
+
+                var newLead = this.service.Add(lead);
+
+                return new HttpResponse<Leads>
+                {
+                    IsStatusCodeSuccess = true,
+                    data = newLead,
+                    statusCode = HttpStatusCode.OK
+                };
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.Message);
+                return new HttpResponse<Leads>
                 {
                     IsStatusCodeSuccess = false,
                     statusCode = HttpStatusCode.InternalServerError,
