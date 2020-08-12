@@ -20,6 +20,7 @@ namespace KivalitaAPI.Services
                         , null as ImageData
                         , type
                         , thumbnaildata
+                        , url
                         , createdat
                         , CreatedBy
                         , UpdatedAt

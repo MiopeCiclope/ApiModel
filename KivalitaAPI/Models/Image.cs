@@ -22,6 +22,9 @@ namespace KivalitaAPI.Models
 
         [Sieve(CanFilter = true, CanSort = true)]
         public string Type { get; set; }
+
+        [Sieve(CanFilter = true, CanSort = true)]
+        public string Url { get; set; }
         [JsonIgnore]
         public int CreatedBy { get; set; }
         [JsonIgnore]
