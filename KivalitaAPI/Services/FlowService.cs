@@ -76,6 +76,30 @@ namespace KivalitaAPI.Services
 
             return base.Update(flow);
         }
+
+        public override Flow Delete(int id, int userId)
+        {
+            if (HasTask(id))
+            {
+                throw new Exception("Não é possível excluir o Fluxo pois existe terefas relacionada a ele!");
+            }
+
+            return baseRepository.Delete(id, userId);
+        }
+
+        public bool HasTemplate(int templateId)
+        {
+            var hasTemplate = flowActionRepository.GetBy(f => f.TemplateId == templateId);
+
+            return hasTemplate.FirstOrDefault() != null;
+        }
+
+        public bool HasTask(int flowId)
+        {
+            var hasTask = flowActionRepository.GetBy(f => f.FlowId == flowId);
+
+            return hasTask.FirstOrDefault() != null;
+        }
     }
 }
 

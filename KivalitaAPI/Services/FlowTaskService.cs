@@ -36,6 +36,17 @@ namespace KivalitaAPI.Services
             return baseRepository.Update(flowTask);
         }
 
+        public override FlowTask Delete(int id, int userId)
+        {
+            var flowTask = baseRepository.Get(id);
+
+            scheduleNextTask(flowTask);
+
+            baseRepository.Delete(id, userId);
+
+            return flowTask;
+        }
+
         public void scheduleNextTask(FlowTask currentTask)
         {
             var cancellationToken = new CancellationToken();

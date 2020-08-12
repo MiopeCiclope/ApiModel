@@ -29,7 +29,7 @@ namespace KivalitaAPI.Models
 		public FlowAction FlowAction { get; set; }
 
 		public List<TaskNote> TaskNote { get; set; }
-		[JsonIgnore]
+
 		[Sieve(CanFilter = true, CanSort = true)]
 		public int? Owner
 		{

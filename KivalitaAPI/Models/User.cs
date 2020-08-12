@@ -21,6 +21,9 @@ namespace KivalitaAPI.Models
         [Sieve(CanFilter = true, CanSort = true)]
         public string Role { get; set; }
 
+        [Sieve(CanFilter = true, CanSort = true)]
+        public bool Active { get; set; }
+
         public string Timezone { get; set; }
 
         [NotMapped]

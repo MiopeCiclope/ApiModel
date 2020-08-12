@@ -9,14 +9,17 @@ namespace KivalitaAPI.Services
     public class TemplateService : Service<Template, KivalitaApiContext, TemplateRepository>
     {
         CategoryRepository _categoryRepository;
+        FlowService flowService;
 
         public TemplateService(
             KivalitaApiContext context,
             TemplateRepository baseRepository,
-            CategoryRepository categoryRepository
+            CategoryRepository categoryRepository,
+            FlowService flowService
         ) : base(context, baseRepository)
         {
             _categoryRepository = categoryRepository;
+            this.flowService = flowService;
         }
 
         public override Template Add(Template entity)
@@ -28,6 +31,16 @@ namespace KivalitaAPI.Services
             entity.Category = existingCategory;
 
             return base.Add(entity);
+        }
+
+        public override Template Delete(int id, int userId)
+        {
+            if (flowService.HasTemplate(id))
+            {
+                throw new Exception("Não é possível excluir o Template pois ele está sendo usado!");
+            }
+
+            return baseRepository.Delete(id, userId);
         }
     }
 }

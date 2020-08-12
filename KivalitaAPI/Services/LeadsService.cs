@@ -224,5 +224,24 @@ namespace KivalitaAPI.Services {
 		{
 			return this.baseRepository.GetAll_v2(filterQuery);
 		}
+
+		public override Leads Delete(int id, int userId)
+		{
+			var lead = baseRepository.GetAsNoTracking(id);
+
+			if (lead.FlowId.HasValue)
+			{
+				throw new Exception("Não é possível excluir a Lead pois existe um fluxo relaciodado!");
+			}
+
+			return baseRepository.Delete(id, userId);
+		}
+
+		public bool HasCompany(int companyId)
+		{
+			var hasCompany = baseRepository.GetBy(l => l.CompanyId == companyId);
+
+			return hasCompany.FirstOrDefault() != null;
+		}
 	}
 }

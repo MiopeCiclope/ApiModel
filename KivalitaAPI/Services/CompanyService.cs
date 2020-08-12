@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using KivalitaAPI.Data;
 using KivalitaAPI.Models;
 using KivalitaAPI.Repositories;
@@ -8,7 +9,16 @@ namespace KivalitaAPI.Services
 
     public class CompanyService : Service<Company, KivalitaApiContext, CompanyRepository>
     {
-        public CompanyService(KivalitaApiContext context, CompanyRepository baseRepository) : base(context, baseRepository) {}
+        LeadsService leadsService;
+
+        public CompanyService(
+            KivalitaApiContext context,
+            CompanyRepository baseRepository,
+            LeadsService leadsService
+        ) : base(context, baseRepository)
+        {
+            this.leadsService = leadsService;
+        }
 
         public override Company Update(Company entity)
         {
@@ -22,9 +32,20 @@ namespace KivalitaAPI.Services
             }
             return base.Update(entity);
         }
+
         public List<Company> WithOutOwner()
         {
             return baseRepository.WithOutOwner();
+        }
+
+        public override Company Delete(int id, int userId)
+        {
+            if (leadsService.HasCompany(id))
+            {
+                throw new Exception("Não é possível excluir a empresa pois existe leads relacionadas!");
+            }
+
+            return baseRepository.Delete(id, userId);
         }
     }
 }

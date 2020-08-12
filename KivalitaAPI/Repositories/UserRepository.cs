@@ -16,7 +16,11 @@ namespace KivalitaAPI.Repositories
 
         public User GetByLoginData(User user)
         {
-            var userSearch = this.GetBy(storedUser => storedUser.Email == user.Email && storedUser.Password == user.Password);
+            var userSearch = this.GetBy(
+                storedUser => storedUser.Email == user.Email &&
+                storedUser.Password == user.Password &&
+                storedUser.Active == true
+            );
             var userLogged = userSearch.Any() ? userSearch.First() : null;
             return userLogged;
         }
