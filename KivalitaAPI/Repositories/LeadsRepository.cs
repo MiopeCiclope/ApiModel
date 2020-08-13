@@ -157,6 +157,7 @@ namespace KivalitaAPI.Repositories
             var result = context.Set<Leads>()
                                 .Include(l => l.Company)
                                 .ThenInclude(c => c.User)
+                                .WithTranslations()
                                 .Where(lead => lead.Deleted == false)
                                 .AsNoTracking();
 
