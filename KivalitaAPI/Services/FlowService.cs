@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using KivalitaAPI.Data;
+using KivalitaAPI.DTOs;
 using KivalitaAPI.Enum;
 using KivalitaAPI.Models;
 using KivalitaAPI.Repositories;
@@ -99,6 +100,17 @@ namespace KivalitaAPI.Services
             var hasTask = flowActionRepository.GetBy(f => f.FlowId == flowId);
 
             return hasTask.FirstOrDefault() != null;
+        }
+
+        public FlowReportDTO getReport(int flowId)
+        {
+            var amountOfLeads = leadsRepository.GetAmountLeadsInFlow(flowId);
+            return new FlowReportDTO
+            {
+                sentEmails = 0,
+                answeredEmails = 0,
+                amountOfLeads = amountOfLeads
+            };
         }
     }
 }

@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using KivalitaAPI.Interfaces;
-using System.Text.Json.Serialization;
 using Sieve.Attributes;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 
 namespace KivalitaAPI.Models
 {
     public class User : IEntity
     {
-        [JsonIgnore]
         [Sieve(CanFilter = true, CanSort = true)]
         public int Id { get; set; }
         [Sieve(CanFilter = true, CanSort=true)]

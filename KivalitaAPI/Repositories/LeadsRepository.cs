@@ -195,5 +195,12 @@ namespace KivalitaAPI.Repositories
             var query = $@"Update Leads set Status = {(int) LeadStatusEnum.Pending} where id in ({String.Join(',', Ids)})";
             context.Database.ExecuteSqlCommand(query);
         }
+
+        public int GetAmountLeadsInFlow(int flowid)
+        {
+            return context.Set<Leads>()
+                .Where(l => l.FlowId == flowid)
+                .Count();
+        }
     }
 }
