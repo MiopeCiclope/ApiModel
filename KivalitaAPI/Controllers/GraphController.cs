@@ -16,10 +16,22 @@ namespace KivalitaAPI.Controllers
     public class GraphController : ControllerBase
     {
         private readonly MicrosoftTokenService service;
+        private readonly UserService userService;
+        private readonly TemplateService templateService;
+        private readonly LeadsService leadService;
+
         private readonly ILogger<GraphController> logger;
 
-        public GraphController(MicrosoftTokenService tokenService, ILogger<GraphController> _logger) {
+        public GraphController(MicrosoftTokenService tokenService
+            , ILogger<GraphController> _logger
+            , UserService _userService
+            , TemplateService _templateService
+            , LeadsService _leadService
+        ) {
             service = tokenService;
+            userService = _userService;
+            templateService = _templateService;
+            leadService = _leadService;
             logger = _logger;
         }
 
@@ -127,6 +139,43 @@ namespace KivalitaAPI.Controllers
                 return int.Parse(identity.FindFirst("Id").Value);
             else
                 return 0;
+        }
+
+        [HttpPost("SendMail")]
+        [Authorize]
+        public virtual HttpResponse<bool> SendMail(FlowTask task)
+        {
+            logger.LogInformation($"{this.GetType().Name} - SendMail - {task.Id}");
+            try
+            {
+                var userId = this.GetAuditTrailUser();
+                var graphClient = service.GetTokenClient(userId);
+                var signature = userService.GetSignature(userId);
+                var template = templateService.Get((int)task.FlowAction.TemplateId);
+                var lead = leadService.Get(task.LeadId);
+
+                var mail = service.BuildEmail(lead, template, task.Id, signature);
+
+                var result = service.SendMail(graphClient, mail, userId);
+
+                return new HttpResponse<bool>
+                {
+                    IsStatusCodeSuccess = true,
+                    statusCode = HttpStatusCode.OK,
+                    data = result
+                };
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.Message);
+                return new HttpResponse<bool>
+                {
+                    IsStatusCodeSuccess = false,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    data = false,
+                    ErrorMessage = "Erro ao realizar a requisição"
+                };
+            }
         }
     }
 }

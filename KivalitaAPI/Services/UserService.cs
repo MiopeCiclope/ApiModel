@@ -49,28 +49,38 @@ namespace KivalitaAPI.Services
 
         public override User Update(User user)
         {
-            var oldUser = this.baseRepository.Get(user.Id);
-
-            var companyToUnlink = oldUser.Company.Where(company => !user.Company.Select(company => company.Id)?.Contains(company.Id) ?? true);
-            var companyToLink = user.Company.Where(company => !oldUser.Company?.Select(companyUnlink => companyUnlink.Id).Contains(company.Id) ?? true);
-
-            if(companyToUnlink.Any()) {
-                var companyList = companyToUnlink.ToList();
-                companyList.ForEach(company => company.UserId = null);
-                companyRepository.UpdateRange(companyList);
-            }
-
-            if (companyToLink.Any())
+            try
             {
-                var companyList = companyToLink.ToList();
-                companyList.ForEach(company => company.UserId = user.Id);
-                companyRepository.UpdateRange(companyList);
+
+                if(user.Company != null)
+                {
+                    var oldUser = this.baseRepository.Get(user.Id);
+                    var companyToUnlink = oldUser.Company.Where(company => !user.Company.Select(company => company.Id)?.Contains(company.Id) ?? true);
+                    var companyToLink = user.Company.Where(company => !oldUser.Company?.Select(companyUnlink => companyUnlink.Id).Contains(company.Id) ?? true);
+                    if(companyToUnlink.Any()) {
+                        var companyList = companyToUnlink.ToList();
+                        companyList.ForEach(company => company.UserId = null);
+                        companyRepository.UpdateRange(companyList);
+                    }
+
+                    if (companyToLink.Any())
+                    {
+                        var companyList = companyToLink.ToList();
+                        companyList.ForEach(company => company.UserId = user.Id);
+                        companyRepository.UpdateRange(companyList);
+                    }
+                }
+
+
+                if (!String.IsNullOrEmpty(user.Password)) 
+                    user.Password = Encrypt(user.Password);
+
+                return base.Update(user);
             }
-
-            if (!String.IsNullOrEmpty(user.Password)) 
-                user.Password = Encrypt(user.Password);
-
-            return base.Update(user);
+            catch(Exception e)
+            {
+                return null;
+            }
         }
 
         private string Encrypt(string str)
@@ -84,7 +94,10 @@ namespace KivalitaAPI.Services
             }
             return hash;
         }
-
+        public string GetSignature(int id)
+        {
+            return this.baseRepository.Get(id)?.Signature ?? "";
+        }
     }
 }
 
