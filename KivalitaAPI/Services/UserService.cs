@@ -37,7 +37,7 @@ namespace KivalitaAPI.Services
 
         public override User Add(User user)
         {
-            user.Password = Encrypt(user.Password);
+            user.Password = Encrypt("kivalita@2020");
             return base.Add(user);
         }
 

@@ -153,12 +153,6 @@ namespace KivalitaAPI.Repositories
 
         public new QueryResult<Leads> GetAll_v2(SieveModel filterQuery)
         {
-            int page = filterQuery?.Page ?? 1;
-            int pageSize = filterQuery?.PageSize ?? 10;
-
-            filterQuery.Page = 1;
-            filterQuery.PageSize = int.MaxValue;
-
             var result = context.Set<Leads>()
                                 .Include(l => l.Company)
                                 .ThenInclude(c => c.User)
@@ -166,17 +160,14 @@ namespace KivalitaAPI.Repositories
                                 .Where(lead => lead.Deleted == false)
                                 .AsNoTracking();
 
-            result = this.filterProcessor.Apply(filterQuery, result).WithTranslations();
-
+            result = this.filterProcessor.Apply(filterQuery, result, applyPagination: false).WithTranslations();
             var total = result.Count();
-            var skip = (page - 1) * pageSize;
-            var take = pageSize;
+
+            result = this.filterProcessor.Apply(filterQuery, result, applyFiltering: false, applySorting: false);
 
             return new QueryResult<Leads>
             {
-                Items = result.Skip(skip)
-                                .Take(take)
-                                .ToList(),
+                Items = result.ToList(),
                 TotalItems = total,
             };
         }

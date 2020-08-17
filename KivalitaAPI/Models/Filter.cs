@@ -25,7 +25,10 @@ namespace KivalitaAPI.Models {
 
         [Sieve(CanFilter = true, CanSort = true)]
 		public string Email { get; set; }
-			
+
+		[Sieve(CanFilter = true, CanSort = true)]
+		public string Date { get; set; }
+
 		[Sieve(CanFilter = true, CanSort = true)]
 		public FilterTypeEnum type { get; set; }
 
