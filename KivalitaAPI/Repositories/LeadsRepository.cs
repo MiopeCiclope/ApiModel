@@ -101,7 +101,12 @@ namespace KivalitaAPI.Repositories
 
         public override List<Leads> GetBy(Func<Leads, bool> condition)
         {
-            return base.GetBy(condition).ToList();
+           return context.Set<Leads>()
+                               .Include(l => l.Company)
+                               .ThenInclude(c => c.User)
+                               .WithTranslations()
+                               .Where(condition)
+                               .ToList();
         }
 
         private IQueryable<Leads> BuildQuery(IQueryable<Leads> queryable, LeadQueryDTO leadQuery)

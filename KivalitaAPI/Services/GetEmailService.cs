@@ -70,12 +70,9 @@ namespace KivalitaAPI.Services
 
             Console.WriteLine($"Email - {email}");
 
-            if (email != null)
-            {
-                lead.Email = email;
-                leadsRepository.Update(lead);
-            }
-
+            lead.Email = email;
+            lead.DidGuessEmail = true;
+            leadsRepository.Update(lead);
         }
 
         public List<string> GetDomainsFromCompany(Company company)

@@ -18,7 +18,9 @@ namespace KivalitaAPI.AuditModels
 		public int? CompanyId { get; set; }
 		public int? FlowId { get; set; }
 		public int TableId { get; set; }
-        public ActionEnum Action { get; set; }
+		public bool DidGuessEmail { get; set; }
+
+		public ActionEnum Action { get; set; }
         public int Responsable { get; set; }
         public DateTime Date { get; set; }
 		public bool Deleted { get; set; }

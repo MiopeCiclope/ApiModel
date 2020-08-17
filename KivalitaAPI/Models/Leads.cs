@@ -49,7 +49,8 @@ namespace KivalitaAPI.Models {
 
 		[Sieve(CanFilter = true, CanSort = true)]
 		public bool Deleted {get;set;}
-
+		[Sieve(CanFilter = true, CanSort = true)]
+		public bool DidGuessEmail { get; set; }
 		[JsonIgnore]
         [Sieve(CanFilter = true, CanSort = true)]
 		public int CreatedBy { get; set; }
