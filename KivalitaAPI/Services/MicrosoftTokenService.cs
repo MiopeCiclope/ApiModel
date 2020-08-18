@@ -12,6 +12,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Text;
+using System.Web;
 
 namespace KivalitaAPI.Services
 {
@@ -167,6 +169,62 @@ namespace KivalitaAPI.Services
         {
             var tokenUser = base.GetAll().Where(token => token.UserId == userId).First();
             return base.Delete(tokenUser.Id, responsableId);
+        }
+
+        public Message BuildEmail(Leads lead, Template template, int taskId, string signature)
+        {
+            try
+            {
+                return new Message
+                {
+                    Subject = this.ReplaceVariables(template.Subject, lead),
+                    Body = new ItemBody
+                    {
+                        ContentType = BodyType.Html,
+                        Content = $"{this.ReplaceVariables(template.Content, lead)}{GetTracker(lead, taskId)}{signature}"
+                    },
+                    ToRecipients = new List<Recipient>() {
+                    new Recipient
+                    {
+                        EmailAddress = new EmailAddress
+                        {
+                            //Address = $"{lead.Email}"
+                            Address = $"romulo.carvalho@kivalita.com.br"
+                        }
+                    }
+                }
+                };
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Erro ao criar e-mails");
+                _logger.LogError($"{e.Message}");
+                throw e;
+            }
+        }
+
+        private string ReplaceVariables(string text, Leads lead)
+        {
+            try
+            {
+                var templateTransformService = new TemplateTransformService();
+
+                return templateTransformService.TransformLead(text, lead);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Erro ao substituir variáveis");
+                _logger.LogError($"{e.Message}");
+                throw e;
+            }
+        }
+
+        private string GetTracker(Leads lead, int taskId)
+        {
+            var text = $"{taskId}-{lead.Id}";
+            var encriptKey = HttpUtility.UrlEncode(AesCripty.EncryptString(Setting.MailTrackSecret, text), Encoding.UTF8);
+            var url = $"<img src = \"http://localhost:5000/api/tracker/track?key={encriptKey}\" width=1 height=1 style=\"mso-hide:all; display:none; line-height: 0; font-size: 0; height: 0; padding: 0; visibility:hidden;\"/>";
+            return url;
         }
     }
 }
