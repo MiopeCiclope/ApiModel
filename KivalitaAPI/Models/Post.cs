@@ -30,24 +30,34 @@ namespace KivalitaAPI.Models
         [JsonIgnore]
         [Sieve(CanFilter = true, CanSort = true)]
         public int ImageId { get; set; }
+
         [JsonIgnore]
         public Image PostImage { get; set; }
         [ForeignKey("User")]
         [Sieve(CanFilter = true, CanSort = true)]
         public int AuthorId { get; set; }
+
         [JsonIgnore]
         [Sieve(CanFilter = true, CanSort = true)]
         public User Author { get; set; }
+
         [NotMapped]
         public string ImageData { get; set; }
         [Sieve(CanFilter = true, CanSort = true)]
         public LanguageEnum Language { get; set; }
+
         [Sieve(CanFilter = true, CanSort = true)]
         public bool isNews { get; set; }
+
+        [Sieve(CanFilter = true, CanSort = true)]
+        public int? LinkId { get; set; }
+
         [JsonIgnore]
         public int CreatedBy { get; set; }
+
         [JsonIgnore]
         public int UpdatedBy { get; set; }
+
         [JsonIgnore]
         public DateTime UpdatedAt { get; set; }
     }

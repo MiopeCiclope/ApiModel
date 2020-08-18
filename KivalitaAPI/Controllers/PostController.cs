@@ -9,6 +9,7 @@ using System.Net;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using KivalitaAPI.Enum;
 
 namespace KivalitaAPI.Controllers
 {
@@ -69,6 +70,40 @@ namespace KivalitaAPI.Controllers
                     IsStatusCodeSuccess = hasError,
                     statusCode = statusRequest,
                     data = data
+                };
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.Message);
+                return new HttpResponse<Post>
+                {
+                    IsStatusCodeSuccess = false,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    data = null,
+                    ErrorMessage = "Erro ao realizar a requisição"
+                };
+            }
+        }
+
+        [HttpGet("{id}/{language}")]
+        [AllowAnonymous]
+        public HttpResponse<Post> GetByLanguage(int id, string language)
+        {
+            logger.LogInformation($"Post - Get By Language - {id} - {language}");
+            try
+            {
+                var lang = language == "en" ? LanguageEnum.English : LanguageEnum.Portuguese;
+                var posts = service.GetByLinkId(id);
+                var statusRequest = (posts == null) ? HttpStatusCode.NotFound : HttpStatusCode.OK;
+                var hasError = (statusRequest == HttpStatusCode.OK);
+
+                Post response = posts.FirstOrDefault(p => p.Language == lang);
+
+                return new HttpResponse<Post>
+                {
+                    IsStatusCodeSuccess = hasError,
+                    statusCode = statusRequest,
+                    data = response
                 };
             }
             catch (Exception e)

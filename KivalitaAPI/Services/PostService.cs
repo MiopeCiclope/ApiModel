@@ -32,7 +32,16 @@ namespace KivalitaAPI.Services
             var storedImage = this._imageRepository.Add(postImage);
             post.ImageId = storedImage.Id;
 
-            return base.Add(post);
+            var postAdded = base.Add(post);
+
+            if (postAdded.LinkId.HasValue)
+            {
+                var postLinked = baseRepository.Get((int)postAdded.LinkId);
+                postLinked.LinkId = postAdded.Id;
+                base.Update(postLinked);
+            }
+
+            return postAdded;
         }
 
         public override Post Update(Post post)
@@ -59,6 +68,18 @@ namespace KivalitaAPI.Services
             storedPost.Author = this._userRepository.Get(storedPost.AuthorId);
 
             return storedPost;
+        }
+
+        public List<Post> GetByLinkId(int id)
+        {
+            var posts = baseRepository.GetByLinkId(id);
+            foreach (var post in posts)
+            {
+                post.PostImage = this._imageRepository.Get(post.ImageId);
+                post.Author = this._userRepository.Get(post.AuthorId);
+            }
+
+            return posts;
         }
 
         public override List<Post> GetAll()
