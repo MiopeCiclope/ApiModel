@@ -2,10 +2,12 @@ using System;
 using System.Linq;
 using System.Threading;
 using KivalitaAPI.Data;
+using KivalitaAPI.DTOs;
 using KivalitaAPI.Interfaces;
 using KivalitaAPI.Models;
 using KivalitaAPI.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Sieve.Models;
 
 namespace KivalitaAPI.Services
 {
@@ -73,6 +75,11 @@ namespace KivalitaAPI.Services
         public bool isJobAutomatic(FlowAction flowAction)
         {
             return flowAction.Type == "email" && flowAction.Flow.isAutomatic;
+        }
+
+        public TaskListDTO initialTasks(SieveModel filterQuery)
+        {
+            return this.baseRepository.initialTasks(filterQuery);
         }
     }
 }

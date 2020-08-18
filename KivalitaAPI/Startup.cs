@@ -39,6 +39,7 @@ namespace KivalitaAPI
         }
 
         public IConfiguration Configuration { get; }
+        public static readonly ILoggerFactory sqlLogger = LoggerFactory.Create(builder => { builder.AddConsole(); });
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -100,7 +101,10 @@ namespace KivalitaAPI
             });
 
             services.AddDbContext<KivalitaApiContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                {
+                    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+                    //options.UseLoggerFactory(sqlLogger);
+                });
 
             services.AddScoped<DbContext, KivalitaApiContext>();
 

@@ -8,6 +8,8 @@ using KivalitaAPI.Common;
 using Sieve.Models;
 using Microsoft.Linq.Translations;
 using System;
+using KivalitaAPI.DTOs;
+using System.Data.Entity.Core.Objects;
 
 namespace KivalitaAPI.Repositories
 {
@@ -29,17 +31,18 @@ namespace KivalitaAPI.Repositories
         public override QueryResult<FlowTask> GetAll_v2(SieveModel filterQuery)
         {
             var result = context.Set<FlowTask>()
-                .Include(f => f.Leads)
-                    .ThenInclude(l => l.Company)
-                .Include(f => f.FlowAction)
-                .AsNoTracking();
-            var total = result.Count();
+                    .Include(f => f.Leads)
+                        .ThenInclude(l => l.Company)
+                    .Include(f => f.FlowAction)
+                    .AsNoTracking();
 
             result = this.filterProcessor.Apply(filterQuery, result).WithTranslations();
+            var total = 0;
 
+            var response = result.ToList();
             return new QueryResult<FlowTask>
             {
-                Items = result.ToList(),
+                Items = response,
                 TotalItems = total,
             };
         }
@@ -68,6 +71,25 @@ namespace KivalitaAPI.Repositories
                 )
                 .Include(f => f.FlowAction)
                 .FirstOrDefault();
+        }
+
+        public TaskListDTO initialTasks(SieveModel filterQuery)
+        {
+            TaskListDTO separateTasks = new TaskListDTO();
+
+            var result = context.Set<FlowTask>()
+                    .Include(f => f.Leads)
+                        .ThenInclude(l => l.Company)
+                    .Include(f => f.FlowAction)
+                    .AsNoTracking();
+
+            var listResult = this.filterProcessor.Apply(filterQuery, result, applyPagination: false).WithTranslations().ToList();
+
+            separateTasks.futureTasks = listResult.Where(task => task.ScheduledTo > DateTime.Now).Take(10).ToList();
+            separateTasks.todayTasks = listResult.Where(task => task.ScheduledTo.Value.Date == DateTime.Now.Date).Take(10).ToList();
+            separateTasks.overdueTasks = listResult.Where(task => task.ScheduledTo.Value.Date < DateTime.Now.Date).Take(10).ToList();
+
+            return separateTasks;
         }
 
         public List<FlowTask> GetPendingByLead(int leadId)

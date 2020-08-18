@@ -146,7 +146,7 @@ namespace KivalitaAPI.Controllers
         public virtual HttpResponse<bool> SendMail(FlowTask task)
         {
             logger.LogInformation($"{this.GetType().Name} - SendMail - {task.Id}");
-            try
+            try 
             {
                 var userId = this.GetAuditTrailUser();
                 var graphClient = service.GetTokenClient(userId);
