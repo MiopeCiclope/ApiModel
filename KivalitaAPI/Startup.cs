@@ -25,6 +25,9 @@ using Quartz.Spi;
 using Quartz;
 using Quartz.Impl;
 using KivalitaAPI.Interfaces;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace KivalitaAPI
 {
@@ -180,8 +183,7 @@ namespace KivalitaAPI
 
                 cfg.CreateMap<Image, ImageHistory>()
                             .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Id))
-                            .ForMember(dest => dest.Id, opt => opt.Ignore())
-                            .ForMember(dest => dest.ImageData, opt => opt.MapFrom(src => src.ImageData == null ? Convert.FromBase64String(src.ImageString) : src.ImageData));
+                            .ForMember(dest => dest.Id, opt => opt.Ignore());
                 cfg.CreateMap<ImageHistory, Image>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TableId));
 
                 cfg.CreateMap<Job, JobHistory>()
@@ -296,6 +298,13 @@ namespace KivalitaAPI
                 x.AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader();
+            });
+
+            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"Resources")),
+                RequestPath = new PathString("/Resources")
             });
 
             app.UseAuthentication();

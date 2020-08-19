@@ -14,9 +14,9 @@ namespace KivalitaAPI.Services
         private ImageRepository _imageRepository;
         private UserRepository _userRepository;
 
-        public JobService(KivalitaApiContext context, JobRepository baseRepository) : base(context, baseRepository)
+        public JobService(KivalitaApiContext context, JobRepository baseRepository, ImageRepository imageRepository) : base(context, baseRepository)
         {
-            _imageRepository = new ImageRepository(this.context, this.baseRepository.filterProcessor);
+            _imageRepository = imageRepository;
             _userRepository = new UserRepository(this.context, this.baseRepository.filterProcessor);
         }
 
@@ -41,7 +41,6 @@ namespace KivalitaAPI.Services
             {
                 var JobImage = new Image
                 {
-                    ImageData = Convert.FromBase64String(Job.ImageData),
                     Type = "Job"
                 };
 
@@ -72,7 +71,6 @@ namespace KivalitaAPI.Services
             storedJobs = storedJobs.Select(Job =>
             {
                 Job.JobImage = JobImages.Where(image => image.Id == Job.ImageId)
-                    .Select(img => new Image { Id = img.Id, ThumbnailData = img.ThumbnailData })
                     .First();
 
                 Job.Author = JobAuthors.Where(author => author.Id == Job.AuthorId).First();

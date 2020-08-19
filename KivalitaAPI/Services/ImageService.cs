@@ -17,11 +17,10 @@ namespace KivalitaAPI.Services
         {
             return baseRepository.GetListByQuery(
                 $@"Select id
-                        , null as ImageData
                         , type
-                        , thumbnaildata
+                        , fileName
                         , url
-                        , createdat
+                        , CreatedAt
                         , CreatedBy
                         , UpdatedAt
                         , updatedby 

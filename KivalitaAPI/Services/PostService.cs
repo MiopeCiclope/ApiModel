@@ -14,9 +14,9 @@ namespace KivalitaAPI.Services
         private ImageRepository _imageRepository;
         private UserRepository _userRepository;
 
-        public PostService(KivalitaApiContext context, PostRepository baseRepository) : base(context, baseRepository) 
+        public PostService(KivalitaApiContext context, PostRepository baseRepository, ImageRepository imageRepository) : base(context, baseRepository) 
         {
-            _imageRepository = new ImageRepository(this.context, this.baseRepository.filterProcessor);
+            _imageRepository = imageRepository;
             _userRepository = new UserRepository(this.context, this.baseRepository.filterProcessor);
         }
 
@@ -24,7 +24,6 @@ namespace KivalitaAPI.Services
         {
             var postImage = new Image
             {
-                ImageData = Convert.FromBase64String(post.ImageData),
                 ImageString = post.ImageData,
                 Type = "Blog"
             };
@@ -46,16 +45,35 @@ namespace KivalitaAPI.Services
 
         public override Post Update(Post post)
         {
+            var oldPost = baseRepository.GetAsNoTracking(post.Id);
+            if (oldPost.LinkId.HasValue && oldPost.LinkId != post.LinkId)
+            {
+                var oldLinked = baseRepository.Get((int)oldPost.LinkId);
+                oldLinked.LinkId = null;
+                base.Update(oldLinked);
+            }
+
             if (!String.IsNullOrEmpty(post.ImageData) && !Convert.ToBoolean(post.ImageId))
             {
                 var JobImage = new Image
                 {
-                    ImageData = Convert.FromBase64String(post.ImageData),
+                	ImageString = post.ImageData,
                     Type = "Blog"
                 };
 
                 var storedImage = this._imageRepository.Add(JobImage);
                 post.ImageId = storedImage.Id;
+            }
+            else
+            {
+                post.ImageId = oldPost.ImageId;
+            }
+
+            if (post.LinkId.HasValue)
+            {
+                var postLinked = baseRepository.Get((int)post.LinkId);
+                postLinked.LinkId = post.Id;
+                base.Update(postLinked);
             }
 
             return base.Update(post);
@@ -89,13 +107,12 @@ namespace KivalitaAPI.Services
 
             var postImages = this._imageRepository.GetListByQuery(
                                             $@"Select id
-                                                    , null as ImageData
                                                     , type
-                                                    , thumbnaildata
+                                                    , fileName
                                                     , url
-                                                    , createdat
-                                                    , CreatedBy
-                                                    , UpdatedAt
+                                                    , CreatedAt
+                                                    , createdBy
+                                                    , updatedAt
                                                     , updatedby
                                             from Image
                                                 where type = 'Blog'");
@@ -104,7 +121,6 @@ namespace KivalitaAPI.Services
             storedPosts = storedPosts.Select(post =>
             {
                 post.PostImage = postImages.Where(image => image.Id == post.ImageId)
-                    .Select(img => new Image { Id = img.Id, ThumbnailData = img.ThumbnailData })
                     .First();
 
                 post.Author = postAuthors.Where(author => author.Id == post.AuthorId).First();

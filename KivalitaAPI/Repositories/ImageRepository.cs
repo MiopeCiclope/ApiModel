@@ -3,51 +3,47 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using Sieve.Services;
 using System.IO;
-using System.Drawing;
+using KivalitaAPI.Common;
+using Microsoft.Extensions.Options;
 
 namespace KivalitaAPI.Repositories
 {
     public class ImageRepository : Repository<Models.Image, DbContext, SieveProcessor>
     {
-        public ImageRepository(DbContext context, SieveProcessor filterProcessor) : base(context, filterProcessor) { }
+        private readonly Settings _myConfiguration;
+
+        public ImageRepository(
+            DbContext context,
+            SieveProcessor filterProcessor,
+            IOptions<Settings> settings
+        ) : base(context, filterProcessor)
+        {
+            _myConfiguration = settings.Value;
+        }
 
         public override Models.Image Add(Models.Image image)
         {
-            image.ImageData = Convert.FromBase64String(image.ImageString);
-            image.ThumbnailData = resizeImage(image.ImageString);
+            var folderName = Path.Combine("Resources", "Images");
+            var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+
+            if (!Directory.Exists(pathToSave))
+            {
+                Directory.CreateDirectory(pathToSave);
+            }
+
+            var fileName = string.Format(@"{0}.jpg", Guid.NewGuid());
+            string imgPath = Path.Combine(pathToSave, fileName);
+
+            byte[] imageBytes = Convert.FromBase64String(image.ImageString);
+
+            File.WriteAllBytes(imgPath, imageBytes);
+
+            image.FileName = fileName;
+            image.Url = $"{_myConfiguration.Host}/resources/images/{fileName}";
+
             return base.Add(image);
         }
 
-        private byte[] resizeImage(string ImageString)
-        {
-            byte[] bytes = Convert.FromBase64String(ImageString);
-
-            Image image;
-
-            using (MemoryStream ms = new MemoryStream(bytes))
-            {
-                image = Image.FromStream(ms);
-            }
-
-            var newWidth = 450;
-            var newHeight = (newWidth * image.Height) / image.Width;
-
-            Bitmap b = new Bitmap(newWidth, newHeight, image.PixelFormat);
-
-            Graphics g = Graphics.FromImage((Image)b);
-
-            g.DrawImage(image, 0, 0, newWidth, newHeight);
-            g.Dispose();
-            image = (Image)b;
-
-            using (MemoryStream ms = new MemoryStream())
-            {
-                image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                byte[] imageBytes = ms.ToArray();
-
-                return imageBytes;
-            }
-        }
     }
 }
 

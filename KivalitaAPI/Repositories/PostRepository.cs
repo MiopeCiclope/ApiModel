@@ -11,6 +11,14 @@ namespace KivalitaAPI.Repositories
     {
         public PostRepository(DbContext context, SieveProcessor filterProcessor) : base(context, filterProcessor) { }
 
+        public Post GetAsNoTracking(int id)
+        {
+            return context.Set<Post>()
+                .Where(l => l.Id == id)
+                .AsNoTracking()
+                .SingleOrDefault();
+        }
+
         public List<Post> GetByLinkId(int linkId)
         {
             return context.Set<Post>()
