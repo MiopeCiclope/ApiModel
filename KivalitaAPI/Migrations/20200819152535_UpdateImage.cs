@@ -3,20 +3,21 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace KivalitaAPI.Migrations
 {
-    public partial class UpdateToUploadFile : Migration
+    public partial class UpdateImage : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "ImageData",
-                table: "Image");
-
             migrationBuilder.DropColumn(
                 name: "ThumbnailData",
                 table: "Image");
 
             migrationBuilder.AddColumn<string>(
                 name: "FileName",
+                table: "Image",
+                nullable: true);
+
+            migrationBuilder.AddColumn<string>(
+                name: "ImageUrl",
                 table: "Image",
                 nullable: true);
         }
@@ -27,11 +28,9 @@ namespace KivalitaAPI.Migrations
                 name: "FileName",
                 table: "Image");
 
-            migrationBuilder.AddColumn<byte[]>(
-                name: "ImageData",
-                table: "Image",
-                type: "varbinary(max)",
-                nullable: true);
+            migrationBuilder.DropColumn(
+                name: "ImageUrl",
+                table: "Image");
 
             migrationBuilder.AddColumn<byte[]>(
                 name: "ThumbnailData",

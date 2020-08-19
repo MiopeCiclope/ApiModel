@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KivalitaAPI.Migrations
 {
     [DbContext(typeof(KivalitaApiContext))]
-    [Migration("20200819113749_UpdateToUploadFile")]
-    partial class UpdateToUploadFile
+    [Migration("20200819152535_UpdateImage")]
+    partial class UpdateImage
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -858,6 +858,12 @@ namespace KivalitaAPI.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("FileName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("ImageData")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Type")

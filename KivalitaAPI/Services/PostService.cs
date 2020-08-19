@@ -110,6 +110,8 @@ namespace KivalitaAPI.Services
                                                     , type
                                                     , fileName
                                                     , url
+                                                    , ImageUrl
+                                                    , ImageData
                                                     , CreatedAt
                                                     , createdBy
                                                     , updatedAt

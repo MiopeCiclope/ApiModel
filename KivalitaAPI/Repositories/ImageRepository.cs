@@ -39,7 +39,7 @@ namespace KivalitaAPI.Repositories
             File.WriteAllBytes(imgPath, imageBytes);
 
             image.FileName = fileName;
-            image.Url = $"{_myConfiguration.Host}/resources/images/{fileName}";
+            image.ImageUrl = $"{_myConfiguration.Host}/resources/images/{fileName}";
 
             return base.Add(image);
         }
