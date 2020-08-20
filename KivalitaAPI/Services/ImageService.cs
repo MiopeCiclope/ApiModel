@@ -2,9 +2,7 @@
 using KivalitaAPI.Data;
 using KivalitaAPI.Models;
 using KivalitaAPI.Repositories;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace KivalitaAPI.Services
 {
@@ -15,17 +13,7 @@ namespace KivalitaAPI.Services
 
         public List<Image> GetByType(string imageType)
         {
-            return baseRepository.GetListByQuery(
-                $@"Select id
-                        , type
-                        , fileName
-                        , url
-                        , CreatedAt
-                        , CreatedBy
-                        , UpdatedAt
-                        , updatedby 
-                from Image 
-                    where type = '{imageType}'").ToList();
+            return baseRepository.GetByType(imageType);
         }
     }
 }

@@ -99,38 +99,6 @@ namespace KivalitaAPI.Services
 
             return posts;
         }
-
-        public override List<Post> GetAll()
-        {
-            var storedPosts = base.GetAll();
-            var authors = storedPosts.Select(post => post.AuthorId);
-
-            var postImages = this._imageRepository.GetListByQuery(
-                                            $@"Select id
-                                                    , type
-                                                    , fileName
-                                                    , url
-                                                    , ImageUrl
-                                                    , ImageData
-                                                    , CreatedAt
-                                                    , createdBy
-                                                    , updatedAt
-                                                    , updatedby
-                                            from Image
-                                                where type = 'Blog'");
-            var postAuthors = this._userRepository.GetBy(user => authors.Contains(user.Id));
-
-            storedPosts = storedPosts.Select(post =>
-            {
-                post.PostImage = postImages.Where(image => image.Id == post.ImageId)
-                    .First();
-
-                post.Author = postAuthors.Where(author => author.Id == post.AuthorId).First();
-                return post;
-            }).OrderByDescending(p => p.Id).ToList();
-
-            return storedPosts;
-        }
     }
 }
 

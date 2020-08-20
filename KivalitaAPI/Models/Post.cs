@@ -1,16 +1,14 @@
 ﻿using KivalitaAPI.Enum;
 using KivalitaAPI.Interfaces;
+using Newtonsoft.Json;
 using Sieve.Attributes;
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
 
 namespace KivalitaAPI.Models
 {
     public class Post : IEntity
     {
-        [JsonIgnore]
         [Sieve(CanFilter = true, CanSort = true)]
         public int Id { get; set; }
 
@@ -27,11 +25,9 @@ namespace KivalitaAPI.Models
         public DateTime CreatedAt { get; set; }
 
         [ForeignKey("Image")]
-        [JsonIgnore]
         [Sieve(CanFilter = true, CanSort = true)]
         public int ImageId { get; set; }
 
-        [JsonIgnore]
         public Image PostImage { get; set; }
         [ForeignKey("User")]
         [Sieve(CanFilter = true, CanSort = true)]

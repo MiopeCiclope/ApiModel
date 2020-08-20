@@ -18,7 +18,6 @@ namespace KivalitaAPI.Models
         [Sieve(CanFilter = true, CanSort = true)]
         public string FileName { get; set; }
 
-        [JsonIgnore]
         public byte[] ImageData { get; set; }
 
         [Sieve(CanFilter = true, CanSort = true)]

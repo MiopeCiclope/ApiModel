@@ -5,10 +5,13 @@ using Sieve.Services;
 using System.IO;
 using KivalitaAPI.Common;
 using Microsoft.Extensions.Options;
+using KivalitaAPI.Models;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace KivalitaAPI.Repositories
 {
-    public class ImageRepository : Repository<Models.Image, DbContext, SieveProcessor>
+    public class ImageRepository : Repository<Image, DbContext, SieveProcessor>
     {
         private readonly Settings _myConfiguration;
 
@@ -21,7 +24,7 @@ namespace KivalitaAPI.Repositories
             _myConfiguration = settings.Value;
         }
 
-        public override Models.Image Add(Models.Image image)
+        public override Image Add(Image image)
         {
             var folderName = Path.Combine("Resources", "Images");
             var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
@@ -42,6 +45,13 @@ namespace KivalitaAPI.Repositories
             image.ImageUrl = $"{_myConfiguration.Host}/resources/images/{fileName}";
 
             return base.Add(image);
+        }
+
+        public List<Image> GetByType(string imageType)
+        {
+            return context.Set<Image>()
+                .Where(im => im.Type == imageType)
+                .ToList();
         }
 
     }
