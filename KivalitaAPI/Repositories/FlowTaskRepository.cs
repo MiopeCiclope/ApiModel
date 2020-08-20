@@ -34,6 +34,8 @@ namespace KivalitaAPI.Repositories
                     .Include(f => f.Leads)
                         .ThenInclude(l => l.Company)
                     .Include(f => f.FlowAction)
+                        .ThenInclude(f => f.Flow)
+                        .ThenInclude(f => f.User)
                     .AsNoTracking();
 
             result = this.filterProcessor.Apply(filterQuery, result).WithTranslations();
