@@ -30,7 +30,7 @@ namespace KivalitaAPI.Models
 
         public virtual ICollection<Filter> Filters { get; set; }
 
-        [JsonIgnore]
+        //[JsonIgnore]
         public string Password { get; set; }
 
         [JsonIgnore]
