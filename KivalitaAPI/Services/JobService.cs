@@ -25,7 +25,7 @@ namespace KivalitaAPI.Services
             var JobImage = new Image
             {
                 ImageString = Job.ImageData,
-                CreatedBy = Job.CreatedBy,
+                CreatedBy = Job.AuthorId,
                 Type = "Job"
             };
 
@@ -37,15 +37,22 @@ namespace KivalitaAPI.Services
 
         public override Job Update(Job Job)
         {
+            var oldJob = baseRepository.Get(Job.Id);
+
             if (!String.IsNullOrEmpty(Job.ImageData) && !Convert.ToBoolean(Job.ImageId))
             {
                 var JobImage = new Image
                 {
+                    ImageString = Job.ImageData,
                     Type = "Job"
                 };
 
                 var storedImage = this._imageRepository.Add(JobImage);
                 Job.ImageId = storedImage.Id;
+            }
+            else
+            {
+                Job.ImageId = oldJob.ImageId;
             }
 
             return base.Update(Job);
