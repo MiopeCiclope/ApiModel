@@ -155,7 +155,9 @@ namespace KivalitaAPI.Repositories
         {
             var result = context.Set<Leads>()
                                 .Include(l => l.Company)
-                                .ThenInclude(c => c.User)
+                                    .ThenInclude(c => c.User)
+                                .Include(l => l.LeadTag)
+                                    .ThenInclude(l => l.Tag)
                                 .WithTranslations()
                                 .Where(lead => lead.Deleted == false)
                                 .AsNoTracking();
@@ -164,10 +166,11 @@ namespace KivalitaAPI.Repositories
             var total = result.Count();
 
             result = this.filterProcessor.Apply(filterQuery, result, applyFiltering: false, applySorting: false);
+            var list = result.ToList();
 
             return new QueryResult<Leads>
             {
-                Items = result.ToList(),
+                Items = list,
                 TotalItems = total,
             };
         }
