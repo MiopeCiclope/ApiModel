@@ -188,8 +188,8 @@ namespace KivalitaAPI.Services
                     {
                         EmailAddress = new EmailAddress
                         {
-                            //Address = $"{lead.Email}"
-                            Address = $"romulo.carvalho@kivalita.com.br"
+                            Address = $"{lead.Email}"
+                            //Address = $"romulo.carvalho@kivalita.com.br"
                         }
                     }
                 }
