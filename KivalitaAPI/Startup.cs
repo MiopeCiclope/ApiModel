@@ -248,6 +248,16 @@ namespace KivalitaAPI
                             .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Id))
                             .ForMember(dest => dest.Id, opt => opt.Ignore());
                 cfg.CreateMap<MailTrackHistory, MailTrack>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TableId));
+
+                cfg.CreateMap<Tag, TagHistory>()
+                            .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Id))
+                            .ForMember(dest => dest.Id, opt => opt.Ignore());
+                cfg.CreateMap<TagHistory, Tag>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TableId));
+
+                cfg.CreateMap<LeadTag, LeadTagHistory>()
+                            .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Id))
+                            .ForMember(dest => dest.Id, opt => opt.Ignore());
+                cfg.CreateMap<LeadTagHistory, LeadTag>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TableId));
             });
 
             //Mapper Configured service

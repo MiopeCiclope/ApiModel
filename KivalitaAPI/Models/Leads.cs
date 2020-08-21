@@ -10,7 +10,7 @@ using Sieve.Attributes;
 namespace KivalitaAPI.Models {
 	public class Leads : IEntity
 	{
-        [Sieve(CanFilter = true, CanSort = true)]
+		[Sieve(CanFilter = true, CanSort = true)]
 		public int Id { get; set; }
 
         [Sieve(CanFilter = true, CanSort = true)]
@@ -95,6 +95,7 @@ namespace KivalitaAPI.Models {
 		{
 			get { return WithEmailExpression.Evaluate(this); }
 		}
+		public IList<LeadTag> LeadTag { get; set; }
 
 		private static readonly CompiledExpression<Leads, int?> ownerExpression 
 						= DefaultTranslationOf<Leads>.Property(lead => lead.Owner).Is(lead => lead.Company != null ? lead.Company.UserId : 0);

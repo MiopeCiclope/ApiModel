@@ -68,9 +68,16 @@ namespace KivalitaAPI.Data
         public DbSet<LogTask> LogTasks {get;set;}
         public DbSet<LogTaskHistory> LogTasksHistory {get;set;}
 
+        public DbSet<Tag> Tag { get; set; }
+        public DbSet<TagHistory> TagHistory { get; set; }
+
+        public DbSet<LeadTag> LeadTag { get; set; }
+        public DbSet<LeadTagHistory> LeadTagHistory { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<LeadTag>().HasKey(sc => new { sc.LeadId, sc.TagId });
+
             modelBuilder.Entity<Post>()
                 .HasOne(a => a.PostImage)
                 .WithOne()
