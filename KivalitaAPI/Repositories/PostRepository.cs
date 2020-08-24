@@ -40,8 +40,11 @@ namespace KivalitaAPI.Repositories
                     Language = p.Language,
                     isNews = p.isNews,
                     Published = p.Published,
-                    AuthorId = p.AuthorId
-                }).AsNoTracking();
+                    AuthorId = p.AuthorId,
+                    CreatedAt = p.CreatedAt
+                })
+                .OrderByDescending(p => p.CreatedAt)
+                .AsNoTracking();
 
             var total = result.Count();
             result = this.filterProcessor.Apply(filterQuery, result);

@@ -25,6 +25,7 @@ namespace KivalitaAPI.Services
             var postImage = new Image
             {
                 ImageString = post.ImageData,
+                CreatedBy = post.AuthorId,
                 Type = "Blog"
             };
 
