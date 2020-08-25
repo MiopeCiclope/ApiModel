@@ -85,6 +85,16 @@ namespace KivalitaAPI.Services
 
                         var task = _flowTaskRepository.Add(taskPayload);
 
+                        var LeadTaskCreated = new LogTask {
+                            Description = "Tarefa adicionada",
+                            LeadId = lead.Id,
+                            Type = "task",
+                            TaskId = task.Id,
+                            CreatedAt = DateTime.Now
+                        };
+
+                        _logTaskRepository.Add(LeadTaskCreated);
+
                         if (task.ScheduledTo.HasValue)
                         {
                             DateTimeOffset dateTimeOffset = new DateTimeOffset((DateTime)task.ScheduledTo);
