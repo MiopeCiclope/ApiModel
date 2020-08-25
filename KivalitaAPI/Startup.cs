@@ -167,6 +167,11 @@ namespace KivalitaAPI
             services.AddScoped<LogTaskRepository>();
             services.AddScoped<LogTaskService>();
 
+            services.AddScoped<TagRepository>();
+            services.AddScoped<TagService>();
+
+            services.AddScoped<LeadTagRepository>();
+
 
             var mappingConfig = new MapperConfiguration(cfg =>
             {

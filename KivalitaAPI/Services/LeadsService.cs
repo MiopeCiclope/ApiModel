@@ -18,6 +18,7 @@ namespace KivalitaAPI.Services {
 		CompanyRepository companyRepository;
 		FlowRepository flowRepository;
 		FlowTaskRepository flowTaskRepository;
+		LeadTagRepository leadTagRepository;
 		ScheduleTasksService scheduleTasksService;
 		public readonly IJobScheduler scheduler;
 
@@ -27,6 +28,7 @@ namespace KivalitaAPI.Services {
 			CompanyRepository companyRepository,
 			FlowRepository flowRepository,
 			FlowTaskRepository flowTaskRepository,
+			LeadTagRepository leadTagRepository,
 			ScheduleTasksService scheduleTasksService,
 			IJobScheduler scheduler
 		) : base (context, baseRepository) {
@@ -35,6 +37,7 @@ namespace KivalitaAPI.Services {
 			this.flowTaskRepository = flowTaskRepository;
 			this.scheduleTasksService = scheduleTasksService;
 			this.scheduler = scheduler;
+			this.leadTagRepository = leadTagRepository;
 		}
 
 		public override Leads Update(Leads lead)
@@ -54,6 +57,24 @@ namespace KivalitaAPI.Services {
 
 				var flow = flowRepository.Get((int)lead.FlowId);
 				scheduleTasksService.Execute(flow, new List<Leads> { lead });
+			}
+
+			if (lead.LeadTag != null)
+			{
+				var tagToUnlink = oldLead.LeadTag.Where(tag => !lead.LeadTag.Select(tag => tag.TagId)?.Contains(tag.TagId) ?? true);
+				var tagToLink = lead.LeadTag.Where(tag => !oldLead.LeadTag?.Select(tagToUnlink => tagToUnlink.TagId).Contains(tag.TagId) ?? true);
+				if (tagToUnlink.Any())
+				{
+					var tagList = tagToUnlink.ToList();
+					leadTagRepository.DeleteRange(tagList);
+				}
+
+				if (tagToLink.Any())
+				{
+					var tagList = tagToLink.ToList();
+					tagList.ForEach(leadtag => leadtag.Tag = null);
+					leadTagRepository.AddRange(tagList);
+				}
 			}
 
 			return baseRepository.Update(lead);

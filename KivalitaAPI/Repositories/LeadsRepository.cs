@@ -25,12 +25,16 @@ namespace KivalitaAPI.Repositories
                 .Include(l => l.Flow)
                     .ThenInclude(f => f.User)
                 .Include(l => l.Company)
+                .Include(l => l.LeadTag)
+                    .ThenInclude(l => l.Tag)
                 .SingleOrDefault();
         }
 
         public Leads GetAsNoTracking(int id)
         {
             return context.Set<Leads>()
+                .Include(l => l.LeadTag)
+                    .ThenInclude(l => l.Tag)
                 .Where(l => l.Id == id)
                 .AsNoTracking()
                 .SingleOrDefault();
