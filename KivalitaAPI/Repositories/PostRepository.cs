@@ -28,6 +28,12 @@ namespace KivalitaAPI.Repositories
                 .ToList();
         }
 
+        public Post GetBySlug(string slug)
+        {
+            return context.Set<Post>()
+                .Where(p => p.Slug == slug).FirstOrDefault();
+        }
+
         public override QueryResult<Post> GetAll_v2(SieveModel filterQuery)
         {
             var result = context.Set<Post>()
@@ -35,6 +41,7 @@ namespace KivalitaAPI.Repositories
                 {
                     Id = p.Id,
                     Title = p.Title,
+                    Slug = p.Slug,
                     ImageId = p.ImageId,
                     PostImage = p.PostImage,
                     Language = p.Language,

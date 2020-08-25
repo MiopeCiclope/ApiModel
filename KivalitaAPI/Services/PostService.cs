@@ -4,7 +4,7 @@ using KivalitaAPI.Models;
 using KivalitaAPI.Repositories;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace KivalitaAPI.Services
 {
@@ -31,6 +31,7 @@ namespace KivalitaAPI.Services
 
             var storedImage = this._imageRepository.Add(postImage);
             post.ImageId = storedImage.Id;
+            post.Slug = GenerateSlug(post.Title);
 
             var postAdded = base.Add(post);
 
@@ -77,6 +78,7 @@ namespace KivalitaAPI.Services
                 base.Update(postLinked);
             }
 
+            post.Slug = GenerateSlug(post.Title);
             return base.Update(post);
         }
 
@@ -89,9 +91,11 @@ namespace KivalitaAPI.Services
             return storedPost;
         }
 
-        public List<Post> GetByLinkId(int id)
+        public List<Post> GetBySlug(string slug)
         {
-            var posts = baseRepository.GetByLinkId(id);
+            var postBySlug = baseRepository.GetBySlug(slug);
+            var posts = baseRepository.GetByLinkId(postBySlug.Id);
+
             foreach (var post in posts)
             {
                 post.PostImage = this._imageRepository.Get(post.ImageId);
@@ -99,6 +103,24 @@ namespace KivalitaAPI.Services
             }
 
             return posts;
+        }
+
+        private string GenerateSlug(string phrase)
+        {
+            string str = RemoveAccent(phrase).ToLower();
+        
+            str = Regex.Replace(str, @"[^a-z0-9\s-]", "");
+
+            str = Regex.Replace(str, @"\s+", " ").Trim();
+
+            str = Regex.Replace(str, @"\s", "-");
+            return str;
+        }
+
+        private string RemoveAccent(string txt)
+        {
+            byte[] bytes = System.Text.Encoding.GetEncoding("Cyrillic").GetBytes(txt);
+            return System.Text.Encoding.ASCII.GetString(bytes);
         }
     }
 }
