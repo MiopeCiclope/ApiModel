@@ -17,15 +17,19 @@ namespace KivalitaAPI.Services
         FlowTaskRepository _flowTaskRepository;
         public readonly IJobScheduler _scheduler;
 
+        LogTaskRepository _logTaskRepository;
+
         public ScheduleTasksService (
             FlowTaskRepository flowTaskRepository,
             LeadsRepository leadsRepository,
-            IJobScheduler scheduler
+            IJobScheduler scheduler,
+            LogTaskRepository logTaskRepository
         )
         { 
             _flowTaskRepository = flowTaskRepository;
             _leadsRepository = leadsRepository;
             _scheduler = scheduler;
+            _logTaskRepository = logTaskRepository;
         }
 
         public void Execute(Flow flow, List<Leads> leads)
@@ -46,7 +50,24 @@ namespace KivalitaAPI.Services
                         lead.Status = LeadStatusEnum.Flow;
                         lead.FlowId = flow.Id;
                         _leadsRepository.Update(lead);
+                        
+                        var LeadAddToFlow = new LogTask {
+                            Description = "Lead adicionada ao Fluxo",
+                            LeadId = lead.Id,
+                            Type = "ADD",
+                            CreatedAt = DateTime.Now
+                        };
 
+                        var LeadChangedStatus = new LogTask {
+                            Description = "Status alterado",
+                            LeadId = lead.Id,
+                            Type = "UPDATE",
+                            CreatedAt = DateTime.Now
+                        };
+
+                        _logTaskRepository.Add(LeadAddToFlow);
+                        _logTaskRepository.Add(LeadChangedStatus);
+                        
                         var taskPayload = new FlowTask
                         {
                             Status = "pending",
@@ -63,6 +84,16 @@ namespace KivalitaAPI.Services
                         }
 
                         var task = _flowTaskRepository.Add(taskPayload);
+
+                        var LeadTaskCreated = new LogTask {
+                            Description = "Tarefa adicionada",
+                            LeadId = lead.Id,
+                            Type = "task",
+                            TaskId = task.Id,
+                            CreatedAt = DateTime.Now
+                        };
+
+                        _logTaskRepository.Add(LeadTaskCreated);
 
                         if (task.ScheduledTo.HasValue)
                         {
