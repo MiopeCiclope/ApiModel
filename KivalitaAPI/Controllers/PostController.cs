@@ -86,15 +86,15 @@ namespace KivalitaAPI.Controllers
             }
         }
 
-        [HttpGet("{id}/{language}")]
+        [HttpGet("{slug}/{language}")]
         [AllowAnonymous]
-        public HttpResponse<Post> GetByLanguage(int id, string language)
+        public HttpResponse<Post> GetByLanguage(string slug, string language)
         {
-            logger.LogInformation($"Post - Get By Language - {id} - {language}");
+            logger.LogInformation($"Post - Get By Language - {slug} - {language}");
             try
             {
                 var lang = language == "en" ? LanguageEnum.English : LanguageEnum.Portuguese;
-                var posts = service.GetByLinkId(id);
+                var posts = service.GetBySlug(slug);
                 var statusRequest = (posts == null) ? HttpStatusCode.NotFound : HttpStatusCode.OK;
                 var hasError = (statusRequest == HttpStatusCode.OK);
 

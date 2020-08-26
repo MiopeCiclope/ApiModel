@@ -16,6 +16,9 @@ namespace KivalitaAPI.Models
         public string Title { get; set; }
 
         [Sieve(CanFilter = true, CanSort = true)]
+        public string Slug { get; set; }
+
+        [Sieve(CanFilter = true, CanSort = true)]
         public string Article { get; set; }
 
         [Sieve(CanFilter = true, CanSort = false)]
