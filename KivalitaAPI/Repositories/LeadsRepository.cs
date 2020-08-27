@@ -192,7 +192,7 @@ namespace KivalitaAPI.Repositories
                                         }
                                     }
 
-                                });;
+                                });
 
             result = this.filterProcessor.Apply(filterQuery, result, applyPagination: false).WithTranslations();
             var total = result.Count();
