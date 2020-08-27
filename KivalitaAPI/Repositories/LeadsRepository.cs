@@ -164,7 +164,35 @@ namespace KivalitaAPI.Repositories
                                     .ThenInclude(l => l.Tag)
                                 .WithTranslations()
                                 .Where(lead => lead.Deleted == false)
-                                .AsNoTracking();
+                                .AsNoTracking()
+                                .Select(l => new Leads
+                                {
+                                    Id = l.Id,
+                                    Name = l.Name,
+                                    Position = l.Position,
+                                    Email = l.Email,
+                                    LinkedIn = l.LinkedIn,
+                                    Status = l.Status,
+                                    Flow = l.Flow,
+                                    FlowId = l.FlowId,
+                                    CreatedAt = l.CreatedAt,
+                                    LeadTag = l.LeadTag,
+                                    CompanyId = l.CompanyId,
+                                    Company = new Company
+                                    {
+                                        Id = l.Company.Id,
+                                        Name = l.Company.Name,
+                                        Sector = l.Company.Sector,
+                                        UserId = l.Company.UserId,
+                                        User = new User
+                                        {
+                                            Id = l.Company.User.Id,
+                                            FirstName = l.Company.User.FirstName,
+                                            LastName = l.Company.User.LastName
+                                        }
+                                    }
+
+                                });;
 
             result = this.filterProcessor.Apply(filterQuery, result, applyPagination: false).WithTranslations();
             var total = result.Count();
