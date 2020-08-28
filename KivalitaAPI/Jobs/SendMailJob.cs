@@ -14,6 +14,7 @@ using KivalitaAPI;
 using System.Web;
 using System.Text;
 using KivalitaAPI.Repositories;
+using KivalitaAPI.Enum;
 
 [DisallowConcurrentExecution]
 public class SendMailJob : IJob
@@ -23,6 +24,7 @@ public class SendMailJob : IJob
     IServiceScope scope;
     private Semaphore semaphore;
     private MicrosoftTokenService graphService;
+    private LogTaskService logTaskService;
     private GraphServiceClient client;
     private FlowTaskRepository taskRepository;
     private int templateId = 4;
@@ -57,6 +59,7 @@ public class SendMailJob : IJob
             }
 
             this.graphService = scope.ServiceProvider.GetService<MicrosoftTokenService>();
+            this.logTaskService = scope.ServiceProvider.GetService<LogTaskService>();
             this.taskRepository = scope.ServiceProvider.GetService<FlowTaskRepository>();
             this.client = graphService.GetTokenClient(userId);
             this.userSignature = GetSignature(userId);
@@ -72,6 +75,10 @@ public class SendMailJob : IJob
                 mailList.ForEach(mail =>
                 {
                     var logMessage = graphService.SendMail(client, mail, userId) ? "Mail Sent" : "Faild Send Mail";
+                    if (logMessage == "Mail Sent")
+                    {
+                        this.logTaskService.RegisterLog(LogTaskEnum.EmailSent, flowTask.LeadId, flowTask.Id);
+                    }
                     _logger.LogInformation($"{logMessage}: {mail.ToRecipients.First().EmailAddress.Address}");
                 });
         }

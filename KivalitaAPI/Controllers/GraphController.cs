@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using KivalitaAPI.Models;
 using Microsoft.Extensions.Logging;
+using KivalitaAPI.Enum;
 
 namespace KivalitaAPI.Controllers
 {
@@ -19,6 +20,7 @@ namespace KivalitaAPI.Controllers
         private readonly UserService userService;
         private readonly TemplateService templateService;
         private readonly LeadsService leadService;
+        private readonly LogTaskService logTaskService;
 
         private readonly ILogger<GraphController> logger;
 
@@ -27,11 +29,13 @@ namespace KivalitaAPI.Controllers
             , UserService _userService
             , TemplateService _templateService
             , LeadsService _leadService
+            , LogTaskService _logTaskService
         ) {
             service = tokenService;
             userService = _userService;
             templateService = _templateService;
             leadService = _leadService;
+            logTaskService = _logTaskService;
             logger = _logger;
         }
 
@@ -157,6 +161,8 @@ namespace KivalitaAPI.Controllers
                 var mail = service.BuildEmail(lead, template, task.Id, signature);
 
                 var result = service.SendMail(graphClient, mail, userId);
+
+                this.logTaskService.RegisterLog(LogTaskEnum.EmailSent, lead.Id, task.Id);
 
                 return new HttpResponse<bool>
                 {

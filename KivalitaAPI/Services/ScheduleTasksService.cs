@@ -15,21 +15,20 @@ namespace KivalitaAPI.Services
     {
         LeadsRepository _leadsRepository;
         FlowTaskRepository _flowTaskRepository;
+        LogTaskService _logTaskService;
         public readonly IJobScheduler _scheduler;
-
-        LogTaskRepository _logTaskRepository;
 
         public ScheduleTasksService (
             FlowTaskRepository flowTaskRepository,
             LeadsRepository leadsRepository,
-            IJobScheduler scheduler,
-            LogTaskRepository logTaskRepository
+            LogTaskService logTaskService,
+            IJobScheduler scheduler
         )
         { 
             _flowTaskRepository = flowTaskRepository;
             _leadsRepository = leadsRepository;
             _scheduler = scheduler;
-            _logTaskRepository = logTaskRepository;
+            _logTaskService = logTaskService;
         }
 
         public void Execute(Flow flow, List<Leads> leads)
@@ -46,27 +45,21 @@ namespace KivalitaAPI.Services
 
                     foreach (var lead in leadList)
                     {
+                        if (!lead.FlowId.HasValue || lead.FlowId != flow.Id)
+                        {
+                            lead.FlowId = flow.Id;
+                            _leadsRepository.Update(lead);
 
-                        lead.Status = LeadStatusEnum.Flow;
-                        lead.FlowId = flow.Id;
-                        _leadsRepository.Update(lead);
-                        
-                        var LeadAddToFlow = new LogTask {
-                            Description = "Lead adicionada ao Fluxo",
-                            LeadId = lead.Id,
-                            Type = "ADD",
-                            CreatedAt = DateTime.Now
-                        };
+                            _logTaskService.RegisterLog(LogTaskEnum.LeadAddedToFLow, lead.Id);
+                        }
 
-                        var LeadChangedStatus = new LogTask {
-                            Description = "Status alterado",
-                            LeadId = lead.Id,
-                            Type = "UPDATE",
-                            CreatedAt = DateTime.Now
-                        };
+                        if (lead.Status != LeadStatusEnum.Flow)
+                        {
+                            lead.Status = LeadStatusEnum.Flow;
+                            _leadsRepository.Update(lead);
 
-                        _logTaskRepository.Add(LeadAddToFlow);
-                        _logTaskRepository.Add(LeadChangedStatus);
+                            _logTaskService.RegisterLog(LogTaskEnum.StatusChanged, lead.Id);
+                        }
                         
                         var taskPayload = new FlowTask
                         {
@@ -85,15 +78,7 @@ namespace KivalitaAPI.Services
 
                         var task = _flowTaskRepository.Add(taskPayload);
 
-                        var LeadTaskCreated = new LogTask {
-                            Description = "Tarefa adicionada",
-                            LeadId = lead.Id,
-                            Type = "task",
-                            TaskId = task.Id,
-                            CreatedAt = DateTime.Now
-                        };
-
-                        _logTaskRepository.Add(LeadTaskCreated);
+                        _logTaskService.RegisterLog(LogTaskEnum.TaskAdded, lead.Id, task.Id);
 
                         if (task.ScheduledTo.HasValue)
                         {

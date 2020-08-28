@@ -46,14 +46,14 @@ namespace KivalitaAPI.Services {
 
 			if (lead.FlowId.HasValue && lead.FlowId != oldLead.FlowId)
 			{
-				var tasks = flowTaskRepository.GetPendingByLead(lead.Id);
-				foreach (var task in tasks)
+				var tasksPending = flowTaskRepository.GetPendingByLead(lead.Id);
+				foreach (var task in tasksPending)
 				{
 					var job = new JobKey($"TaskJob_{task.Id}", "DEFAULT");
 					scheduler.DeleteJob(job);
 				}
 
-				flowTaskRepository.DeleteRange(tasks);
+				flowTaskRepository.DeleteRange(tasksPending);
 
 				var flow = flowRepository.Get((int)lead.FlowId);
 				scheduleTasksService.Execute(flow, new List<Leads> { lead });
@@ -252,7 +252,7 @@ namespace KivalitaAPI.Services {
 
 			if (lead.FlowId.HasValue)
 			{
-				throw new Exception("Não é possível excluir a Lead pois existe um fluxo relaciodado!");
+				throw new Exception("N?o ? poss?vel excluir a Lead pois existe um fluxo relaciodado!");
 			}
 
 			return baseRepository.Delete(id, userId);

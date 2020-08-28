@@ -1,15 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using KivalitaAPI.Common;
-using System.Net;
-using KivalitaAPI.DTOs;
 using KivalitaAPI.Services;
-using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
 using KivalitaAPI.Models;
-using System.Threading.Tasks;
-using System.Text;
 using Microsoft.Extensions.Logging;
+using KivalitaAPI.Enum;
 
 namespace KivalitaAPI.Controllers
 {
@@ -19,10 +14,16 @@ namespace KivalitaAPI.Controllers
     {
         public readonly ILogger<TrackerController> _logger;
         private MailTrackService _mailTrackService;
+        private LogTaskService _logTaskService;
 
-        public TrackerController(ILogger<TrackerController> logger, MailTrackService mailTrackService) {
+        public TrackerController(
+            ILogger<TrackerController> logger,
+            MailTrackService mailTrackService,
+            LogTaskService logTaskService
+        ) {
             this._logger = logger;
             this._mailTrackService = mailTrackService;
+            this._logTaskService = logTaskService;
         }
 
         [HttpGet]
@@ -37,6 +38,7 @@ namespace KivalitaAPI.Controllers
                 int taskId = int.Parse(decryptedKey.Split("-")[0]);
                 int leadId = int.Parse(decryptedKey.Split("-")[1]);
                 this._mailTrackService.Add(new MailTrack { TaskId = taskId, LeadId = leadId, CreatedAt = DateTime.UtcNow});
+                this._logTaskService.RegisterLog(LogTaskEnum.EmailRead, leadId, taskId);
             }
             catch(Exception e)
             {
