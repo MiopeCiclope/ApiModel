@@ -60,6 +60,9 @@ namespace KivalitaAPI.Common
                 case TaskNote taskNote:
                     var taskNoteAudit = _mapper.Map<TaskNoteHistory>(taskNote);
                     return addAuditComplement(taskNoteAudit, action, responsable);
+                case MailSignature mailSignature:
+                    var mailSignatureAudit = _mapper.Map<MailSignatureHistory>(mailSignature);
+                    return addAuditComplement(mailSignatureAudit, action, responsable);
                 default:
                     return null;
             }

@@ -30,7 +30,6 @@ namespace KivalitaAPI.Models
 
         public virtual ICollection<Filter> Filters { get; set; }
 
-        //[JsonIgnore]
         public string Password { get; set; }
 
         [JsonIgnore]
@@ -48,6 +47,8 @@ namespace KivalitaAPI.Models
 
         [JsonIgnore]
         public ICollection<Company> Company { get; set; }
-        public string? Signature { get; set; }
+
+        public int? MailSignatureId { get; set; }
+        public MailSignature? MailSignature { get; set; }
     }
 }

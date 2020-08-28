@@ -14,16 +14,19 @@ namespace KivalitaAPI.Services
     {
         CompanyRepository companyRepository;
         MicrosoftTokenRepository microsoftTokenRepository;
+        MailSignatureService mailSignatureService;
 
         public UserService(
             KivalitaApiContext context,
             UserRepository baseRepository,
             CompanyRepository companyRepository,
-            MicrosoftTokenRepository microsoftTokenRepository
+            MicrosoftTokenRepository microsoftTokenRepository,
+            MailSignatureService _mailSignatureService
         ) : base(context, baseRepository)
         {
             this.companyRepository = companyRepository;
             this.microsoftTokenRepository = microsoftTokenRepository;
+            this.mailSignatureService = _mailSignatureService;
         }
 
         public override User Get(int id)
@@ -52,9 +55,9 @@ namespace KivalitaAPI.Services
             try
             {
 
+                var oldUser = this.baseRepository.Get(user.Id);
                 if(user.Company != null)
                 {
-                    var oldUser = this.baseRepository.Get(user.Id);
                     var companyToUnlink = oldUser.Company.Where(company => !user.Company.Select(company => company.Id)?.Contains(company.Id) ?? true);
                     var companyToLink = user.Company.Where(company => !oldUser.Company?.Select(companyUnlink => companyUnlink.Id).Contains(company.Id) ?? true);
                     if(companyToUnlink.Any()) {
@@ -71,6 +74,17 @@ namespace KivalitaAPI.Services
                     }
                 }
 
+                if(user.MailSignature != null)
+                {
+                    if (oldUser.MailSignature == null)
+                        user.MailSignatureId = mailSignatureService.Add(user.MailSignature).Id;
+                    else
+                    {
+                        var signature = oldUser.MailSignature;
+                        signature.Signature = user.MailSignature.Signature;
+                        mailSignatureService.Update(signature);
+                    }
+                }
 
                 if (!String.IsNullOrEmpty(user.Password)) 
                     user.Password = Encrypt(user.Password);
@@ -96,7 +110,7 @@ namespace KivalitaAPI.Services
         }
         public string GetSignature(int id)
         {
-            return this.baseRepository.Get(id)?.Signature ?? "";
+            return this.baseRepository.Get(id)?.MailSignature.Signature ?? "";
         }
     }
 }

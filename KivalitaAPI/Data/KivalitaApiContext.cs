@@ -74,6 +74,9 @@ namespace KivalitaAPI.Data
         public DbSet<LeadTag> LeadTag { get; set; }
         public DbSet<LeadTagHistory> LeadTagHistory { get; set; }
 
+        public DbSet<MailSignature> MailSignature { get; set; }
+        public DbSet<MailSignatureHistory> MailSignatureHistory { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<LeadTag>().HasKey(sc => new { sc.LeadId, sc.TagId });

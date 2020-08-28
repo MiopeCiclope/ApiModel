@@ -96,7 +96,7 @@ public class SendMailJob : IJob
     private string GetSignature(int id)
     {
         var userService = scope.ServiceProvider.GetService<UserService>();
-        return userService.Get(id)?.Signature ?? "";
+        return userService.Get(id)?.MailSignature.Signature ?? "";
     }
 
     private List<Message> GetMailList(int userId, FlowTask flowTask)

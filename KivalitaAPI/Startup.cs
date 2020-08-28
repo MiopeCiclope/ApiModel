@@ -172,6 +172,9 @@ namespace KivalitaAPI
 
             services.AddScoped<LeadTagRepository>();
 
+            services.AddScoped<MailSignatureRepository>();
+            services.AddScoped<MailSignatureService>();
+
 
             var mappingConfig = new MapperConfiguration(cfg =>
             {
@@ -263,6 +266,11 @@ namespace KivalitaAPI
                             .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Id))
                             .ForMember(dest => dest.Id, opt => opt.Ignore());
                 cfg.CreateMap<LeadTagHistory, LeadTag>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TableId));
+
+                cfg.CreateMap<MailSignature, MailSignatureHistory>()
+                            .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Id))
+                            .ForMember(dest => dest.Id, opt => opt.Ignore());
+                cfg.CreateMap<MailSignatureHistory, MailSignature>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TableId));
             });
 
             //Mapper Configured service

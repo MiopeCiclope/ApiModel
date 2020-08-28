@@ -18,6 +18,8 @@
     <Compile Remove="Migrations\20200709144319_Fluxo.Designer.cs" />
     <Compile Remove="Migrations\20200716155809_Tracker.cs" />
     <Compile Remove="Migrations\20200716155809_Tracker.Designer.cs" />
+    <Compile Remove="Migrations\20200828140506_MailSignature.cs" />
+    <Compile Remove="Migrations\20200828140506_MailSignature.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

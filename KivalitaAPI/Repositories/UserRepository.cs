@@ -7,6 +7,8 @@ using System;
 using Sieve.Services;
 using KivalitaAPI.DTOs;
 using KivalitaAPI.Enum;
+using KivalitaAPI.Common;
+using Sieve.Models;
 
 namespace KivalitaAPI.Repositories
 {
@@ -29,15 +31,32 @@ namespace KivalitaAPI.Repositories
         {
             var user = context.Set<User>()
                 .Include(u => u.Company)
+                .Include(u => u.MailSignature)
                 .SingleOrDefault(u => u.Id == id);
 
             return removePassword(user);
+        }
+
+        public override QueryResult<User> GetAll_v2(SieveModel filterQuery)
+        {
+            var result = context.Set<User>()
+                .Include(u => u.MailSignature)
+                .AsNoTracking();
+            var total = result.Count();
+            result = this.filterProcessor.Apply(filterQuery, result);
+
+            return new QueryResult<User>
+            {
+                Items = result.ToList(),
+                TotalItems = total,
+            };
         }
 
         public override List<User> GetAll()
         {
             var users = context.Set<User>()
                 .Include(u => u.Company)
+                .Include(u => u.MailSignature)
                 .ToList();
 
             users = users.Select(user =>
