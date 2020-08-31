@@ -50,8 +50,11 @@ namespace KivalitaAPI.Services
             var token = RestClient.PostFormUrlEncoded<GraphAuthDTO>(url, dict).Result;
             var entity = _mapper.Map<MicrosoftToken>(token);
             entity.UserId = userId;
-            base.Add(entity);
 
+            if (token.access_token == null) 
+                return null;
+
+            base.Add(entity);
             return entity;
         }
 

@@ -49,6 +49,17 @@ namespace KivalitaAPI.Controllers
             {
                 var user = GetAuditTrailUser();
                 var didLogin = service.Auth(authObject, user);
+                if (didLogin == null)
+                {
+                    return new HttpResponse<MicrosoftToken>
+                    {
+                        IsStatusCodeSuccess = false,
+                        statusCode = HttpStatusCode.Forbidden,
+                        data = null,
+                        ErrorMessage = "Erro ao validar credenciais do Outlook"
+                    };
+                }
+
                 return new HttpResponse<MicrosoftToken>
                 {
                     IsStatusCodeSuccess = true,
