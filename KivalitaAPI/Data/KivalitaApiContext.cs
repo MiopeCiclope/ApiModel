@@ -153,6 +153,12 @@ namespace KivalitaAPI.Data
             if (dataChanges.Any())
             {
                 dataChanges.ToList().ForEach(data => {
+                    if (data.State != EntityState.Added)
+                    {
+                        data.Property("CreatedAt").IsModified = false;
+                        data.Property("CreatedBy").IsModified = false;
+                    }
+
                     var baseObject = data.Entity as IEntity;
                     var auditData = _auditFactory.GetAuditObject(baseObject, data.State, data.State == EntityState.Added ? baseObject.CreatedBy: baseObject.UpdatedBy);
                     if(auditData != null)
