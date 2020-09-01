@@ -175,6 +175,7 @@ namespace KivalitaAPI
             services.AddScoped<MailSignatureRepository>();
             services.AddScoped<MailSignatureService>();
 
+            services.AddScoped<ISieveCustomFilterMethods, SieveCustomFilterMethods>();
 
             var mappingConfig = new MapperConfiguration(cfg =>
             {

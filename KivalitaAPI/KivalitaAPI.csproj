@@ -20,6 +20,8 @@
     <Compile Remove="Migrations\20200716155809_Tracker.Designer.cs" />
     <Compile Remove="Migrations\20200828140506_MailSignature.cs" />
     <Compile Remove="Migrations\20200828140506_MailSignature.Designer.cs" />
+    <Compile Remove="Migrations\20200901123545_TagFilter.cs" />
+    <Compile Remove="Migrations\20200901123545_TagFilter.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

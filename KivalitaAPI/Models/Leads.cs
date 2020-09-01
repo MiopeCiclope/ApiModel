@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using KivalitaAPI.Enum;
 using KivalitaAPI.Interfaces;
 using Microsoft.Linq.Translations;
@@ -71,30 +72,35 @@ namespace KivalitaAPI.Models {
 		public string CaptureDate {
 			get { return dateExpression.Evaluate(this); }
 		}
+
 		[JsonIgnore]
 		[Sieve(CanFilter = true, CanSort = true)]
 		public int? Owner
 		{
 			get { return ownerExpression.Evaluate(this); }
 		}
+
 		[JsonIgnore]
 		[Sieve(CanFilter = true, CanSort = true)]
 		public string? CompanyName
 		{
 			get { return companyNameExpression.Evaluate(this); }
 		}
+
 		[JsonIgnore]
 		[Sieve(CanFilter = true, CanSort = true)]
 		public string? CompanySector
 		{
 			get { return CompanySectorExpression.Evaluate(this); }
 		}
+
 		[JsonIgnore]
 		[Sieve(CanFilter = true, CanSort = true)]
 		public bool WithEmail
 		{
 			get { return WithEmailExpression.Evaluate(this); }
 		}
+
 		public IList<LeadTag> LeadTag { get; set; }
 
 		private static readonly CompiledExpression<Leads, int?> ownerExpression 
