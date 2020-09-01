@@ -40,10 +40,7 @@ namespace KivalitaAPI.Models {
 
 		//[ForeignKey("Tag")]
 		[Sieve(CanFilter = true, CanSort = true)]
-		public int? TagId { get; set; }
-
-		[JsonIgnore]
-		public virtual Tag Tag { get; set; }
+		public string TagId { get; set; }
 
 		[ForeignKey ("User")]
         [Sieve(CanFilter = true, CanSort = true)]
@@ -73,7 +70,7 @@ namespace KivalitaAPI.Models {
 			if (this.Sector != null) filter += $",CompanySector == {this.Sector}";
 			if (this.Position != null) filter += $",Position == {this.Position}";
 			if (this.UserId != null) filter += $",Owner == {this.UserId}";
-			if (this.TagId != null) filter += $",Tag @= {this.TagId}";
+			if (this.TagId != null) filter += $",Tags == {this.TagId}";
 			if (this.Email != null && this.Email != "bothEmail") filter += $",WithEmail == {(this.Email == "withEmail")}";
 
 			return filter;

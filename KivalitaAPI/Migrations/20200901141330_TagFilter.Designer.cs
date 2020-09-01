@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KivalitaAPI.Migrations
 {
     [DbContext(typeof(KivalitaApiContext))]
-    [Migration("20200901123846_TagFilter")]
+    [Migration("20200901141330_TagFilter")]
     partial class TagFilter
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -788,8 +788,8 @@ namespace KivalitaAPI.Migrations
                     b.Property<int?>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TagId")
-                        .HasColumnType("int");
+                    b.Property<string>("TagId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -804,8 +804,6 @@ namespace KivalitaAPI.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("TagId");
 
                     b.HasIndex("UserId");
 
@@ -1613,10 +1611,6 @@ namespace KivalitaAPI.Migrations
 
             modelBuilder.Entity("KivalitaAPI.Models.Filter", b =>
                 {
-                    b.HasOne("KivalitaAPI.Models.Tag", "Tag")
-                        .WithMany()
-                        .HasForeignKey("TagId");
-
                     b.HasOne("KivalitaAPI.Models.User", "User")
                         .WithMany("Filters")
                         .HasForeignKey("UserId")

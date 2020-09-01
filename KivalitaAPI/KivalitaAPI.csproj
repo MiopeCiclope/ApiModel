@@ -22,6 +22,12 @@
     <Compile Remove="Migrations\20200828140506_MailSignature.Designer.cs" />
     <Compile Remove="Migrations\20200901123545_TagFilter.cs" />
     <Compile Remove="Migrations\20200901123545_TagFilter.Designer.cs" />
+    <Compile Remove="Migrations\20200901123846_TagFilter.cs" />
+    <Compile Remove="Migrations\20200901123846_TagFilter.Designer.cs" />
+    <Compile Remove="Migrations\20200901141014_TagFilterList.cs" />
+    <Compile Remove="Migrations\20200901141014_TagFilterList.Designer.cs" />
+    <Compile Remove="Migrations\20200901141206_TagFilter.cs" />
+    <Compile Remove="Migrations\20200901141206_TagFilter.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
