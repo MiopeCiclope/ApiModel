@@ -66,13 +66,13 @@ namespace KivalitaAPI.Models {
 		{
 			string filter = string.Empty;
 
-			if (this.Company != null) filter += $"CompanyName == {this.Company}";
+			if (this.Company != null) filter += $",CompanyName == {this.Company}";
 			if (this.Sector != null) filter += $",CompanySector == {this.Sector}";
 			if (this.Position != null) filter += $",Position == {this.Position}";
 			if (this.UserId != null) filter += $",Owner == {this.UserId}";
-			if (this.TagId != null) filter += $",Tags == {this.TagId}";
+			if (!String.IsNullOrEmpty(this.TagId)) filter += $",Tags == {this.TagId}";
 			if (this.Email != null && this.Email != "bothEmail") filter += $",WithEmail == {(this.Email == "withEmail")}";
-
+			if (this.Date != null) filter += $",createdAt>={ this.Date },createdAt<{DateTime.Parse(this.Date).AddDays(1).Date.ToString()}";
 			return filter;
 		}
 	}
