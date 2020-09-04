@@ -7,6 +7,7 @@ using KivalitaAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Linq;
+using Z.EntityFramework.Extensions;
 
 namespace KivalitaAPI.Data
 {
@@ -18,6 +19,9 @@ namespace KivalitaAPI.Data
         {
             _auditFactory = new AuditFactory(mapper);
         }
+
+        public KivalitaApiContext()
+        { }
 
         public DbSet<User> User { get; set; }
         public DbSet<UserHistory> UserHistory { get; set; }

@@ -36,10 +36,18 @@ namespace KivalitaAPI.Services
             CancellationToken cancellationToken = new CancellationToken();
 
             var leadGroup = SplitLeadGroupByDay(leads, flow);
+            List<Leads> leadListToUpdate = new List<Leads>();
+            List<FlowTask> taskList = new List<FlowTask>();
+            List<int> emailActionList = new List<int>();
 
             var daysToAdd = 0;
             foreach (var action in flow.FlowAction)
             {
+                if (action.Type == "email" && action.Flow.isAutomatic)
+                {
+                    emailActionList.Add(action.Id);
+                }
+
                 foreach (var leadList in leadGroup)
                 {
 
@@ -48,20 +56,18 @@ namespace KivalitaAPI.Services
                         if (!lead.FlowId.HasValue || lead.FlowId != flow.Id)
                         {
                             lead.FlowId = flow.Id;
-                            _leadsRepository.Update(lead);
-
+                            leadListToUpdate.Add(lead);
                             _logTaskService.RegisterLog(LogTaskEnum.LeadAddedToFLow, lead.Id);
                         }
 
                         if (lead.Status != LeadStatusEnum.Flow)
                         {
                             lead.Status = LeadStatusEnum.Flow;
-                            _leadsRepository.Update(lead);
-
+                            leadListToUpdate.Add(lead);
                             _logTaskService.RegisterLog(LogTaskEnum.StatusChanged, lead.Id);
                         }
                         
-                        var taskPayload = new FlowTask
+                        var task = new FlowTask
                         {
                             Status = "pending",
                             LeadId = lead.Id,
@@ -73,27 +79,39 @@ namespace KivalitaAPI.Services
 
                         if (flow.FlowAction.First() == action)
                         {
-                            taskPayload.ScheduledTo = DateTime.Now.AddDays(action.afterDays + daysToAdd);
+                            task.ScheduledTo = DateTime.Now.AddDays(action.afterDays + daysToAdd);
                         }
 
-                        var task = _flowTaskRepository.Add(taskPayload);
-
+                        taskList.Add(task);
                         _logTaskService.RegisterLog(LogTaskEnum.TaskAdded, lead.Id, task.Id);
-
-                        if (task.ScheduledTo.HasValue)
-                        {
-                            DateTimeOffset dateTimeOffset = new DateTimeOffset((DateTime)task.ScheduledTo);
-                            var job = new JobScheduleDTO("TaskJob", "0/2 * * * * ?", dateTimeOffset, task.Id)
-                            {
-                                userId = flow.CreatedBy
-                            };
-                            _scheduler.ScheduleJob(cancellationToken, job);
-                        }
-
                     }
                     daysToAdd += 1;
                 }
             }
+
+            if (leadListToUpdate.Any()) 
+                _leadsRepository.UpdateRange(leadListToUpdate.Distinct().ToList());
+            if (taskList.Any())
+            {
+                var tasksWithId = _flowTaskRepository.AddRange(taskList);
+                var tasksToSchedule = tasksWithId
+                                        .Where(task =>
+                                                task.ScheduledTo.HasValue
+                                                && emailActionList.Contains(task.FlowActionId))
+                                        .ToList();
+
+                foreach (var task in tasksToSchedule)
+                {
+                    DateTimeOffset dateTime = new DateTimeOffset(DateTime.Now);
+                    var job = new JobScheduleDTO("SendMailJob", "0/2 * * * * ?", dateTime, task.Id);
+                    job.userId = task.CreatedBy;
+                    _scheduler.ScheduleJob(cancellationToken, job);
+
+                    task.Status = "finished";
+                }
+                _flowTaskRepository.UpdateRange(tasksToSchedule);
+            }
+
         }
 
         private List<List<Leads>> SplitLeadGroupByDay(List<Leads> leads, Flow flow)
