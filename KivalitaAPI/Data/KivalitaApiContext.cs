@@ -20,8 +20,8 @@ namespace KivalitaAPI.Data
             _auditFactory = new AuditFactory(mapper);
         }
 
-        public KivalitaApiContext()
-        { }
+        //public KivalitaApiContext()
+        //{ }
 
         public DbSet<User> User { get; set; }
         public DbSet<UserHistory> UserHistory { get; set; }

@@ -76,6 +76,7 @@ namespace KivalitaAPI.Repositories {
 
 		public virtual List<TEntity> UpdateRange(List<TEntity> entities)
 		{
+			EntityFrameworkManager.ContextFactory = _context => { return context; };
 			context.Set<TEntity>().BulkUpdate(entities, options =>
 			{
 				options.IgnoreOnUpdateExpression = entity => new

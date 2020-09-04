@@ -38,16 +38,10 @@ namespace KivalitaAPI.Services
             var leadGroup = SplitLeadGroupByDay(leads, flow);
             List<Leads> leadListToUpdate = new List<Leads>();
             List<FlowTask> taskList = new List<FlowTask>();
-            List<int> emailActionList = new List<int>();
 
             var daysToAdd = 0;
             foreach (var action in flow.FlowAction)
             {
-                if (action.Type == "email" && action.Flow.isAutomatic)
-                {
-                    emailActionList.Add(action.Id);
-                }
-
                 foreach (var leadList in leadGroup)
                 {
 
@@ -93,23 +87,11 @@ namespace KivalitaAPI.Services
                 _leadsRepository.UpdateRange(leadListToUpdate.Distinct().ToList());
             if (taskList.Any())
             {
-                var tasksWithId = _flowTaskRepository.AddRange(taskList);
-                var tasksToSchedule = tasksWithId
-                                        .Where(task =>
-                                                task.ScheduledTo.HasValue
-                                                && emailActionList.Contains(task.FlowActionId))
-                                        .ToList();
+                _flowTaskRepository.AddRange(taskList);
 
-                foreach (var task in tasksToSchedule)
-                {
-                    DateTimeOffset dateTime = new DateTimeOffset(DateTime.Now);
-                    var job = new JobScheduleDTO("SendMailJob", "0/2 * * * * ?", dateTime, task.Id);
-                    job.userId = task.CreatedBy;
-                    _scheduler.ScheduleJob(cancellationToken, job);
-
-                    task.Status = "finished";
-                }
-                _flowTaskRepository.UpdateRange(tasksToSchedule);
+                DateTimeOffset dateTime = new DateTimeOffset(DateTime.Now);
+                var job = new JobScheduleDTO("MailSchedulerJob", "0/2 * * * * ?", dateTime);
+                _scheduler.ScheduleJob(cancellationToken, job);
             }
 
         }

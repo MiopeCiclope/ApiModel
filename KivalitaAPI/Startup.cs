@@ -292,6 +292,7 @@ namespace KivalitaAPI
             services.AddSingleton<TaskJob>();
             services.AddSingleton<ReplyCheckJob>();
             services.AddSingleton<GetMailJob>();
+            services.AddSingleton<MailSchedulerJob>();
 
             //services.AddSingleton(new JobScheduleDTO("ReplyCheckJob", "* 0/20 * * * ?", null, 0));
             //services.AddSingleton(new JobScheduleDTO("GetMailJob", null, DateTimeOffset.UtcNow, 0));
