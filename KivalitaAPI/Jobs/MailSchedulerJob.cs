@@ -27,6 +27,7 @@ public class MailSchedulerJob : IJob
     private LogTaskService logTaskService;
     private GraphServiceClient client;
     private FlowTaskRepository taskRepository;
+    private FlowTaskService flowTaskService;
     private int templateId = 4;
     private string userSignature = "";
 
@@ -49,7 +50,7 @@ public class MailSchedulerJob : IJob
         try
         {
             semaphore.WaitOne();
-            _logger.LogInformation($"{DateTime.Now}");
+            _logger.LogInformation($"Start Schedule e-mails - {DateTime.Now}");
             if (scope == null)
             {
                 scope = this._serviceProvider.CreateScope();
@@ -58,6 +59,7 @@ public class MailSchedulerJob : IJob
             this.taskRepository = scope.ServiceProvider.GetService<FlowTaskRepository>();
             this.graphService = scope.ServiceProvider.GetService<MicrosoftTokenService>();
             this.logTaskService = scope.ServiceProvider.GetService<LogTaskService>();
+            this.flowTaskService = scope.ServiceProvider.GetService<FlowTaskService>();
             List<FlowTask> taskScheduledList = new List<FlowTask>();
 
             var taskList = taskRepository.GetSchedulableTask();
@@ -68,8 +70,6 @@ public class MailSchedulerJob : IJob
 
                 this.client = graphService.GetTokenClient(userId);
                 this.userSignature = GetSignature(userId);
-
-                //var flowTask = this.taskRepository.Get(taskId);
                 this.templateId = (int)flowTask.FlowAction.TemplateId;
 
                 var mailList = GetMailList(userId, flowTask);
@@ -93,6 +93,10 @@ public class MailSchedulerJob : IJob
             if(taskScheduledList.Any())
             {
                 taskRepository.UpdateRange(taskScheduledList);
+                foreach (var task in taskScheduledList)
+                {
+                    flowTaskService.scheduleNextTask(task);
+                }
             }
         }
         catch(Exception e)
@@ -157,8 +161,8 @@ public class MailSchedulerJob : IJob
                     {
                         EmailAddress = new EmailAddress
                         {
-                            //Address = $"{lead.Email}"
-                            Address = $"romulo.carvalho@kivalita.com.br"
+                            Address = $"{lead.Email}"
+                            //Address = $"romulo.carvalho@kivalita.com.br"
                         }
                     } 
                 }
@@ -176,7 +180,7 @@ public class MailSchedulerJob : IJob
     {
         var text = $"{taskId}-{lead.Id}";
         var encriptKey = HttpUtility.UrlEncode(AesCripty.EncryptString(Setting.MailTrackSecret, text), Encoding.UTF8);
-        var url = $"<img src = \"http://localhost:5000/api/tracker/track?key={encriptKey}\" width=1 height=1 style=\"mso-hide:all; display:none; line-height: 0; font-size: 0; height: 0; padding: 0; visibility:hidden;\"/>";
+        var url = $"<img src = \"https://api.kivalita.com.br/api/tracker/track?key={encriptKey}\" width=1 height=1 style=\"mso-hide:all; display:none; line-height: 0; font-size: 0; height: 0; padding: 0; visibility:hidden;\"/>";
         return url;
     }
 
