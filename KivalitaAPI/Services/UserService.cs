@@ -15,23 +15,30 @@ namespace KivalitaAPI.Services
         CompanyRepository companyRepository;
         MicrosoftTokenRepository microsoftTokenRepository;
         MailSignatureService mailSignatureService;
+        MailSignatureRepository mailSignatureRepository;
 
         public UserService(
             KivalitaApiContext context,
             UserRepository baseRepository,
             CompanyRepository companyRepository,
             MicrosoftTokenRepository microsoftTokenRepository,
-            MailSignatureService _mailSignatureService
+            MailSignatureService _mailSignatureService,
+            MailSignatureRepository _mailSignatureRepository
         ) : base(context, baseRepository)
         {
             this.companyRepository = companyRepository;
             this.microsoftTokenRepository = microsoftTokenRepository;
             this.mailSignatureService = _mailSignatureService;
+            this.mailSignatureRepository = _mailSignatureRepository;
         }
 
         public override User Get(int id)
         {
             var user = baseRepository.Get(id);
+
+            var signature = mailSignatureRepository.GetBy(signature => signature.UserId == user.Id)?.First() ?? null;
+            user.MailSignature = signature;
+
             var microsoftToken = this.microsoftTokenRepository.GetBy(m => m.UserId == user.Id)
                 .FirstOrDefault();
             user.LinkedMicrosoftGraph = microsoftToken != null ? true : false;

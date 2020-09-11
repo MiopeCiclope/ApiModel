@@ -31,7 +31,7 @@ namespace KivalitaAPI.Repositories
         {
             var user = context.Set<User>()
                 .Include(u => u.Company)
-                .Include(u => u.MailSignature)
+                //.Include(u => u.MailSignature)
                 .SingleOrDefault(u => u.Id == id);
 
             return removePassword(user);
@@ -40,7 +40,7 @@ namespace KivalitaAPI.Repositories
         public override QueryResult<User> GetAll_v2(SieveModel filterQuery)
         {
             var result = context.Set<User>()
-                .Include(u => u.MailSignature)
+                //.Include(u => u.MailSignature)
                 .AsNoTracking();
             var total = result.Count();
             result = this.filterProcessor.Apply(filterQuery, result);
