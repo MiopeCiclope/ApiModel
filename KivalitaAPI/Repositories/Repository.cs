@@ -7,6 +7,7 @@ using KivalitaAPI.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Sieve.Models;
 using Sieve.Services;
+using Z.EntityFramework.Extensions;
 
 namespace KivalitaAPI.Repositories {
 	public abstract class Repository<TEntity, TContext, TFilterEngine> : IRepository<TEntity>
@@ -27,8 +28,7 @@ namespace KivalitaAPI.Repositories {
 		}
 
 		public virtual List<TEntity> AddRange (List<TEntity> entities) {
-			context.Set<TEntity> ().AddRange (entities);
-			context.SaveChanges ();
+			context.Set<TEntity>().BulkInsert(entities, options => options.BatchSize = 200);
 			return entities;
 		}
 
@@ -76,8 +76,15 @@ namespace KivalitaAPI.Repositories {
 
 		public virtual List<TEntity> UpdateRange(List<TEntity> entities)
 		{
-			context.Set<TEntity>().UpdateRange(entities);
-			context.SaveChanges();
+			EntityFrameworkManager.ContextFactory = _context => { return context; };
+			context.Set<TEntity>().BulkUpdate(entities, options =>
+			{
+				options.IgnoreOnUpdateExpression = entity => new
+				{
+					entity.CreatedAt,
+					entity.CreatedBy
+				};
+			});
 			return entities;
 		}
 

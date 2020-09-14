@@ -2,7 +2,7 @@
 
 public class JobScheduleDTO
 {
-    public JobScheduleDTO(string jobType, string cronExpression, DateTimeOffset? start, int task)
+    public JobScheduleDTO(string jobType, string cronExpression, DateTimeOffset? start, int task = 0)
     {
         JobType = Type.GetType(jobType);
         CronExpression = cronExpression;

@@ -119,5 +119,20 @@ namespace KivalitaAPI.Repositories
                             .Where(condition)
                             .ToList();
         }
+
+        public List<FlowTask> GetSchedulableTask()
+        {
+            return context.Set<FlowTask>()
+                            .Include(f => f.FlowAction)
+                                .ThenInclude(fa => fa.Flow)
+                            .WithTranslations()
+                            .AsNoTracking()
+                            .Where(task => task.Status == "pending" 
+                                        && task.ScheduledTo.HasValue 
+                                        && task.ScheduledTo.Value.Date <= DateTime.Now
+                                        && task.FlowAction.Type == "email" 
+                                        && task.FlowAction.Flow.isAutomatic)
+                            .ToList();
+        }
     }
 }
