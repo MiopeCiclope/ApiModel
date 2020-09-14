@@ -175,6 +175,9 @@ namespace KivalitaAPI
             services.AddScoped<MailSignatureRepository>();
             services.AddScoped<MailSignatureService>();
 
+            services.AddScoped<PreLeadRepository>();
+            services.AddScoped<PreLeadService>();
+
             services.AddScoped<ISieveCustomFilterMethods, SieveCustomFilterMethods>();
 
             var mappingConfig = new MapperConfiguration(cfg =>
@@ -272,6 +275,11 @@ namespace KivalitaAPI
                             .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Id))
                             .ForMember(dest => dest.Id, opt => opt.Ignore());
                 cfg.CreateMap<MailSignatureHistory, MailSignature>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TableId));
+
+                cfg.CreateMap<PreLead, PreLeadHistory>()
+                            .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Id))
+                            .ForMember(dest => dest.Id, opt => opt.Ignore());
+                cfg.CreateMap<PreLeadHistory, PreLead>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TableId));
             });
 
             //Mapper Configured service
