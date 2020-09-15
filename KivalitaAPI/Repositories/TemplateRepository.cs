@@ -18,6 +18,13 @@ namespace KivalitaAPI.Repositories {
                 .ToList();
         }
 
+        public List<Template> GetAllAsNoTracking()
+        {
+            return context.Set<Template>()
+                .AsNoTracking()
+                .ToList();
+        }
+
         public override Template Get(int id)
         {
             return context.Set<Template>()

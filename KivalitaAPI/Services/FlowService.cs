@@ -16,7 +16,9 @@ namespace KivalitaAPI.Services
     {
         LeadsRepository leadsRepository;
         FlowActionRepository flowActionRepository;
+        FlowTaskRepository flowTaskRepository;
         FilterRepository filterRepository;
+        TemplateRepository templateRepository;
         ScheduleTasksService scheduleTasksService;
 
         public FlowService(
@@ -24,12 +26,16 @@ namespace KivalitaAPI.Services
             FlowRepository baseRepository,
             LeadsRepository _leadsRepository,
             FlowActionRepository _flowActionRepository,
+            FlowTaskRepository _flowTaskRepository,
             FilterRepository _filterRepository,
+            TemplateRepository _templateRepository,
             ScheduleTasksService _scheduleTasksService
         ) : base(context, baseRepository) {
             leadsRepository = _leadsRepository;
             flowActionRepository = _flowActionRepository;
+            flowTaskRepository = _flowTaskRepository;
             filterRepository = _filterRepository;
+            templateRepository = _templateRepository;
             scheduleTasksService = _scheduleTasksService;
         }
 
@@ -112,6 +118,30 @@ namespace KivalitaAPI.Services
                 amountOfLeads = amountOfLeads
             };
         }
+
+        public List<FlowLeadsDTO> getLeads(int flowId, SieveModel filterQuery)
+        {
+            var leads = leadsRepository.GetLeadsByFlowId(flowId, filterQuery);
+            var templates = templateRepository.GetAllAsNoTracking();
+
+            return leads.Select(lead => {
+                var task = flowTaskRepository.GetCurrentTaskFromLead(lead.Id, flowId);
+                var template = templates.Find(t => t.Id == task?.FlowAction?.TemplateId);
+
+                var flowTask = task != null
+                    ? new FlowTaskDTO { Type = task.FlowAction.Type, TemplateName = template?.Name }
+                    : null;
+
+                return new FlowLeadsDTO
+                {
+                    Id = lead.Id,
+                    Name = lead.Name,
+                    Email = lead.Email,
+                    Task = flowTask
+                };
+            }).ToList();
+        }
+
     }
 }
 

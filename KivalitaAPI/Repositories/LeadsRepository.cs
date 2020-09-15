@@ -204,5 +204,16 @@ namespace KivalitaAPI.Repositories
                 .Where(l => l.FlowId == flowid)
                 .Count();
         }
+
+        public List<Leads> GetLeadsByFlowId(int flowid, SieveModel filterQuery)
+        {
+            var result = context.Set<Leads>()
+                .Where(l => l.FlowId == flowid)
+                .AsNoTracking();
+
+            result = this.filterProcessor.Apply(filterQuery, result, applyFiltering: false, applySorting: false);
+            return result.ToList();
+
+        }
     }
 }

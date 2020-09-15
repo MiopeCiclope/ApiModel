@@ -8,6 +8,8 @@ using KivalitaAPI.Common;
 using System;
 using System.Net;
 using KivalitaAPI.DTOs;
+using System.Collections.Generic;
+using Sieve.Models;
 
 namespace KivalitaAPI.Controllers
 {
@@ -37,6 +39,35 @@ namespace KivalitaAPI.Controllers
             {
                 logger.LogError(e.Message);
                 return new HttpResponse<FlowReportDTO>
+                {
+                    IsStatusCodeSuccess = false,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    data = null,
+                    ErrorMessage = "Erro ao realizar a requisição"
+                };
+            }
+        }
+
+        [HttpGet]
+        [Authorize]
+        [Route("{flowId}/leads")]
+        public HttpResponse<List<FlowLeadsDTO>> GetLeads(int flowId, [FromQuery] SieveModel filterQuery)
+        {
+            logger.LogInformation($"{this.GetType().Name} - Flow Leads");
+            try
+            {
+                var flowLeads = service.getLeads(flowId, filterQuery);
+                return new HttpResponse<List<FlowLeadsDTO>>
+                {
+                    IsStatusCodeSuccess = true,
+                    statusCode = HttpStatusCode.OK,
+                    data = flowLeads
+                };
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.Message);
+                return new HttpResponse<List<FlowLeadsDTO>>
                 {
                     IsStatusCodeSuccess = false,
                     statusCode = HttpStatusCode.InternalServerError,
