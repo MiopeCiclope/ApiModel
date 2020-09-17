@@ -46,6 +46,14 @@ namespace KivalitaAPI.Repositories
                 .Include(f => f.Filter)
                 .SingleOrDefault();
         }
+
+        public Flow GetAsNoTracking(int id)
+        {
+            return context.Set<Flow>()
+                .Where(l => l.Id == id)
+                .AsNoTracking()
+                .SingleOrDefault();
+        }
     }
 }
 

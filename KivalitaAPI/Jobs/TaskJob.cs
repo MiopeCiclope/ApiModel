@@ -1,13 +1,10 @@
 ﻿using KivalitaAPI.Interfaces;
-using KivalitaAPI.Models;
 using KivalitaAPI.Repositories;
 using KivalitaAPI.Services;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Quartz;
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -44,12 +41,14 @@ public class TaskJob : IJob
         CancellationToken cancellationToken = new CancellationToken();
 
         var scope = this._serviceProvider.CreateScope();
+        var flowRepository = scope.ServiceProvider.GetService<FlowRepository>();
         var flowTaskRepository = scope.ServiceProvider.GetService<FlowTaskRepository>();
         var flowTaskService = scope.ServiceProvider.GetService<FlowTaskService>();
 
         var flowTask = flowTaskRepository.Get(taskId);
+        var flow = flowRepository.Get(flowTask.FlowAction.FlowId);
 
-        if (flowTaskService.isJobAutomatic(flowTask.FlowAction))
+        if (flowTaskService.isJobAutomatic(flowTask.FlowAction) && flow.IsActive)
         {
             DateTimeOffset dateTime = new DateTimeOffset(DateTime.Now);
             var job = new JobScheduleDTO("SendMailJob", "0/2 * * * * ?", dateTime, flowTask.Id);

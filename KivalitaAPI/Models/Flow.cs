@@ -30,6 +30,9 @@ namespace KivalitaAPI.Models
 		public string DaysOfTheWeek { get; set; }
 
 		[Sieve(CanFilter = true, CanSort = true)]
+		public bool IsActive { get; set; }
+
+		[Sieve(CanFilter = true, CanSort = true)]
 		[ForeignKey("Filter")]
 		public int FilterId { get; set; }
 		public Filter Filter { get; set; }

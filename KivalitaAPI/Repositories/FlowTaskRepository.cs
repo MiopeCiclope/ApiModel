@@ -144,7 +144,8 @@ namespace KivalitaAPI.Repositories
                                         && task.ScheduledTo.HasValue 
                                         && task.ScheduledTo.Value.Date <= DateTime.Now
                                         && task.FlowAction.Type == "email" 
-                                        && task.FlowAction.Flow.isAutomatic)
+                                        && task.FlowAction.Flow.isAutomatic
+                                        && task.FlowAction.Flow.IsActive)
                             .ToList();
         }
     }
