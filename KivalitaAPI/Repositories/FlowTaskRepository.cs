@@ -9,7 +9,6 @@ using Sieve.Models;
 using Microsoft.Linq.Translations;
 using System;
 using KivalitaAPI.DTOs;
-using System.Data.Entity.Core.Objects;
 
 namespace KivalitaAPI.Repositories
 {
@@ -88,6 +87,7 @@ namespace KivalitaAPI.Repositories
                 )
                 .FirstOrDefault();
         }
+
 
         public TaskListDTO initialTasks(SieveModel filterQuery)
         {

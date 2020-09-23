@@ -46,6 +46,11 @@ namespace KivalitaAPI.Models {
         [Sieve(CanFilter = true, CanSort = true)]
 		public int UserId { get; set; }
 
+		[ForeignKey("Flow")]
+		[Sieve(CanFilter = true, CanSort = true)]
+		public int? FlowId { get; set; }
+		public Flow Flow { get; set; }
+
 		[JsonIgnore]
 		public virtual User User { get; set; }
 

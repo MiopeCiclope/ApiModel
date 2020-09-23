@@ -5,10 +5,8 @@ using KivalitaAPI.Common;
 using KivalitaAPI.Data;
 using KivalitaAPI.DTOs;
 using KivalitaAPI.Enum;
-using KivalitaAPI.Interfaces;
 using KivalitaAPI.Models;
 using KivalitaAPI.Repositories;
-using Quartz;
 using Sieve.Models;
 
 namespace KivalitaAPI.Services {
@@ -17,26 +15,20 @@ namespace KivalitaAPI.Services {
 
 		CompanyRepository companyRepository;
 		FlowRepository flowRepository;
-		FlowTaskRepository flowTaskRepository;
 		LeadTagRepository leadTagRepository;
 		ScheduleTasksService scheduleTasksService;
-		public readonly IJobScheduler scheduler;
 
 		public LeadsService (
 			KivalitaApiContext context,
 			LeadsRepository baseRepository,
 			CompanyRepository companyRepository,
 			FlowRepository flowRepository,
-			FlowTaskRepository flowTaskRepository,
 			LeadTagRepository leadTagRepository,
-			ScheduleTasksService scheduleTasksService,
-			IJobScheduler scheduler
+			ScheduleTasksService scheduleTasksService
 		) : base (context, baseRepository) {
 			this.companyRepository = companyRepository;
 			this.flowRepository = flowRepository;
-			this.flowTaskRepository = flowTaskRepository;
 			this.scheduleTasksService = scheduleTasksService;
-			this.scheduler = scheduler;
 			this.leadTagRepository = leadTagRepository;
 		}
 
@@ -44,19 +36,19 @@ namespace KivalitaAPI.Services {
 		{
 			var oldLead = baseRepository.GetAsNoTracking(lead.Id);
 
-			if (lead.FlowId.HasValue && lead.FlowId != oldLead.FlowId)
+			if (lead.FlowId != oldLead.FlowId)
 			{
-				var tasksPending = flowTaskRepository.GetPendingByLead(lead.Id);
-				foreach (var task in tasksPending)
-				{
-					var job = new JobKey($"TaskJob_{task.Id}", "DEFAULT");
-					scheduler.DeleteJob(job);
-				}
+				if (oldLead.FlowId.HasValue)
+                {
+					scheduleTasksService.Remove(lead);
+                }
 
-				flowTaskRepository.DeleteRange(tasksPending);
+				if (lead.FlowId.HasValue)
+                {
+					var flow = flowRepository.Get((int)lead.FlowId);
+					scheduleTasksService.Execute(flow, new List<Leads> { lead });
+                }
 
-				var flow = flowRepository.Get((int)lead.FlowId);
-				scheduleTasksService.Execute(flow, new List<Leads> { lead });
 			}
 
 			if (lead.LeadTag != null)

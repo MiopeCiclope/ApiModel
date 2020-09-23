@@ -6,6 +6,7 @@ using KivalitaAPI.Enum;
 using KivalitaAPI.Interfaces;
 using KivalitaAPI.Models;
 using KivalitaAPI.Repositories;
+using Quartz;
 using Sieve.Models;
 
 namespace KivalitaAPI.Services
@@ -94,6 +95,28 @@ namespace KivalitaAPI.Services
                 _scheduler.ScheduleJob(cancellationToken, job);
             }
 
+        }
+
+        public void RemoveRange(List<Leads> leads)
+        {
+            foreach( var lead in leads ) {
+                this.Remove(lead);
+            }
+        }
+
+        public void Remove(Leads lead)
+        {
+            var tasksPending = _flowTaskRepository.GetPendingByLead(lead.Id);
+            foreach (var task in tasksPending)
+            {
+                var job = new JobKey($"TaskJob_{task.Id}", "DEFAULT");
+                _scheduler.DeleteJob(job);
+            }
+
+            _flowTaskRepository.DeleteRange(tasksPending);
+
+            lead.FlowId = null;
+            _leadsRepository.Update(lead);
         }
 
         private List<List<Leads>> SplitLeadGroupByDay(List<Leads> leads, Flow flow)

@@ -41,9 +41,13 @@ namespace KivalitaAPI.Services
 
         public override Flow Add(Flow flow)
         {
+            var filters = flow.Filter.Select(filter => filterRepository.Get(filter.Id)).ToList();
+            flow.Filter = filters;
+
             var flowCreated = base.Add(flow);
 
-            var leads = GetLeadsByFilter(flow.FilterId);
+            var filterIds = filters.Select(f => f.Id).ToList();
+            var leads = GetLeadsByFilter(filterIds);
             leads = leads.Where(l => l.Status == LeadStatusEnum.ColdLead).ToList();
 
             scheduleTasksService.Execute(flowCreated, leads);
@@ -51,20 +55,39 @@ namespace KivalitaAPI.Services
             return flowCreated;
         }
 
-        private List<Leads> GetLeadsByFilter(int filterId)
-        {
-            var filter = filterRepository.Get(filterId);
-            var filterModel = new SieveModel();
-            filterModel.Filters = filter.GetSieveFilter();
-
-            return leadsRepository.GetAll_v2(filterModel).Items;
-        }
-
-
         public override Flow Update(Flow flow)
         {
             var oldFlow = baseRepository.Get(flow.Id);
 
+            // Update Filters
+            if (flow.Filter != null)
+            {
+                var filterToUnlink = oldFlow.Filter.Where(filter => !flow.Filter.Select(filter => filter.Id)?.Contains(filter.Id) ?? true);
+                var filterToLink = flow.Filter.Where(filter => !oldFlow.Filter?.Select(filterUnlink => filterUnlink.Id).Contains(filter.Id) ?? true);
+                if (filterToUnlink.Any())
+                {
+                    var filterList = filterToUnlink.ToList();
+                    filterList.ForEach(filter => filter.FlowId = null);
+                    filterRepository.UpdateRange(filterList);
+                }
+
+                if (filterToLink.Any())
+                {
+                    var filterList = filterToLink.ToList();
+                    filterList.ForEach(filter => filter.FlowId = flow.Id);
+                    filterRepository.UpdateRange(filterList);
+                }
+
+                var filterUnlinkIds = filterToUnlink.Select(f => f.Id).ToList();
+                var leadsUnlink = GetLeadsByFilter(filterUnlinkIds);
+                scheduleTasksService.RemoveRange(leadsUnlink);
+
+                var filterLinkIds = filterToLink.Select(f => f.Id).ToList();
+                var leadsLink = GetLeadsByFilter(filterLinkIds);
+                scheduleTasksService.Execute(flow, leadsLink);
+            }
+
+            // Update Flow Actions
             var actionToUnlink = oldFlow.FlowAction.Where(flowAction => !flow.FlowAction.Select(flowAction => flowAction.Id)?.Contains(flowAction.Id) ?? true);
             var actionToLink = flow.FlowAction.Where(flowAction => !oldFlow.FlowAction?.Select(actionUnlink => actionUnlink.Id).Contains(flowAction.Id) ?? true);
 
@@ -140,6 +163,22 @@ namespace KivalitaAPI.Services
                     Task = flowTask
                 };
             }).ToList();
+        }
+
+        private List<Leads> GetLeadsByFilter(List<int> filterIds)
+        {
+            var leads = new List<Leads> { };
+            foreach (var filterId in filterIds)
+            {
+                var filter = filterRepository.Get(filterId);
+                var filterModel = new SieveModel();
+                filterModel.Filters = filter.GetSieveFilter();
+                var leadsFound = leadsRepository.GetAll_v2(filterModel).Items;
+
+                leads.AddRange(leadsFound);
+            }
+
+            return leads;
         }
 
     }

@@ -13,7 +13,6 @@ namespace KivalitaAPI.AuditModels
 		public bool isAutomatic { get; set; }
 		public string DaysOfTheWeek { get; set; }
 		public bool IsActive { get; set; }
-		public int FilterId { get; set; }
 		public int TableId { get; set; }
         public ActionEnum Action { get; set; }
         public int Responsable { get; set; }

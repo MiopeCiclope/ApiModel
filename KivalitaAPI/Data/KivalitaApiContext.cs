@@ -126,10 +126,15 @@ namespace KivalitaAPI.Data
                 .WithMany()
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Flow>()
-                .HasOne(t => t.Filter)
-                .WithMany()
+            modelBuilder.Entity<Filter>()
+                .HasOne(f => f.Flow)
+                .WithMany(f => f.Filter)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Flow>()
+                .HasMany(f => f.Filter)
+                .WithOne(f => f.Flow)
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Flow>()
                 .HasMany(f => f.FlowAction)
