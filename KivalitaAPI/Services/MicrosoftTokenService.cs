@@ -254,12 +254,10 @@ namespace KivalitaAPI.Services
                 });
             }
 
-            Console.WriteLine($"Folder: {folder.DisplayName}");
-
             var subscription = new Subscription
             {
                 ChangeType = "created",
-                NotificationUrl = $"https://api.kivalita.com.br/api//Graph/Webhook/{userId}/GetAnsweredEmails",
+                NotificationUrl = $"https://api.kivalita.com.br/api/Graph/Webhook/{userId}/GetAnsweredEmails",
                 Resource = $"me/mailFolders('{folder.Id}')/messages",
                 ExpirationDateTime = DateTimeOffset.UtcNow.AddMinutes(4200)
             };

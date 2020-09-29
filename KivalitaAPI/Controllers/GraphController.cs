@@ -14,6 +14,9 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Linq;
 using Microsoft.Graph;
+using System.IO;
+using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace KivalitaAPI.Controllers
 {
@@ -167,7 +170,7 @@ namespace KivalitaAPI.Controllers
 
         [HttpPost("SendMail")]
         [Authorize]
-        public virtual HttpResponse<bool> SendMail(FlowTask task)
+        public HttpResponse<bool> SendMail(FlowTask task)
         {
             logger.LogInformation($"{this.GetType().Name} - SendMail - {task.Id}");
             try 
@@ -206,22 +209,23 @@ namespace KivalitaAPI.Controllers
 
         [HttpPost("Webhook/RegisterAnsweredEmails")]
         [Authorize]
-        public virtual async Task<IGraphServiceSubscriptionsCollectionPage> RegisterAnsweredEmails([FromBody] RegisterAnsweredEmailsDTO dataDTO)
+        public async Task<IGraphServiceSubscriptionsCollectionPage> RegisterAnsweredEmails([FromBody] RegisterAnsweredEmailsDTO dataDTO)
         {
             Console.WriteLine($"Userid: {dataDTO.UserId}");
             return await service.RegisterWebhookToAnsweredEmailsAsync(dataDTO.UserId);
         }
 
         [HttpPost("Webhook/{userId}/GetAnsweredEmails")]
-        public virtual async Task<IActionResult> GetAnsweredEmails(
-            int userId,
-            [FromBody] GraphNotificationCollection collection,
-            [FromQuery] string validationToken = null)
+        public async Task<IActionResult> GetAnsweredEmails(int userId, [FromQuery] string validationToken = null)
         {
             logger.LogInformation($"{this.GetType().Name} - GetAnsweredEmails");
 
             if (string.IsNullOrEmpty(validationToken))
             {
+                var body = new StreamReader(Request.Body);
+                var requestBody = await body.ReadToEndAsync();
+                var collection = JsonConvert.DeserializeObject<GraphNotificationCollection>(requestBody);
+
                 var graphClient = service.GetTokenClient(userId);
 
                 foreach (var notification in collection.Value)
