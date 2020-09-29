@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web;
 
 namespace KivalitaAPI.Services
@@ -55,6 +56,9 @@ namespace KivalitaAPI.Services
                 return null;
 
             base.Add(entity);
+
+            RegisterWebhookToAnsweredEmailsAsync(userId).Wait();
+
             return entity;
         }
 
@@ -228,6 +232,41 @@ namespace KivalitaAPI.Services
             var encriptKey = HttpUtility.UrlEncode(AesCripty.EncryptString(Setting.MailTrackSecret, text), Encoding.UTF8);
             var url = $"<img src = \"http://localhost:5000/api/tracker/track?key={encriptKey}\" width=1 height=1 style=\"mso-hide:all; display:none; line-height: 0; font-size: 0; height: 0; padding: 0; visibility:hidden;\"/>";
             return url;
+        }
+
+        public async Task<IGraphServiceSubscriptionsCollectionPage> RegisterWebhookToAnsweredEmailsAsync(int userId)
+        {
+            var folderName = "PokeLead Respostas";
+            var graphClient = GetTokenClient(userId);
+
+            var folders = await graphClient.Me.MailFolders.Request().Filter($"displayName eq '{folderName}'").GetAsync();
+            MailFolder folder;
+
+            if (folders.Count > 0)
+            {
+                folder = folders.First();
+            }
+            else
+            {
+                folder = await graphClient.Me.MailFolders.Request().AddAsync(new MailFolder
+                {
+                    DisplayName = folderName
+                });
+            }
+
+            Console.WriteLine($"Folder: {folder.DisplayName}");
+
+            var subscription = new Subscription
+            {
+                ChangeType = "created",
+                NotificationUrl = $"https://api.kivalita.com.br/api//Graph/Webhook/{userId}/GetAnsweredEmails",
+                Resource = $"me/mailFolders('{folder.Id}')/messages",
+                ExpirationDateTime = DateTimeOffset.UtcNow.AddMinutes(4200)
+            };
+
+            await graphClient.Subscriptions.Request().AddAsync(subscription);
+
+            return await graphClient.Subscriptions.Request().GetAsync();
         }
     }
 }

@@ -9,6 +9,11 @@ using System.Security.Claims;
 using KivalitaAPI.Models;
 using Microsoft.Extensions.Logging;
 using KivalitaAPI.Enum;
+using System.Threading.Tasks;
+using System.Text.Json;
+using System.Text.RegularExpressions;
+using System.Linq;
+using Microsoft.Graph;
 
 namespace KivalitaAPI.Controllers
 {
@@ -21,15 +26,18 @@ namespace KivalitaAPI.Controllers
         private readonly TemplateService templateService;
         private readonly LeadsService leadService;
         private readonly LogTaskService logTaskService;
+        private readonly MailAnsweredService mailAnsweredService;
 
         private readonly ILogger<GraphController> logger;
 
-        public GraphController(MicrosoftTokenService tokenService
+        public GraphController(
+            MicrosoftTokenService tokenService
             , ILogger<GraphController> _logger
             , UserService _userService
             , TemplateService _templateService
             , LeadsService _leadService
             , LogTaskService _logTaskService
+            , MailAnsweredService _mailAnsweredService
         ) {
             service = tokenService;
             userService = _userService;
@@ -37,6 +45,7 @@ namespace KivalitaAPI.Controllers
             leadService = _leadService;
             logTaskService = _logTaskService;
             logger = _logger;
+            mailAnsweredService = _mailAnsweredService;
         }
 
         [HttpPost]
@@ -193,6 +202,83 @@ namespace KivalitaAPI.Controllers
                     ErrorMessage = "Erro ao realizar a requisição"
                 };
             }
+        }
+
+        [HttpPost("Webhook/RegisterAnsweredEmails")]
+        [Authorize]
+        public virtual async Task<IGraphServiceSubscriptionsCollectionPage> RegisterAnsweredEmails([FromBody] RegisterAnsweredEmailsDTO dataDTO)
+        {
+            Console.WriteLine($"Userid: {dataDTO.UserId}");
+            return await service.RegisterWebhookToAnsweredEmailsAsync(dataDTO.UserId);
+        }
+
+        [HttpPost("Webhook/{userId}/GetAnsweredEmails")]
+        public virtual async Task<IActionResult> GetAnsweredEmails(
+            int userId,
+            [FromBody] GraphNotificationCollection collection,
+            [FromQuery] string validationToken = null)
+        {
+            logger.LogInformation($"{this.GetType().Name} - GetAnsweredEmails");
+
+            if (string.IsNullOrEmpty(validationToken))
+            {
+                var graphClient = service.GetTokenClient(userId);
+
+                foreach (var notification in collection.Value)
+                {
+                    if (notification.ChangeType == "created")
+                    {
+                        // Obter email pelo ID 
+                        var message = await graphClient.Me.Messages[notification.ResourceData.Id].Request().GetAsync();
+                        var mainMessage = await graphClient.Me.Messages.Request().Filter($"conversationId eq '{message.ConversationId}'").GetAsync();
+
+                        var regex = new Regex(@"(track\?key+)=([^\s\""]+)");
+                        var match = regex.Match(mainMessage[0].Body.Content);
+
+                        var key = match.Value.Split("=").Last();
+                        key = Uri.UnescapeDataString(key);
+
+                        var decryptedKey = AesCripty.DecryptString(Setting.MailTrackSecret, key);
+                        int taskId = int.Parse(decryptedKey.Split("-")[0]);
+                        int leadId = int.Parse(decryptedKey.Split("-")[1]);
+
+                        mailAnsweredService.Save(message, userId, leadId, taskId);
+                    }
+                }
+
+                return Accepted();
+            }
+            else
+            {
+                return Content(WebUtility.HtmlEncode(validationToken));
+            }
+        }
+
+        // Called by pipedream every 2 days 
+        [HttpGet("Cron/UpdateSubscriptions")]
+        public virtual async Task<IActionResult> UpdateSubscriptions()
+        {
+            var users = userService.GetAll();
+            foreach (var user in users)
+            {
+                var graphClient = service.GetTokenClient(user.Id);
+
+                var subscriptions = await graphClient.Subscriptions
+                    .Request()
+                    .GetAsync();
+
+                foreach (var subscription in subscriptions)
+                {
+                    await graphClient.Subscriptions[subscription.Id]
+                        .Request()
+                        .UpdateAsync(new Subscription
+                        {
+                            ExpirationDateTime = DateTimeOffset.UtcNow.AddMinutes(4200)
+                        });
+                }
+            }
+
+            return Accepted();
         }
     }
 }

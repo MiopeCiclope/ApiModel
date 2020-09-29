@@ -115,9 +115,11 @@ namespace KivalitaAPI.Services
             }
             return hash;
         }
+
         public string GetSignature(int id)
         {
-            return this.baseRepository.Get(id)?.MailSignature.Signature ?? "";
+            var mailSignature = mailSignatureRepository.GetBy(signature => signature.UserId == id).FirstOrDefault();
+            return mailSignature != null ? mailSignature.Signature : "";
         }
     }
 }

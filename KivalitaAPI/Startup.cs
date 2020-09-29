@@ -178,6 +178,9 @@ namespace KivalitaAPI
             services.AddScoped<PreLeadRepository>();
             services.AddScoped<PreLeadService>();
 
+            services.AddScoped<MailAnsweredRepository>();
+            services.AddScoped<MailAnsweredService>();
+
             services.AddScoped<ISieveCustomFilterMethods, SieveCustomFilterMethods>();
 
             var mappingConfig = new MapperConfiguration(cfg =>

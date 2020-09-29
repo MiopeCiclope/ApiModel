@@ -1,0 +1,26 @@
+﻿using KivalitaAPI.Interfaces;
+using Sieve.Attributes;
+using System;
+
+namespace KivalitaAPI.Models
+{
+    public class MailAnswered : IEntity
+    {
+        public int Id { get; set; }
+        public int UserId { get; set; }
+        public int LeadId { get; set; }
+        public int TaskId { get; set; }
+        public string MessageId { get; set; }
+        public string Subject { get; set; }
+        public string BodyPreview { get; set; }
+        public string BodyContent { get; set; }
+        public string Sender { get; set; }
+        public string Recipient { get; set; }
+
+        public int CreatedBy { get; set; }
+        public int UpdatedBy { get; set; }
+        [Sieve(CanFilter = true, CanSort = true)]
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+    }
+}

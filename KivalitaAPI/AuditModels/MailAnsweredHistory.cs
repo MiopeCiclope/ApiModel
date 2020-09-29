@@ -4,14 +4,17 @@ using System;
 
 namespace KivalitaAPI.AuditModels
 {
-    public class TemplateHistory : IAuditTable
+    public class MailAnsweredHistory : IAuditTable
     {
         public int Id { get; set; }
-        public string Name { get; set; }
-        public string Type { get; set; }
+        public int LeadId { get; set; }
+        public int TaskId { get; set; }
+        public string MessageId { get; set; }
         public string Subject { get; set; }
-        public string Content { get; set; }
-        public int CategoryId { get; set; }
+        public string BodyPreview { get; set; }
+        public string BodyContent { get; set; }
+        public string Sender { get; set; }
+        public string Recipient { get; set; }
 
         public int TableId { get; set; }
         public ActionEnum Action { get; set; }
