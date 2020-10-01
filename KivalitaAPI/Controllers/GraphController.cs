@@ -209,10 +209,32 @@ namespace KivalitaAPI.Controllers
 
         [HttpPost("Webhook/RegisterAnsweredEmails")]
         [Authorize]
-        public async Task<IGraphServiceSubscriptionsCollectionPage> RegisterAnsweredEmails([FromBody] RegisterAnsweredEmailsDTO dataDTO)
+        public async Task<HttpResponse<IGraphServiceSubscriptionsCollectionPage>> RegisterAnsweredEmailsAsync([FromBody] RegisterAnsweredEmailsDTO dataDTO)
         {
-            Console.WriteLine($"Userid: {dataDTO.UserId}");
-            return await service.RegisterWebhookToAnsweredEmailsAsync(dataDTO.UserId);
+            logger.LogInformation($"{this.GetType().Name} - RegisterAnsweredEmails");
+            try
+            {
+                var notifications = await service.RegisterWebhookToAnsweredEmailsAsync(dataDTO.UserId);
+
+                return new HttpResponse<IGraphServiceSubscriptionsCollectionPage>
+                {
+                    IsStatusCodeSuccess = true,
+                    statusCode = HttpStatusCode.OK,
+                    data = notifications
+                };
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.Message);
+                return new HttpResponse<IGraphServiceSubscriptionsCollectionPage>
+                {
+                    IsStatusCodeSuccess = false,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    data = null,
+                    ErrorMessage = "Erro ao realizar a requisição"
+                };
+            }
+            
         }
 
         [HttpPost("Webhook/{userId}/GetAnsweredEmails")]
@@ -220,41 +242,51 @@ namespace KivalitaAPI.Controllers
         {
             logger.LogInformation($"{this.GetType().Name} - GetAnsweredEmails");
 
-            if (string.IsNullOrEmpty(validationToken))
+            try
             {
-                var body = new StreamReader(Request.Body);
-                var requestBody = await body.ReadToEndAsync();
-                var collection = JsonConvert.DeserializeObject<GraphNotificationCollection>(requestBody);
-
-                var graphClient = service.GetTokenClient(userId);
-
-                foreach (var notification in collection.Value)
+                if (string.IsNullOrEmpty(validationToken))
                 {
-                    if (notification.ChangeType == "created")
+                    var body = new StreamReader(Request.Body);
+                    var requestBody = await body.ReadToEndAsync();
+                    var collection = JsonConvert.DeserializeObject<GraphNotificationCollection>(requestBody);
+
+                    var graphClient = service.GetTokenClient(userId);
+
+                    foreach (var notification in collection.Value)
                     {
-                        // Obter email pelo ID 
-                        var message = await graphClient.Me.Messages[notification.ResourceData.Id].Request().GetAsync();
-                        var mainMessage = await graphClient.Me.Messages.Request().Filter($"conversationId eq '{message.ConversationId}'").GetAsync();
+                        if (notification.ChangeType == "created")
+                        {
+                            // Obter email pelo ID 
+                            var message = await graphClient.Me.Messages[notification.ResourceData.Id].Request().GetAsync();
+                            var mainMessage = await graphClient.Me.Messages.Request().Filter($"conversationId eq '{message.ConversationId}'").GetAsync();
 
-                        var regex = new Regex(@"(track\?key+)=([^\s\""]+)");
-                        var match = regex.Match(mainMessage[0].Body.Content);
+                            var regex = new Regex(@"(track\?key+)=([^\s\""]+)");
+                            var match = regex.Match(mainMessage[0].Body.Content);
 
-                        var key = match.Value.Split("=").Last();
-                        key = Uri.UnescapeDataString(key);
+                            if (match.Success)
+                            {
+                                var key = match.Value.Split("=").Last();
+                                key = Uri.UnescapeDataString(key);
 
-                        var decryptedKey = AesCripty.DecryptString(Setting.MailTrackSecret, key);
-                        int taskId = int.Parse(decryptedKey.Split("-")[0]);
-                        int leadId = int.Parse(decryptedKey.Split("-")[1]);
+                                var decryptedKey = AesCripty.DecryptString(Setting.MailTrackSecret, key);
+                                int taskId = int.Parse(decryptedKey.Split("-")[0]);
+                                int leadId = int.Parse(decryptedKey.Split("-")[1]);
 
-                        mailAnsweredService.Save(message, userId, leadId, taskId);
+                                mailAnsweredService.Save(message, userId, leadId, taskId);
+                            }
+                        }
                     }
-                }
 
-                return Accepted();
+                    return Accepted();
+                }
+                else
+                {
+                    return Content(WebUtility.HtmlEncode(validationToken));
+                }
             }
-            else
+            catch (Exception e)
             {
-                return Content(WebUtility.HtmlEncode(validationToken));
+                return BadRequest(e);
             }
         }
 

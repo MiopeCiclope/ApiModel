@@ -283,6 +283,11 @@ namespace KivalitaAPI
                             .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Id))
                             .ForMember(dest => dest.Id, opt => opt.Ignore());
                 cfg.CreateMap<PreLeadHistory, PreLead>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TableId));
+
+                cfg.CreateMap<MailAnswered, MailAnsweredHistory>()
+                            .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Id))
+                            .ForMember(dest => dest.Id, opt => opt.Ignore());
+                cfg.CreateMap<MailAnsweredHistory, MailAnswered>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TableId));
             });
 
             //Mapper Configured service
