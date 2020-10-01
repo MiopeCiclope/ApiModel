@@ -47,6 +47,27 @@ namespace KivalitaAPI.Repositories
             return base.Add(image);
         }
 
+        public override Image Update(Image image)
+        {
+            var folderName = Path.Combine("Resources", "Images");
+            var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+
+            if (!Directory.Exists(pathToSave))
+            {
+                Directory.CreateDirectory(pathToSave);
+            }
+
+            var fileName = image.FileName;
+            string imgPath = Path.Combine(pathToSave, fileName);
+
+            byte[] imageBytes = Convert.FromBase64String(image.ImageString);
+
+            File.Delete(imgPath);
+            File.WriteAllBytes(imgPath, imageBytes);
+
+            return base.Update(image);
+        }
+
         public List<Image> GetByType(string imageType)
         {
             return context.Set<Image>()

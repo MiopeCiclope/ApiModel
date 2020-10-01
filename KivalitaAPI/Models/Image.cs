@@ -8,7 +8,6 @@ namespace KivalitaAPI.Models
 {
     public class Image : IEntity
     {
-        [JsonIgnore]
         [Sieve(CanFilter = true, CanSort = true)]
         public int Id { get; set; }
 

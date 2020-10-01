@@ -20,7 +20,7 @@ namespace KivalitaAPI.Controllers
     {
         public readonly TService service;
         public readonly ILogger logger;
-        private readonly string[] hasOwnerProperty = { "Company", "FlowTask", "Filter" };
+        private readonly string[] hasOwnerProperty = { "Company", "FlowTask" };
 
         public CustomController(TService _service, ILogger _logger)
         {

@@ -28,6 +28,7 @@ namespace KivalitaAPI.Repositories {
 		}
 
 		public virtual List<TEntity> AddRange (List<TEntity> entities) {
+			EntityFrameworkManager.ContextFactory = _context => { return context; };
 			context.Set<TEntity>().BulkInsert(entities, options => options.BatchSize = 200);
 			return entities;
 		}

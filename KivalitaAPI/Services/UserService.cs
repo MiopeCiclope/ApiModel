@@ -36,7 +36,7 @@ namespace KivalitaAPI.Services
         {
             var user = baseRepository.Get(id);
 
-            var signature = mailSignatureRepository.GetBy(signature => signature.UserId == user.Id)?.First() ?? null;
+            var signature = mailSignatureRepository.GetBy(signature => signature.UserId == user.Id)?.First() ?? new MailSignature { Id = 0, Signature = "" };
             user.MailSignature = signature;
 
             var microsoftToken = this.microsoftTokenRepository.GetBy(m => m.UserId == user.Id)
@@ -61,7 +61,6 @@ namespace KivalitaAPI.Services
         {
             try
             {
-
                 var oldUser = this.baseRepository.Get(user.Id);
                 if(user.Company != null)
                 {
@@ -81,13 +80,13 @@ namespace KivalitaAPI.Services
                     }
                 }
 
-                if(user.MailSignature != null)
+                if (user.MailSignature != null)
                 {
-                    if (oldUser.MailSignature == null)
+                    var signature = mailSignatureRepository.GetBy(signature => signature.UserId == user.Id)?.First() ?? null;
+                    if (signature == null)
                         user.MailSignatureId = mailSignatureService.Add(user.MailSignature).Id;
                     else
                     {
-                        var signature = oldUser.MailSignature;
                         signature.Signature = user.MailSignature.Signature;
                         mailSignatureService.Update(signature);
                     }

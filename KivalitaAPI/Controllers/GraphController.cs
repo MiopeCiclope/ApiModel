@@ -180,6 +180,17 @@ namespace KivalitaAPI.Controllers
                 var signature = userService.GetSignature(userId);
                 var template = templateService.Get((int)task.FlowAction.TemplateId);
                 var lead = leadService.Get(task.LeadId);
+                //lead.Email = "romulo.carvalho@kivalita.com.br";
+
+                if(String.IsNullOrEmpty(lead.Email)) {
+                    return new HttpResponse<bool>
+                    {
+                        IsStatusCodeSuccess = false,
+                        statusCode = HttpStatusCode.InternalServerError,
+                        data = false,
+                        ErrorMessage = "Lead Sem e-mail"
+                    };
+                }
 
                 var mail = service.BuildEmail(lead, template, task.Id, signature);
 

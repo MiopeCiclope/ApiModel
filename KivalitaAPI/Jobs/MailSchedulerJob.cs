@@ -65,32 +65,40 @@ public class MailSchedulerJob : IJob
             var taskList = taskRepository.GetSchedulableTask();
             foreach (var flowTask in taskList)
             {
-                var userId = flowTask.FlowAction.Flow.Owner ?? 0;
-                var taskId = flowTask.Id;
+                try
+                {
+                    var userId = flowTask.FlowAction.Flow.Owner ?? 0;
+                    var taskId = flowTask.Id;
 
-                this.client = graphService.GetTokenClient(userId);
-                this.userSignature = GetSignature(userId);
-                this.templateId = (int)flowTask.FlowAction.TemplateId;
+                    this.client = graphService.GetTokenClient(userId);
+                    this.userSignature = GetSignature(userId);
+                    this.templateId = (int)flowTask.FlowAction.TemplateId;
 
-                var mailList = GetMailList(userId, flowTask);
+                    var mailList = GetMailList(userId, flowTask);
 
-                if (!mailList.Any())
-                    _logger.LogInformation($"Nenhum e-mail na lista");
-                else
-                    mailList.ForEach(mail =>
-                    {
-                        var logMessage = graphService.SendMail(client, mail, userId) ? "Mail Sent" : "Faild Send Mail";
-                        if (logMessage == "Mail Sent")
+                    if (!mailList.Any())
+                        _logger.LogInformation($"Nenhum e-mail na lista");
+                    else
+                        mailList.ForEach(mail =>
                         {
-                            this.logTaskService.RegisterLog(LogTaskEnum.EmailSent, flowTask.LeadId, flowTask.Id);
-                            flowTask.Status = "finished";
-                            taskScheduledList.Add(flowTask);
-                        }
-                        _logger.LogInformation($"{logMessage}: {mail.ToRecipients.First().EmailAddress.Address}");
-                    });
+                            var logMessage = graphService.SendMail(client, mail, userId) ? "Mail Sent" : "Faild Send Mail";
+                            if (logMessage == "Mail Sent")
+                            {
+                                this.logTaskService.RegisterLog(LogTaskEnum.EmailSent, flowTask.LeadId, flowTask.Id);
+                                flowTask.Status = "finished";
+                                taskScheduledList.Add(flowTask);
+                            }
+                            _logger.LogInformation($"{logMessage}: {mail.ToRecipients.First().EmailAddress.Address}");
+                        });
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError($"Erro ao montar tarefa");
+                    _logger.LogError($"{e.Message}");
+                }
             }
 
-            if(taskScheduledList.Any())
+            if (taskScheduledList.Any())
             {
                 taskRepository.UpdateRange(taskScheduledList);
                 foreach (var task in taskScheduledList)
@@ -113,7 +121,7 @@ public class MailSchedulerJob : IJob
     private string GetSignature(int id)
     {
         var userService = scope.ServiceProvider.GetService<UserService>();
-        return userService.Get(id)?.MailSignature.Signature ?? "";
+        return userService.GetSignature(id);
     }
 
     private List<Message> GetMailList(int userId, FlowTask flowTask)
@@ -127,7 +135,7 @@ public class MailSchedulerJob : IJob
             if (template == null) return null;
 
             return leadList
-                    .Where(lead => !this.graphService.DidReply(this.client, lead.Email))
+                    .Where(lead => !String.IsNullOrEmpty(lead.Email) && !this.graphService.DidReply(this.client, lead.Email))
                     .Select(lead => BuildEmail(lead, template, flowTask.Id)).ToList();
         }
         catch (Exception e)
