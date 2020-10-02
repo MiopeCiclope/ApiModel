@@ -154,7 +154,7 @@ namespace KivalitaAPI.Controllers
                     IsStatusCodeSuccess = false,
                     statusCode = HttpStatusCode.InternalServerError,
                     data = null,
-                    ErrorMessage = "Erro ao realizar a requisição"
+                    ErrorMessage = String.IsNullOrEmpty(e.Message) ? "Erro ao realizar a requisição" : e.Message
                 };
             }
         }
@@ -190,7 +190,7 @@ namespace KivalitaAPI.Controllers
                     IsStatusCodeSuccess = false,
                     statusCode = HttpStatusCode.InternalServerError,
                     data = null,
-                    ErrorMessage = "Erro ao realizar a requisição"
+                    ErrorMessage = String.IsNullOrEmpty(e.Message) ? "Erro ao realizar a requisição" : e.Message
                 };
             }
         }

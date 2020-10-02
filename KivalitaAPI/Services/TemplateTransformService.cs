@@ -56,6 +56,19 @@ namespace KivalitaAPI.Services
             return templateRender;
         }
 
+        public bool IsValid(string text)
+        {
+            try
+            {
+                var templateParse = Template.Parse(text);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         static void RegisterSafeTypes()
         {
             Template.RegisterSafeType(typeof(Models.Leads),

@@ -10,20 +10,28 @@ namespace KivalitaAPI.Services
     {
         CategoryRepository _categoryRepository;
         FlowService flowService;
+        TemplateTransformService templateTransformService;
 
         public TemplateService(
             KivalitaApiContext context,
             TemplateRepository baseRepository,
             CategoryRepository categoryRepository,
-            FlowService flowService
+            FlowService flowService,
+            TemplateTransformService templateTransformService
         ) : base(context, baseRepository)
         {
             _categoryRepository = categoryRepository;
             this.flowService = flowService;
+            this.templateTransformService = templateTransformService;
         }
 
         public override Template Add(Template entity)
         {
+            if (!templateTransformService.IsValid(entity.Content))
+            {
+                throw new Exception("Erro no formato do template: pelo menos uma ou mais váriaveis estão definidas incorretamente.");
+            }
+
             var existingCategory = _categoryRepository.Get(entity.CategoryId);
             if (existingCategory == null)
                 throw new Exception("Categoria não encontrada");
@@ -31,6 +39,16 @@ namespace KivalitaAPI.Services
             entity.Category = existingCategory;
 
             return base.Add(entity);
+        }
+
+        public override Template Update(Template entity)
+        {
+            if (!templateTransformService.IsValid(entity.Content))
+            {
+                throw new Exception("Erro no formato do template: pelo menos uma ou mais váriaveis estão definidas incorretamente.");
+            }
+
+            return base.Update(entity);
         }
 
         public override Template Delete(int id, int userId)
