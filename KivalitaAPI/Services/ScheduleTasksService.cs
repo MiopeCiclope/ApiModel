@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using KivalitaAPI.Common;
 using KivalitaAPI.Enum;
 using KivalitaAPI.Interfaces;
 using KivalitaAPI.Models;
@@ -40,11 +41,16 @@ namespace KivalitaAPI.Services
             List<Leads> leadListToUpdate = new List<Leads>();
             List<FlowTask> taskList = new List<FlowTask>();
 
+            var daysAllowedToSchedule = flow.DaysOfTheWeek.Split(',').Select(Int32.Parse).ToList();
+            var businessDate = DateUtils.GetDateSheduleValid(DateTime.Now, daysAllowedToSchedule);
+
             var daysToAdd = 0;
             foreach (var action in flow.FlowAction)
             {
+                var date = businessDate.AddDays(action.afterDays);
                 foreach (var leadList in leadGroup)
                 {
+                    date = date.AddDays(daysToAdd);
 
                     foreach (var lead in leadList)
                     {
@@ -74,13 +80,14 @@ namespace KivalitaAPI.Services
 
                         if (flow.FlowAction.First() == action)
                         {
-                            task.ScheduledTo = DateTime.Now.AddDays(action.afterDays + daysToAdd);
+                            date = DateUtils.GetDateSheduleValid(date, daysAllowedToSchedule);
+                            task.ScheduledTo = date;
                         }
 
                         taskList.Add(task);
                         _logTaskService.RegisterLog(LogTaskEnum.TaskAdded, lead.Id, task.Id);
                     }
-                    daysToAdd += 1;
+                    daysToAdd = 1;
                 }
             }
 
@@ -88,7 +95,7 @@ namespace KivalitaAPI.Services
                 _leadsRepository.UpdateRange(leadListToUpdate.Distinct().ToList());
             if (taskList.Any())
             {
-                _flowTaskRepository.AddRange(taskList);
+               _flowTaskRepository.AddRange(taskList);
 
                 DateTimeOffset dateTime = new DateTimeOffset(DateTime.Now);
                 var job = new JobScheduleDTO("MailSchedulerJob", "0/2 * * * * ?", dateTime);

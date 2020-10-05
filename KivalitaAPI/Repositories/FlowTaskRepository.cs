@@ -79,6 +79,7 @@ namespace KivalitaAPI.Repositories
         {
             return context.Set<FlowTask>()
                 .Include(f => f.FlowAction)
+                    .ThenInclude(fa => fa.Flow)
                 .Where(
                     f => f.Status == "pending" &&
                     f.LeadId == currentTask.LeadId &&

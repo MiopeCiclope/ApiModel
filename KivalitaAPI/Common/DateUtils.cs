@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace KivalitaAPI.Common
 {
@@ -19,6 +21,21 @@ namespace KivalitaAPI.Common
             else if (date.DayOfWeek == DayOfWeek.Sunday)
             {
                 return date.AddDays(1);
+            }
+
+            return date;
+        }
+
+        public static DateTime GetDateSheduleValid(DateTime date, List<int> daysAllowedToSchedule)
+        {
+            if (!daysAllowedToSchedule.Any())
+            {
+                return date;
+            }
+
+            while (!daysAllowedToSchedule.Contains((int)date.DayOfWeek))
+            {
+                date = date.AddDays(1);
             }
 
             return date;

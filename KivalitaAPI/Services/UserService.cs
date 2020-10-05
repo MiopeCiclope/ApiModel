@@ -82,7 +82,7 @@ namespace KivalitaAPI.Services
 
                 if (user.MailSignature != null)
                 {
-                    var signature = mailSignatureRepository.GetBy(signature => signature.UserId == user.Id)?.First() ?? null;
+                    var signature = mailSignatureRepository.GetBy(signature => signature.UserId == user.Id)?.FirstOrDefault();
                     if (signature == null)
                         user.MailSignatureId = mailSignatureService.Add(user.MailSignature).Id;
                     else

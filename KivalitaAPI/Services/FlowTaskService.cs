@@ -1,12 +1,12 @@
 using System;
 using System.Linq;
 using System.Threading;
+using KivalitaAPI.Common;
 using KivalitaAPI.Data;
 using KivalitaAPI.DTOs;
 using KivalitaAPI.Interfaces;
 using KivalitaAPI.Models;
 using KivalitaAPI.Repositories;
-using Microsoft.EntityFrameworkCore;
 using Sieve.Models;
 
 namespace KivalitaAPI.Services
@@ -29,7 +29,6 @@ namespace KivalitaAPI.Services
         public override FlowTask Update(FlowTask flowTask)
         {
             var oldFlowTask = baseRepository.Get(flowTask.Id);
-
             if (oldFlowTask.Status == "pending" && flowTask.Status == "finished")
             {
                 scheduleNextTask(flowTask);
@@ -57,8 +56,14 @@ namespace KivalitaAPI.Services
             if (nextFlowTask != null)
             {
                 var nextFlowAction = nextFlowTask.FlowAction;
+                var flow = nextFlowAction.Flow;
 
-                nextFlowTask.ScheduledTo = DateTime.Now.AddDays(nextFlowAction.afterDays);
+                var daysAllowedToSchedule = flow.DaysOfTheWeek.Split(',').Select(Int32.Parse).ToList();
+
+
+                var date = DateTime.Now.AddDays(nextFlowAction.afterDays);
+                date = DateUtils.GetDateSheduleValid(date, daysAllowedToSchedule);
+                nextFlowTask.ScheduledTo = date;
                 baseRepository.Update(nextFlowTask);
 
                 if (isJobAutomatic(nextFlowAction))
