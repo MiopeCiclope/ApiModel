@@ -87,14 +87,7 @@ namespace KivalitaAPI.Services
             if (leadListToUpdate.Any()) 
                 _leadsRepository.UpdateRange(leadListToUpdate.Distinct().ToList());
             if (taskList.Any())
-            {
                 _flowTaskRepository.AddRange(taskList);
-
-                DateTimeOffset dateTime = new DateTimeOffset(DateTime.Now);
-                var job = new JobScheduleDTO("MailSchedulerJob", "0/2 * * * * ?", dateTime);
-                _scheduler.ScheduleJob(cancellationToken, job);
-            }
-
         }
 
         public void RemoveRange(List<Leads> leads)
