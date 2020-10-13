@@ -52,5 +52,33 @@ namespace KivalitaAPI.Controllers
                 };
             }
         }
+
+        [HttpPost]
+        [Route("BulkTest")]
+        public HttpResponse<string> Post([FromBody] List<FlowTask> tasks)
+        {
+            logger.LogInformation($"{this.GetType().Name} - Post Task List");
+            try
+            {
+                List<FlowTask> newLeads = this.service.UpdateBulk(tasks);
+                return new HttpResponse<string>
+                {
+                    IsStatusCodeSuccess = true,
+                    data = "Done",
+                    statusCode = HttpStatusCode.OK
+                };
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.Message);
+                return new HttpResponse<string>
+                {
+                    IsStatusCodeSuccess = false,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    data = null,
+                    ErrorMessage = "Erro ao realizar a requisição"
+                };
+            }
+        }
     }
 }

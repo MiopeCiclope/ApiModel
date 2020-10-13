@@ -119,5 +119,27 @@ namespace KivalitaAPI.Models {
 
 		private static readonly CompiledExpression<Leads, bool> WithEmailExpression
 						= DefaultTranslationOf<Leads>.Property(lead => lead.WithEmail).Is(lead => lead.Email != null);
+
+		public string[] GetDataBaseColumn()
+		{
+			return new string[17] {"Id"
+									,"Name"
+									,"Position"
+									,"Email"
+									,"Phone"
+									,"LinkedIn"
+									,"CreatedAt"
+									,"CreatedBy"
+									,"UpdatedAt"
+									,"UpdatedBy"
+									,"CompanyId"
+									,"PersonalEmail"
+									,"Deleted"
+									,"LinkedInPublic"
+									,"Status"
+									,"FlowId"
+									,"DidGuessEmail"
+								};
+		}
 	}
 }

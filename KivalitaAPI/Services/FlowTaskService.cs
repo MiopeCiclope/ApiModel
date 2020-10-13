@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading;
+using AutoMapper;
 using KivalitaAPI.Common;
 using KivalitaAPI.Data;
 using KivalitaAPI.DTOs;
@@ -16,14 +19,20 @@ namespace KivalitaAPI.Services
     {
 
         public readonly IJobScheduler _scheduler;
+        private readonly IMapper _mapper;
+        private readonly FlowTaskDTORepository _flowtaskDtoRepository;
 
         public FlowTaskService(
             KivalitaApiContext context,
             FlowTaskRepository baseRepository,
-            IJobScheduler scheduler
+            IJobScheduler scheduler,
+            IMapper mapper,
+            FlowTaskDTORepository flowtaskDtoRepository
         ) : base(context, baseRepository)
         {
             _scheduler = scheduler;
+            _mapper = mapper;
+            _flowtaskDtoRepository = flowtaskDtoRepository;
         }
 
         public override FlowTask Update(FlowTask flowTask)
@@ -82,9 +91,22 @@ namespace KivalitaAPI.Services
             return flowAction.Type == "email" && flowAction.Flow.isAutomatic;
         }
 
+        public List<FlowTask> SaveRange(List<FlowTask> tasks)
+        {
+            this.baseRepository.AddRange(tasks);
+            return tasks;
+        }
+
         public TaskListDTO initialTasks(SieveModel filterQuery)
         {
             return this.baseRepository.initialTasks(filterQuery);
+        }
+
+        public List<FlowTask> UpdateBulk(List<FlowTask> tasks)
+        {
+            var flowTaskDto = _mapper.Map<List<FlowTaskDTO>>(tasks);
+            this._flowtaskDtoRepository.UpdateRange(flowTaskDto);
+            return tasks;
         }
     }
 }

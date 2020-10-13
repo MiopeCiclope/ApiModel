@@ -45,9 +45,10 @@ namespace KivalitaAPI.Models
 		public DateTime UpdatedAt { get; set; }
 
 		private static readonly CompiledExpression<FlowTask, int?> ownerExpression
-				= DefaultTranslationOf<FlowTask>.Property(task => task.Owner).Is(
-					task => task.Leads != null &&
-					task.Leads.Company != null &&
-					task.Leads.Company.UserId != null ? task.Leads.Company.UserId : 0);
+				= DefaultTranslationOf<FlowTask>.Property(task => task.Owner).Is(task => task.Leads.Company.UserId != null ? task.Leads.Company.UserId : 0);
+
+		public string[] GetDataBaseColumn() {
+			return new string[9]{ "Id", "Status", "ScheduledTo", "LeadId", "FlowActionId", "CreatedBy", "UpdatedBy", "CreatedAt", "UpdatedAt" };
+		}
 	}
 }

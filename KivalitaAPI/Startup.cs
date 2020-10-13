@@ -181,6 +181,8 @@ namespace KivalitaAPI
             services.AddScoped<MailAnsweredRepository>();
             services.AddScoped<MailAnsweredService>();
 
+            services.AddScoped<FlowTaskDTORepository>();
+
             services.AddScoped<ISieveCustomFilterMethods, SieveCustomFilterMethods>();
 
             var mappingConfig = new MapperConfiguration(cfg =>
@@ -278,6 +280,9 @@ namespace KivalitaAPI
                             .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Id))
                             .ForMember(dest => dest.Id, opt => opt.Ignore());
                 cfg.CreateMap<MailSignatureHistory, MailSignature>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TableId));
+
+                cfg.CreateMap<FlowTaskDTO, FlowTask>();
+                cfg.CreateMap<FlowTask, FlowTaskDTO>();
 
                 cfg.CreateMap<PreLead, PreLeadHistory>()
                             .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Id))
