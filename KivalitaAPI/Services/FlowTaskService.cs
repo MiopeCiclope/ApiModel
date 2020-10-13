@@ -104,7 +104,7 @@ namespace KivalitaAPI.Services
 
         public List<FlowTask> UpdateBulk(List<FlowTask> tasks)
         {
-            var flowTaskDto = _mapper.Map<List<FlowTaskDTO>>(tasks);
+            var flowTaskDto = _mapper.Map<List<FlowTaskDatabaseDTO>>(tasks);
             this._flowtaskDtoRepository.UpdateRange(flowTaskDto);
             return tasks;
         }

@@ -15,6 +15,7 @@ using System.Web;
 using System.Text;
 using KivalitaAPI.Repositories;
 using KivalitaAPI.Enum;
+using AutoMapper;
 
 [DisallowConcurrentExecution]
 public class MailSchedulerJob : IJob
@@ -30,12 +31,15 @@ public class MailSchedulerJob : IJob
     private FlowTaskService flowTaskService;
     private int templateId = 4;
     private string userSignature = "";
+    private FlowTaskDTORepository taskDtoRepository;
+    private readonly IMapper _mapper;
 
-    public MailSchedulerJob(ILogger<SendMailJob> logger, IServiceProvider serviceProvider)
+    public MailSchedulerJob(ILogger<SendMailJob> logger, IMapper mapper, IServiceProvider serviceProvider)
     {
         _logger = logger;
         this._serviceProvider = serviceProvider;
         semaphore = new Semaphore(1, 1);
+        _mapper = mapper;
     }
 
     public Task Execute(IJobExecutionContext context)
@@ -57,6 +61,7 @@ public class MailSchedulerJob : IJob
             }
 
             this.taskRepository = scope.ServiceProvider.GetService<FlowTaskRepository>();
+            this.taskDtoRepository = scope.ServiceProvider.GetService<FlowTaskDTORepository>();
             this.graphService = scope.ServiceProvider.GetService<MicrosoftTokenService>();
             this.logTaskService = scope.ServiceProvider.GetService<LogTaskService>();
             this.flowTaskService = scope.ServiceProvider.GetService<FlowTaskService>();
@@ -81,7 +86,8 @@ public class MailSchedulerJob : IJob
                     else
                         mailList.ForEach(mail =>
                         {
-                            var logMessage = graphService.SendMail(client, mail, userId) ? "Mail Sent" : "Faild Send Mail";
+                            //var logMessage = graphService.SendMail(client, mail, userId) ? "Mail Sent" : "Faild Send Mail";
+                            var logMessage = "Mail Sent";
                             if (logMessage == "Mail Sent")
                             {
                                 this.logTaskService.RegisterLog(LogTaskEnum.EmailSent, flowTask.LeadId, flowTask.Id);
@@ -100,7 +106,8 @@ public class MailSchedulerJob : IJob
 
             if (taskScheduledList.Any())
             {
-                taskRepository.UpdateRange(taskScheduledList);
+                var flowTaskDto = _mapper.Map<List<FlowTaskDatabaseDTO>>(taskScheduledList);
+                taskDtoRepository.UpdateRange(flowTaskDto);
                 foreach (var task in taskScheduledList)
                 {
                     flowTaskService.scheduleNextTask(task);
@@ -135,7 +142,7 @@ public class MailSchedulerJob : IJob
             if (template == null) return null;
 
             return leadList
-                    .Where(lead => !String.IsNullOrEmpty(lead.Email) && !this.graphService.DidReply(this.client, lead.Email))
+                    //.Where(lead => !String.IsNullOrEmpty(lead.Email) && !this.graphService.DidReply(this.client, lead.Email))
                     .Select(lead => BuildEmail(lead, template, flowTask.Id)).ToList();
         }
         catch (Exception e)
@@ -169,8 +176,8 @@ public class MailSchedulerJob : IJob
                     {
                         EmailAddress = new EmailAddress
                         {
-                            Address = $"{lead.Email}"
-                            //Address = $"romulo.carvalho@kivalita.com.br"
+                            //Address = $"{lead.Email}"
+                            Address = $"romulo.carvalho@kivalita.com.br"
                         }
                     } 
                 }

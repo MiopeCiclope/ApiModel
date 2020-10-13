@@ -91,8 +91,8 @@ namespace KivalitaAPI.Services
                 }
             }
 
-            if (leadListToUpdate.Any()) 
-                _leadsRepository.UpdateRange(leadListToUpdate.Distinct().ToList());
+            //if (leadListToUpdate.Any()) 
+            //    _leadsRepository.UpdateRange(leadListToUpdate.Distinct().ToList());
             if (taskList.Any())
                 _flowTaskRepository.AddRange(taskList);
         }

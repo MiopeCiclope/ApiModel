@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace KivalitaAPI.Models
 {
-	public class FlowTaskDTO : IEntity
+	public class FlowTaskDatabaseDTO : IEntity
 	{
 		public int Id { get; set; }
 		public string Status { get; set; } 

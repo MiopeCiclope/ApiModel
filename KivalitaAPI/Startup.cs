@@ -281,9 +281,9 @@ namespace KivalitaAPI
                             .ForMember(dest => dest.Id, opt => opt.Ignore());
                 cfg.CreateMap<MailSignatureHistory, MailSignature>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TableId));
 
-                cfg.CreateMap<FlowTaskDTO, FlowTask>();
-                cfg.CreateMap<FlowTask, FlowTaskDTO>();
-
+                cfg.CreateMap<FlowTaskDatabaseDTO, FlowTask>();
+                cfg.CreateMap<FlowTask, FlowTaskDatabaseDTO>();
+                
                 cfg.CreateMap<PreLead, PreLeadHistory>()
                             .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Id))
                             .ForMember(dest => dest.Id, opt => opt.Ignore());
@@ -315,8 +315,8 @@ namespace KivalitaAPI
             services.AddSingleton<GetMailJob>();
             services.AddSingleton<MailSchedulerJob>();
 
-            services.AddSingleton(new JobScheduleDTO("MailSchedulerJob", "0 0 9 1/1 * ? *", null, 0));
-            services.AddSingleton(new JobScheduleDTO("GetMailJob", null, DateTimeOffset.UtcNow, 0));
+            services.AddSingleton(new JobScheduleDTO("MailSchedulerJob", null, DateTimeOffset.UtcNow, 0));
+            //services.AddSingleton(new JobScheduleDTO("GetMailJob", null, DateTimeOffset.UtcNow, 0));
 
             services.AddHostedService<SchedulerService>();
             services.AddSingleton<IJobScheduler, SchedulerService>();
