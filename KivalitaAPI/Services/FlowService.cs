@@ -19,6 +19,7 @@ namespace KivalitaAPI.Services
         FlowTaskRepository flowTaskRepository;
         FilterRepository filterRepository;
         TemplateRepository templateRepository;
+        MailAnsweredRepository mailAnsweredRepository;
         ScheduleTasksService scheduleTasksService;
 
         public FlowService(
@@ -29,6 +30,7 @@ namespace KivalitaAPI.Services
             FlowTaskRepository _flowTaskRepository,
             FilterRepository _filterRepository,
             TemplateRepository _templateRepository,
+            MailAnsweredRepository _mailAnsweredRepository,
             ScheduleTasksService _scheduleTasksService
         ) : base(context, baseRepository) {
             leadsRepository = _leadsRepository;
@@ -36,6 +38,7 @@ namespace KivalitaAPI.Services
             flowTaskRepository = _flowTaskRepository;
             filterRepository = _filterRepository;
             templateRepository = _templateRepository;
+            mailAnsweredRepository = _mailAnsweredRepository;
             scheduleTasksService = _scheduleTasksService;
         }
 
@@ -134,10 +137,18 @@ namespace KivalitaAPI.Services
         public FlowReportDTO getReport(int flowId)
         {
             var amountOfLeads = leadsRepository.GetAmountLeadsInFlow(flowId);
+            var amountSentEmails = flowTaskRepository.GetAmountSentEmails(flowId);
+            var amountAnsweredEmails = mailAnsweredRepository.GetAmountAnsweredEmails(flowId);
+            var amountPositiveAnsweredEmails = mailAnsweredRepository.GetAmountPositiveAnsweredEmails(flowId);
+            var amountNegativeAnsweredEmails = mailAnsweredRepository.GetAmountNegativeAnsweredEmails(flowId);
+            var amountNotFoundAnsweredEmails = mailAnsweredRepository.GetAmountNotFoundAnsweredEmails(flowId);
             return new FlowReportDTO
             {
-                sentEmails = 0,
-                answeredEmails = 0,
+                sentEmails = amountSentEmails,
+                answeredEmails = amountAnsweredEmails,
+                positiveAnsweredEmails = amountPositiveAnsweredEmails,
+                negativeAnsweredEmails = amountNegativeAnsweredEmails,
+                notFoundAnsweredEmails = amountNotFoundAnsweredEmails,
                 amountOfLeads = amountOfLeads
             };
         }

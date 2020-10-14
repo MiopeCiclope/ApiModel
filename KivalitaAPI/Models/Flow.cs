@@ -41,6 +41,9 @@ namespace KivalitaAPI.Models
 
 		public List<FlowAction> FlowAction { get; set; }
 
+		[NotMapped]
+		public NumberFLowEmailsView? NumberFLowEmails { get; set; }
+
 		[JsonIgnore]
 		public int CreatedBy { get; set; }
 		[JsonIgnore]

@@ -16,5 +16,52 @@ namespace KivalitaAPI.Repositories {
                 .Include(m => m.Lead)
                 .SingleOrDefault();
         }
+
+        public int GetAmountAnsweredEmails(int flowid)
+        {
+            return context.Set<MailAnswered>()
+                .Where(
+                    mail => mail.FlowTask.FlowAction.FlowId == flowid
+                )
+                .Select(mail => mail.TaskId)
+                .Distinct()
+                .Count();
+        }
+
+        public int GetAmountPositiveAnsweredEmails(int flowid)
+        {
+            return context.Set<MailAnswered>()
+                .Where(
+                    mail => mail.FlowTask.FlowAction.FlowId == flowid
+                    && mail.Status == Enum.MailAnsweredStatusEnum.Positive
+                )
+                .Select(mail => mail.TaskId)
+                .Distinct()
+                .Count();
+        }
+
+        public int GetAmountNegativeAnsweredEmails(int flowid)
+        {
+            return context.Set<MailAnswered>()
+                .Where(
+                    mail => mail.FlowTask.FlowAction.FlowId == flowid
+                    && mail.Status == Enum.MailAnsweredStatusEnum.Negative
+                )
+                .Select(mail => mail.TaskId)
+                .Distinct()
+                .Count();
+        }
+
+        public int GetAmountNotFoundAnsweredEmails(int flowid)
+        {
+            return context.Set<MailAnswered>()
+                .Where(
+                    mail => mail.FlowTask.FlowAction.FlowId == flowid
+                    && mail.Status == Enum.MailAnsweredStatusEnum.NotFound
+                )
+                .Select(mail => mail.TaskId)
+                .Distinct()
+                .Count();
+        }
     }
 }

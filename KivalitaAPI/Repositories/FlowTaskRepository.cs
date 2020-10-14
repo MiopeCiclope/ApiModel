@@ -149,5 +149,16 @@ namespace KivalitaAPI.Repositories
                                         && task.FlowAction.Flow.IsActive)
                             .ToList();
         }
+
+        public int GetAmountSentEmails(int flowid)
+        {
+            return context.Set<FlowTask>()
+                .Where(
+                    task => task.FlowAction.Type == "email"
+                    && task.FlowAction.FlowId == flowid
+                    && task.Status == "finished"
+                )
+                .Count();
+        }
     }
 }

@@ -31,9 +31,18 @@ namespace KivalitaAPI.Repositories
             var total = result.Count();
             result = this.filterProcessor.Apply(filterQuery, result);
 
+            var flows = result.ToList();
+
+            foreach (var flow in flows)
+            {
+                flow.NumberFLowEmails = context.Set<NumberFLowEmailsView>()
+                    .Where(fe => fe.FlowId == flow.Id)
+                    .FirstOrDefault();
+            }
+
             return new QueryResult<Flow>
             {
-                Items = result.ToList(),
+                Items = flows,
                 TotalItems = total,
             };
         }

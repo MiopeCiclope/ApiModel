@@ -158,6 +158,10 @@ namespace KivalitaAPI.Data
                 .HasOne(f => f.FlowTask)
                 .WithMany(ft => ft.TaskNote)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<NumberFLowEmailsView>()
+                .HasNoKey()
+                .ToView("NumberFlowEmails");
         }
 
         public override int SaveChanges()
