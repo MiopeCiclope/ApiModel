@@ -1,8 +1,10 @@
-﻿using KivalitaAPI.Data;
+﻿using AutoMapper;
+using KivalitaAPI.Data;
 using KivalitaAPI.Models;
 using KivalitaAPI.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -16,6 +18,8 @@ namespace KivalitaAPI.Services
         MicrosoftTokenRepository microsoftTokenRepository;
         MailSignatureService mailSignatureService;
         MailSignatureRepository mailSignatureRepository;
+        IMapper _mapper;
+        CompanyDTORepository companyDtoRepository;
 
         public UserService(
             KivalitaApiContext context,
@@ -23,13 +27,17 @@ namespace KivalitaAPI.Services
             CompanyRepository companyRepository,
             MicrosoftTokenRepository microsoftTokenRepository,
             MailSignatureService _mailSignatureService,
-            MailSignatureRepository _mailSignatureRepository
+            MailSignatureRepository _mailSignatureRepository, 
+            IMapper mapper,
+            CompanyDTORepository _companyDTORepository
         ) : base(context, baseRepository)
         {
             this.companyRepository = companyRepository;
             this.microsoftTokenRepository = microsoftTokenRepository;
             this.mailSignatureService = _mailSignatureService;
             this.mailSignatureRepository = _mailSignatureRepository;
+            this._mapper = mapper;
+            this.companyDtoRepository = _companyDTORepository;
         }
 
         public override User Get(int id)
@@ -69,14 +77,18 @@ namespace KivalitaAPI.Services
                     if(companyToUnlink.Any()) {
                         var companyList = companyToUnlink.ToList();
                         companyList.ForEach(company => company.UserId = null);
-                        companyRepository.UpdateRange(companyList);
+
+                        var bulkListCompany = _mapper.Map<List<CompanyDatabaseDTO>>(companyList);
+                        companyDtoRepository.UpdateRange(bulkListCompany);
                     }
 
                     if (companyToLink.Any())
                     {
                         var companyList = companyToLink.ToList();
                         companyList.ForEach(company => company.UserId = user.Id);
-                        companyRepository.UpdateRange(companyList);
+
+                        var bulkListCompany = _mapper.Map<List<CompanyDatabaseDTO>>(companyList);
+                        companyDtoRepository.UpdateRange(bulkListCompany);
                     }
                 }
 

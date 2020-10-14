@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using AutoMapper;
 using KivalitaAPI.Common;
 using KivalitaAPI.Enum;
 using KivalitaAPI.Interfaces;
@@ -19,18 +20,24 @@ namespace KivalitaAPI.Services
         FlowTaskRepository _flowTaskRepository;
         LogTaskService _logTaskService;
         public readonly IJobScheduler _scheduler;
+        IMapper _mapper;
+        LeadsDTORepository _leadsDTORepository;
 
         public ScheduleTasksService (
             FlowTaskRepository flowTaskRepository,
             LeadsRepository leadsRepository,
             LogTaskService logTaskService,
-            IJobScheduler scheduler
+            IJobScheduler scheduler, 
+            IMapper mapper, 
+            LeadsDTORepository leadsDTORepository
         )
         { 
             _flowTaskRepository = flowTaskRepository;
             _leadsRepository = leadsRepository;
             _scheduler = scheduler;
             _logTaskService = logTaskService;
+            _mapper = mapper;
+            _leadsDTORepository = leadsDTORepository;
         }
 
         public void Execute(Flow flow, List<Leads> leads)
@@ -91,8 +98,11 @@ namespace KivalitaAPI.Services
                 }
             }
 
-            //if (leadListToUpdate.Any()) 
-            //    _leadsRepository.UpdateRange(leadListToUpdate.Distinct().ToList());
+            if (leadListToUpdate.Any())
+            {
+                var bulkListLeads = _mapper.Map<List<LeadDatabaseDTO>>(leadListToUpdate.Distinct().ToList());
+                _leadsDTORepository.UpdateRange(bulkListLeads);
+            }
             if (taskList.Any())
                 _flowTaskRepository.AddRange(taskList);
         }

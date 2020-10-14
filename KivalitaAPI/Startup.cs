@@ -182,7 +182,10 @@ namespace KivalitaAPI
             services.AddScoped<MailAnsweredService>();
 
             services.AddScoped<FlowTaskDTORepository>();
-
+            services.AddScoped<CompanyDTORepository>();
+            services.AddScoped<FilterDTORepository>();
+            services.AddScoped<LeadsDTORepository>();
+            
             services.AddScoped<ISieveCustomFilterMethods, SieveCustomFilterMethods>();
 
             var mappingConfig = new MapperConfiguration(cfg =>
@@ -293,6 +296,15 @@ namespace KivalitaAPI
                             .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Id))
                             .ForMember(dest => dest.Id, opt => opt.Ignore());
                 cfg.CreateMap<MailAnsweredHistory, MailAnswered>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TableId));
+
+                cfg.CreateMap<CompanyDatabaseDTO, Company>();
+                cfg.CreateMap<Company, CompanyDatabaseDTO>();
+
+                cfg.CreateMap<FilterDatabaseDTO, Filter>();
+                cfg.CreateMap<Filter, FilterDatabaseDTO>();
+
+                cfg.CreateMap<LeadDatabaseDTO, Leads>();
+                cfg.CreateMap<Leads, LeadDatabaseDTO>();
             });
 
             //Mapper Configured service

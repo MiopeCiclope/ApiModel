@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AutoMapper;
 using KivalitaAPI.Common;
 using KivalitaAPI.Data;
 using KivalitaAPI.DTOs;
@@ -17,6 +18,8 @@ namespace KivalitaAPI.Services {
 		FlowRepository flowRepository;
 		LeadTagRepository leadTagRepository;
 		ScheduleTasksService scheduleTasksService;
+		CompanyDTORepository companyDtoRepository;
+		IMapper _mapper;
 
 		public LeadsService (
 			KivalitaApiContext context,
@@ -24,12 +27,16 @@ namespace KivalitaAPI.Services {
 			CompanyRepository companyRepository,
 			FlowRepository flowRepository,
 			LeadTagRepository leadTagRepository,
-			ScheduleTasksService scheduleTasksService
+			ScheduleTasksService scheduleTasksService,
+			IMapper mapper,
+			CompanyDTORepository _companyDTORepository
 		) : base (context, baseRepository) {
 			this.companyRepository = companyRepository;
 			this.flowRepository = flowRepository;
 			this.scheduleTasksService = scheduleTasksService;
 			this.leadTagRepository = leadTagRepository;
+			this._mapper = mapper;
+			this.companyDtoRepository = _companyDTORepository;
 		}
 
 		public override Leads Update(Leads lead)
@@ -221,7 +228,8 @@ namespace KivalitaAPI.Services {
 				}
 			}
 
-			companyRepository.UpdateRange(companiesToUpdate);
+			var bulkListCompany = _mapper.Map<List<CompanyDatabaseDTO>>(companiesToUpdate);
+			companyDtoRepository.UpdateRange(bulkListCompany);
 		}
 
 		private List<List<T>> SplitList<T>(List<T> list, int number)

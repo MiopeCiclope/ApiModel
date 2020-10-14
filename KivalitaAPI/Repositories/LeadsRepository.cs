@@ -1,3 +1,4 @@
+using AutoMapper;
 using KivalitaAPI.Common;
 using KivalitaAPI.DTOs;
 using KivalitaAPI.Enum;
@@ -15,8 +16,13 @@ namespace KivalitaAPI.Repositories
     public class LeadsRepository : Repository<Leads, DbContext, SieveProcessor>
     {
         public const int DefaultItemsPerPage = 10;
+        IMapper _mapper;
+        LeadsDTORepository _leadsDTORepository;
 
-        public LeadsRepository(DbContext context, SieveProcessor filterProcessor) : base(context, filterProcessor) {}
+        public LeadsRepository(DbContext context, SieveProcessor filterProcessor, IMapper mapper, LeadsDTORepository leadsDTORepository) : base(context, filterProcessor) {
+            _mapper = mapper;
+            _leadsDTORepository = leadsDTORepository;
+        }
 
         public override Leads Get(int id)
         {
@@ -189,7 +195,8 @@ namespace KivalitaAPI.Repositories
         public override List<Leads> DeleteRange(List<Leads> leads)
         {
             leads.ForEach(l => l.Deleted = true);
-            return base.UpdateRange(leads);
+            var bulkListLeads = _mapper.Map<List<LeadDatabaseDTO>>(leads);
+            return _mapper.Map<List<Leads>>(_leadsDTORepository.UpdateRange(bulkListLeads));
         }
 
         public void UpdateStatusList(List<int> Ids)

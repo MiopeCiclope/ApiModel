@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AutoMapper;
 using KivalitaAPI.Data;
 using KivalitaAPI.DTOs;
 using KivalitaAPI.Enum;
@@ -21,6 +22,8 @@ namespace KivalitaAPI.Services
         TemplateRepository templateRepository;
         MailAnsweredRepository mailAnsweredRepository;
         ScheduleTasksService scheduleTasksService;
+        IMapper mapper;
+        FilterDTORepository filterDTORepository;
 
         public FlowService(
             KivalitaApiContext context,
@@ -30,8 +33,10 @@ namespace KivalitaAPI.Services
             FlowTaskRepository _flowTaskRepository,
             FilterRepository _filterRepository,
             TemplateRepository _templateRepository,
-            MailAnsweredRepository _mailAnsweredRepository,
-            ScheduleTasksService _scheduleTasksService
+            ScheduleTasksService _scheduleTasksService,
+            IMapper _mapper,
+            FilterDTORepository _filterDTORepository,
+            MailAnsweredRepository _mailAnsweredRepository
         ) : base(context, baseRepository) {
             leadsRepository = _leadsRepository;
             flowActionRepository = _flowActionRepository;
@@ -40,6 +45,8 @@ namespace KivalitaAPI.Services
             templateRepository = _templateRepository;
             mailAnsweredRepository = _mailAnsweredRepository;
             scheduleTasksService = _scheduleTasksService;
+            mapper = _mapper;
+            filterDTORepository = _filterDTORepository;
         }
 
         public override Flow Add(Flow flow)
@@ -71,14 +78,18 @@ namespace KivalitaAPI.Services
                 {
                     var filterList = filterToUnlink.ToList();
                     filterList.ForEach(filter => filter.FlowId = null);
-                    filterRepository.UpdateRange(filterList);
+
+                    var bulkListFilter = mapper.Map<List<FilterDatabaseDTO>>(filterList);
+                    filterDTORepository.UpdateRange(bulkListFilter);
                 }
 
                 if (filterToLink.Any())
                 {
                     var filterList = filterToLink.ToList();
                     filterList.ForEach(filter => filter.FlowId = flow.Id);
-                    filterRepository.UpdateRange(filterList);
+
+                    var bulkListFilter = mapper.Map<List<FilterDatabaseDTO>>(filterList);
+                    filterDTORepository.UpdateRange(bulkListFilter);
                 }
 
                 var filterUnlinkIds = filterToUnlink.Select(f => f.Id).ToList();
