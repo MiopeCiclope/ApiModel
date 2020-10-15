@@ -183,7 +183,11 @@ namespace KivalitaAPI.Services
             {
                 var filter = filterRepository.Get(filterId);
                 var filterModel = new SieveModel();
-                filterModel.Filters = filter.GetSieveFilter();
+
+                filterModel.Filters = string.IsNullOrEmpty(filter.SieveFilter)
+                    ? filter.GetSieveFilter()
+                    : filter.SieveFilter;
+
                 var leadsFound = leadsRepository.GetAll_v2(filterModel).Items;
 
                 leads.AddRange(leadsFound);

@@ -27,13 +27,18 @@ namespace KivalitaAPI.Models {
 		public string Email { get; set; }
 
 		[Sieve(CanFilter = true, CanSort = true)]
-		public string Date { get; set; }
+		public string StartDate { get; set; }
 
 		[Sieve(CanFilter = true, CanSort = true)]
+		public string EndDate { get; set; }
+
+		[Sieve(CanFilter = true, CanSort = true)] 
 		public FilterTypeEnum type { get; set; }
 
 		[Sieve(CanFilter = true, CanSort = true)]
 		public LeadStatusEnum? Status { get; set; }
+
+		public string SieveFilter { get; set; }
 
 		[Sieve(CanFilter = true, CanSort = true)]
 		public int Owner { get; set; }
@@ -77,7 +82,8 @@ namespace KivalitaAPI.Models {
 			if (this.UserId != null) filter += $",Owner == {this.UserId}";
 			if (!String.IsNullOrEmpty(this.TagId)) filter += $",Tags == {this.TagId}";
 			if (this.Email != null && this.Email != "bothEmail") filter += $",WithEmail == {(this.Email == "withEmail")}";
-			if (this.Date != null) filter += $",createdAt>={ this.Date },createdAt<{DateTime.Parse(this.Date).AddDays(1).Date.ToString()}";
+			if (this.StartDate != null) filter += $",createdAt>={ this.StartDate }";
+			if (this.EndDate != null) filter += $",createdAt<={ this.EndDate }";
 			return filter;
 		}
 	}
