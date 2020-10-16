@@ -15,7 +15,6 @@ namespace KivalitaAPI.Models
 		public string Sector { get; set; }
 		public string Position { get; set; }
 		public string Email { get; set; }
-		public string Date { get; set; }
 		public FilterTypeEnum type { get; set; }
 		public LeadStatusEnum? Status { get; set; }
 		public int Owner { get; set; }
@@ -26,6 +25,9 @@ namespace KivalitaAPI.Models
 		public int UpdatedBy { get; set; }
 		public DateTime CreatedAt { get; set; }
 		public DateTime UpdatedAt { get; set; }
+		public string SieveFilter { get; set; }
+		public string StartDate { get; set; }
+		public string EndDate { get; set; }
 
 		public string GetTableName()
 		{

@@ -86,8 +86,7 @@ public class MailSchedulerJob : IJob
                     else
                         mailList.ForEach(mail =>
                         {
-                            //var logMessage = graphService.SendMail(client, mail, userId) ? "Mail Sent" : "Faild Send Mail";
-                            var logMessage = "Mail Sent";
+                            var logMessage = graphService.SendMail(client, mail, userId) ? "Mail Sent" : "Faild Send Mail";
                             if (logMessage == "Mail Sent")
                             {
                                 this.logTaskService.RegisterLog(LogTaskEnum.EmailSent, flowTask.LeadId, flowTask.Id);
@@ -142,7 +141,7 @@ public class MailSchedulerJob : IJob
             if (template == null) return null;
 
             return leadList
-                    //.Where(lead => !String.IsNullOrEmpty(lead.Email) && !this.graphService.DidReply(this.client, lead.Email))
+                    .Where(lead => !String.IsNullOrEmpty(lead.Email) && !this.graphService.DidReply(this.client, lead.Email))
                     .Select(lead => BuildEmail(lead, template, flowTask.Id)).ToList();
         }
         catch (Exception e)
@@ -176,8 +175,8 @@ public class MailSchedulerJob : IJob
                     {
                         EmailAddress = new EmailAddress
                         {
-                            //Address = $"{lead.Email}"
-                            Address = $"romulo.carvalho@kivalita.com.br"
+                            Address = $"{lead.Email}"
+                            //Address = $"romulo.carvalho@kivalita.com.br"
                         }
                     } 
                 }

@@ -14,6 +14,7 @@ namespace KivalitaAPI.Repositories {
                 .Where(m => m.Id == id)
                 .Include(m => m.FlowTask)
                 .Include(m => m.Lead)
+                .ThenInclude(l => l.Company)
                 .SingleOrDefault();
         }
 
