@@ -7,7 +7,7 @@ namespace KivalitaAPI.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql(@"
-                CREATE VIEW dbo.NumberFlowEmails as
+                CREATE VIEW NumberFlowEmails as
 	                SELECT flowid,
                     Count(*) AS TotalSent,
                     Sum(CASE
