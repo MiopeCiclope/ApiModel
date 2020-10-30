@@ -93,11 +93,12 @@ namespace KivalitaAPI.Repositories {
 
 			bulk.Setup<TEntity>(x => x.ForCollection(entities))
 				.WithTable(tableName)
+				.WithSchema(Setting.Schema)
 				.AddAllColumns()
 				.BulkUpdate()
 				.SetIdentityColumn(x => x.Id)
 				.MatchTargetOn(x => x.Id);
-
+			
 			bulk.CommitTransaction();
 			return entities;
 		}

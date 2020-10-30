@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using KivalitaAPI.Data;
 using KivalitaAPI.Enum;
 using KivalitaAPI.Models;
@@ -14,8 +15,7 @@ namespace KivalitaAPI.Services
             LogTaskRepository baseRepository
         ) : base(context, baseRepository) { }
 
-        public void RegisterLog(LogTaskEnum logTaskEnum, int leadId, int taskId = 0)
-        {
+        public LogTask GenerateLog(LogTaskEnum logTaskEnum, int leadId, int taskId = 0) {
             var logTask = new LogTask
             {
                 LeadId = leadId,
@@ -47,7 +47,18 @@ namespace KivalitaAPI.Services
                     break;
             }
 
+            return logTask;
+        }
+
+        public void RegisterLog(LogTaskEnum logTaskEnum, int leadId, int taskId = 0)
+        {
+            var logTask = GenerateLog(logTaskEnum, leadId, taskId);
             baseRepository.Add(logTask);
+        }
+
+        public void BulkLog(List<LogTask> logList)
+        {
+            baseRepository.AddRange(logList);
         }
     }
 }

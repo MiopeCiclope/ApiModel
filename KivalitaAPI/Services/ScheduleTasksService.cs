@@ -47,6 +47,7 @@ namespace KivalitaAPI.Services
             var leadGroup = SplitLeadGroupByDay(leads, flow);
             List<Leads> leadListToUpdate = new List<Leads>();
             List<FlowTask> taskList = new List<FlowTask>();
+            List<LogTask> logList = new List<LogTask>();
 
             var daysAllowedToSchedule = flow.DaysOfTheWeek.Split(',').Select(Int32.Parse).ToList();
             var businessDate = DateUtils.GetDateSheduleValid(DateTime.Now, daysAllowedToSchedule);
@@ -65,16 +66,16 @@ namespace KivalitaAPI.Services
                         {
                             lead.FlowId = flow.Id;
                             leadListToUpdate.Add(lead);
-                            _logTaskService.RegisterLog(LogTaskEnum.LeadAddedToFLow, lead.Id);
+                            logList.Add(_logTaskService.GenerateLog(LogTaskEnum.LeadAddedToFLow, lead.Id));
                         }
 
                         if (lead.Status != LeadStatusEnum.Flow)
                         {
                             lead.Status = LeadStatusEnum.Flow;
                             leadListToUpdate.Add(lead);
-                            _logTaskService.RegisterLog(LogTaskEnum.StatusChanged, lead.Id);
+                            logList.Add(_logTaskService.GenerateLog(LogTaskEnum.LeadAddedToFLow, lead.Id));
                         }
-                        
+
                         var task = new FlowTask
                         {
                             Status = "pending",
@@ -92,12 +93,13 @@ namespace KivalitaAPI.Services
                         }
 
                         taskList.Add(task);
-                        _logTaskService.RegisterLog(LogTaskEnum.TaskAdded, lead.Id, task.Id);
+                        logList.Add(_logTaskService.GenerateLog(LogTaskEnum.LeadAddedToFLow, lead.Id));
                     }
                     daysToAdd = 1;
                 }
             }
 
+            
             if (leadListToUpdate.Any())
             {
                 var bulkListLeads = _mapper.Map<List<LeadDatabaseDTO>>(leadListToUpdate.Distinct().ToList());
@@ -105,6 +107,8 @@ namespace KivalitaAPI.Services
             }
             if (taskList.Any())
                 _flowTaskRepository.AddRange(taskList);
+            if (logList.Any())
+                _logTaskService.BulkLog(logList);
         }
 
         public void RemoveRange(List<Leads> leads)
