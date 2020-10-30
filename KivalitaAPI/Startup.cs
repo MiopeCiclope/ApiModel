@@ -185,7 +185,8 @@ namespace KivalitaAPI
             services.AddScoped<CompanyDTORepository>();
             services.AddScoped<FilterDTORepository>();
             services.AddScoped<LeadsDTORepository>();
-            
+            services.AddScoped<LogTaskDTORepository>();
+
             services.AddScoped<ISieveCustomFilterMethods, SieveCustomFilterMethods>();
 
             var mappingConfig = new MapperConfiguration(cfg =>
@@ -305,6 +306,9 @@ namespace KivalitaAPI
 
                 cfg.CreateMap<LeadDatabaseDTO, Leads>();
                 cfg.CreateMap<Leads, LeadDatabaseDTO>();
+
+                cfg.CreateMap<LogTaskDatabaseDTO, LogTask>();
+                cfg.CreateMap<LogTask, LogTaskDatabaseDTO>();
             });
 
             //Mapper Configured service
@@ -327,8 +331,8 @@ namespace KivalitaAPI
             services.AddSingleton<GetMailJob>();
             services.AddSingleton<MailSchedulerJob>();
 
-            services.AddSingleton(new JobScheduleDTO("MailSchedulerJob", "0 0 9 1/1 * ? *", null, 0));
-            services.AddSingleton(new JobScheduleDTO("GetMailJob", null, DateTimeOffset.UtcNow, 0));
+            //services.AddSingleton(new JobScheduleDTO("MailSchedulerJob", "0 0 9 1/1 * ? *", null, 0));
+            //services.AddSingleton(new JobScheduleDTO("GetMailJob", null, DateTimeOffset.UtcNow, 0));
 
             services.AddHostedService<SchedulerService>();
             services.AddSingleton<IJobScheduler, SchedulerService>();

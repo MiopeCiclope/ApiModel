@@ -28,5 +28,19 @@ namespace KivalitaAPI.Models
 		[JsonIgnore]
 		public DateTime UpdatedAt { get; set; }
 
+		public string[] GetDataBaseColumn()
+		{
+			return new string[9] {"Id"
+								,"Description"
+								,"Type"
+								,"LeadId"
+								,"TaskId"
+								,"CreatedBy"
+								,"UpdatedBy"
+								,"CreatedAt"
+								,"UpdatedAt"
+							};
+		}
+
 	}
 }

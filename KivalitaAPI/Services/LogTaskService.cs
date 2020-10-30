@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using AutoMapper;
 using KivalitaAPI.Data;
+using KivalitaAPI.DTOs;
 using KivalitaAPI.Enum;
 using KivalitaAPI.Models;
 using KivalitaAPI.Repositories;
@@ -9,11 +11,18 @@ namespace KivalitaAPI.Services
 {
     public class LogTaskService : Service<LogTask, KivalitaApiContext, LogTaskRepository>
     {
+        IMapper _mapper;
+        LogTaskDTORepository _bulkBaseRepository;
 
         public LogTaskService(
             KivalitaApiContext context,
-            LogTaskRepository baseRepository
-        ) : base(context, baseRepository) { }
+            LogTaskRepository baseRepository,
+            IMapper mapper,
+            LogTaskDTORepository bulkBaseRepository
+        ) : base(context, baseRepository) {
+            _mapper = mapper;
+            _bulkBaseRepository = bulkBaseRepository;
+        }
 
         public LogTask GenerateLog(LogTaskEnum logTaskEnum, int leadId, int taskId = 0) {
             var logTask = new LogTask
@@ -58,7 +67,9 @@ namespace KivalitaAPI.Services
 
         public void BulkLog(List<LogTask> logList)
         {
-            baseRepository.AddRange(logList);
+            //var bulkList = _mapper.Map<List<LogTaskDatabaseDTO>>(logList);
+            //_bulkBaseRepository.AddRange(bulkList);
+            base.AddRange(logList);
         }
     }
 }

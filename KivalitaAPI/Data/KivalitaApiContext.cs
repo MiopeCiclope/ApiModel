@@ -69,7 +69,7 @@ namespace KivalitaAPI.Data
         public DbSet<MailTrackHistory> MailTrackHistory { get; set; }
         public DbSet<TaskDTO> TaskDTO { get; set; }
 
-        public DbSet<LogTask> LogTasks {get;set;}
+        public DbSet<LogTask> LogTask {get;set;}
         public DbSet<LogTaskHistory> LogTasksHistory {get;set;}
 
         public DbSet<Tag> Tag { get; set; }
