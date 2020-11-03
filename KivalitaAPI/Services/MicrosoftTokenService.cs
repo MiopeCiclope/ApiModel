@@ -92,12 +92,18 @@ namespace KivalitaAPI.Services
 
         public GraphServiceClient GetTokenClient(int userId)
         {
-            var graphToken = this.baseRepository.GetBy(token => token.UserId == userId).First();
-            var token = (graphToken.ExpirationDate <= DateTime.UtcNow) ? this.RefreshToken(userId).AccessToken : graphToken.AccessToken;
+            var graphToken = this.baseRepository.GetBy(token => token.UserId == userId).FirstOrDefault();
 
-            return new GraphServiceClient(new DelegateAuthenticationProvider(async request => {
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            }));
+            if (graphToken != null)
+            {
+                var token = (graphToken.ExpirationDate <= DateTime.UtcNow) ? this.RefreshToken(userId).AccessToken : graphToken.AccessToken;
+
+                return new GraphServiceClient(new DelegateAuthenticationProvider(async request => {
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                }));
+            }
+           
+            return null;
         }
 
         public bool SendMail(GraphServiceClient client, Message email, int userId)

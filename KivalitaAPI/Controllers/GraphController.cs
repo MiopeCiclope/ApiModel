@@ -305,23 +305,30 @@ namespace KivalitaAPI.Controllers
         [HttpGet("Cron/UpdateSubscriptions")]
         public virtual async Task<IActionResult> UpdateSubscriptions()
         {
+            logger.LogInformation($"{this.GetType().Name} - Cron/UpdateSubscriptions");
+
             var users = userService.GetAll();
+
             foreach (var user in users)
             {
+
                 var graphClient = service.GetTokenClient(user.Id);
 
-                var subscriptions = await graphClient.Subscriptions
-                    .Request()
-                    .GetAsync();
-
-                foreach (var subscription in subscriptions)
+                if (graphClient != null)
                 {
-                    await graphClient.Subscriptions[subscription.Id]
+                    var subscriptions = await graphClient.Subscriptions
                         .Request()
-                        .UpdateAsync(new Subscription
-                        {
-                            ExpirationDateTime = DateTimeOffset.UtcNow.AddMinutes(4200)
-                        });
+                        .GetAsync();
+
+                    foreach (var subscription in subscriptions)
+                    {
+                        await graphClient.Subscriptions[subscription.Id]
+                            .Request()
+                            .UpdateAsync(new Subscription
+                            {
+                                ExpirationDateTime = DateTimeOffset.UtcNow.AddMinutes(4200)
+                            });
+                    }
                 }
             }
 
