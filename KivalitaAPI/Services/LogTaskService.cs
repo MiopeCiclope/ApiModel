@@ -67,9 +67,8 @@ namespace KivalitaAPI.Services
 
         public void BulkLog(List<LogTask> logList)
         {
-            //var bulkList = _mapper.Map<List<LogTaskDatabaseDTO>>(logList);
-            //_bulkBaseRepository.AddRange(bulkList);
-            base.AddRange(logList);
+            var bulkList = _mapper.Map<List<LogTaskDatabaseDTO>>(logList);
+            _bulkBaseRepository.AddRangeBulkTools(bulkList);
         }
     }
 }

@@ -192,5 +192,23 @@ namespace KivalitaAPI.Repositories {
 				}
 			}
 		}
+
+		public virtual List<TEntity> AddRangeBulkTools(List<TEntity> entities)
+		{
+			if (!entities.Any()) throw new Exception("Insert empty list");
+
+			var tableName = typeof(TEntity).GetMethod("GetTableName").Invoke(entities[0], null) as string;
+			string csDestination = context.Database.GetDbConnection().ConnectionString;
+			var bulk = new BulkOperations(csDestination);
+
+			bulk.Setup<TEntity>(x => x.ForCollection(entities))
+				.WithTable(tableName)
+				.WithSchema(Setting.Schema)
+				.AddAllColumns()
+				.BulkInsert();
+
+			bulk.CommitTransaction();
+			return entities;
+		}
 	}
 }
