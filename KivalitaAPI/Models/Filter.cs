@@ -56,7 +56,7 @@ namespace KivalitaAPI.Models {
 		public int? FlowId { get; set; }
 		public Flow Flow { get; set; }
 
-		[JsonIgnore]
+		//[JsonIgnore]
 		public virtual User User { get; set; }
 
 		[JsonIgnore]

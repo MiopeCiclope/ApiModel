@@ -6,6 +6,6 @@ ao editar este arquivo MSBuild. Para saber mais sobre isso, visite https://go.mi
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <TimeStampOfAssociatedLegacyPublishXmlFile />
-    <EncryptedPassword>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAXSTWY+WJQEKqaJLC8+NVoQAAAAACAAAAAAAQZgAAAAEAACAAAAB5iFThdrJqgjXVjTmYpBfP9twcynVC2OJPzzuZk6+1nwAAAAAOgAAAAAIAACAAAAAV4pwaiU/yoN6CfxK/4qd68J5xpWAHLjQTjLx45gLXMiAAAADlLo8oaZAA0bwK9O28TKEBv2GtaV7kRGZSNvzNPAbt+UAAAABW2hqpzrthPq1SP+sIED04mQbf0l9He5eh83JV20fQNuVxHbme5oFKB/5O77tdw1ipx5e9i+fIRG+GwIDJXG6E</EncryptedPassword>
+    <EncryptedPassword>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA/PbhBuRpREi+wSIUuXssoQAAAAACAAAAAAAQZgAAAAEAACAAAAAq88SLwMZJZTjSbXTeuaAIYopbstXujpINg5O2VlMUbgAAAAAOgAAAAAIAACAAAAAuQ3fMIGbfPomrmDZwkBIXH2oXthbfiI5WFqid3o99FSAAAAAP8nkOBFV92sXuO1q7D5KqTn9MMqSLTE+8sIjPBQl8KEAAAAACOyS67stugfDa9xVM7OO8djSg13CFiqnhGATxH50z79KXhPVdjjl9Qov2Ssqt0KaghOCIZ5MTCowvDKNsqtPi</EncryptedPassword>
   </PropertyGroup>
 </Project>

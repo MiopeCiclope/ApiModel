@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using KivalitaAPI.Common;
 using KivalitaAPI.Models;
 using Microsoft.EntityFrameworkCore;
+using Sieve.Models;
 using Sieve.Services;
 
 namespace KivalitaAPI.Repositories {
@@ -34,6 +36,22 @@ namespace KivalitaAPI.Repositories {
 				return filter;
 			}).ToList ();
 			return filters;
+		}
+
+		public override QueryResult<Filter> GetAll_v2(SieveModel filterQuery)
+		{
+			var result = context.Set<Filter>()
+				.Include(f => f.User)
+				.AsNoTracking();
+
+			var total = result.Count();
+			result = this.filterProcessor.Apply(filterQuery, result);
+
+			return new QueryResult<Filter>
+			{
+				Items = result.ToList(),
+				TotalItems = total,
+			};
 		}
 	}
 }

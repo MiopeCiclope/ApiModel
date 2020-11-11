@@ -5,6 +5,6 @@
   </PropertyGroup>
   <PropertyGroup>
     <ActiveDebugProfile>KivalitaAPI</ActiveDebugProfile>
-    <NameOfLastUsedPublishProfile>HostAzul</NameOfLastUsedPublishProfile>
+    <NameOfLastUsedPublishProfile>api.kivalita.com.br - Web Deploy</NameOfLastUsedPublishProfile>
   </PropertyGroup>
 </Project>
