@@ -189,6 +189,8 @@ namespace KivalitaAPI
 
             services.AddScoped<ISieveCustomFilterMethods, SieveCustomFilterMethods>();
 
+            services.AddScoped<CircleCiService>();
+
             var mappingConfig = new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<User, UserHistory>()

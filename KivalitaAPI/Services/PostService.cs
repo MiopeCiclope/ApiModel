@@ -13,11 +13,13 @@ namespace KivalitaAPI.Services
     {
         private ImageRepository _imageRepository;
         private UserRepository _userRepository;
+        private CircleCiService _deploy;
 
-        public PostService(KivalitaApiContext context, PostRepository baseRepository, ImageRepository imageRepository) : base(context, baseRepository) 
+        public PostService(KivalitaApiContext context, PostRepository baseRepository, ImageRepository imageRepository, CircleCiService deployService) : base(context, baseRepository) 
         {
             _imageRepository = imageRepository;
             _userRepository = new UserRepository(this.context, this.baseRepository.filterProcessor);
+            _deploy = deployService;
         }
 
         public override Post Add(Post post)
@@ -42,6 +44,7 @@ namespace KivalitaAPI.Services
                 base.Update(postLinked);
             }
 
+            _deploy.TriggerDeploy();
             return postAdded;
         }
 
