@@ -36,8 +36,14 @@ namespace KivalitaAPI.Repositories
 
         public override QueryResult<Post> GetAll_v2(SieveModel filterQuery)
         {
-            var result = context.Set<Post>()
-                .Select(p => new Post
+            var result = context.Set<Post>().AsNoTracking();
+
+            var total = result.Count();
+            result = this.filterProcessor.Apply(filterQuery, result);
+
+            return new QueryResult<Post>
+            {
+                Items = result.Select(p => new Post
                 {
                     Id = p.Id,
                     Title = p.Title,
@@ -49,16 +55,7 @@ namespace KivalitaAPI.Repositories
                     Published = p.Published,
                     AuthorId = p.AuthorId,
                     CreatedAt = p.CreatedAt
-                })
-                .OrderByDescending(p => p.CreatedAt)
-                .AsNoTracking();
-
-            var total = result.Count();
-            result = this.filterProcessor.Apply(filterQuery, result);
-
-            return new QueryResult<Post>
-            {
-                Items = result.ToList(),
+                }).OrderByDescending(p => p.CreatedAt).ToList(),
                 TotalItems = total,
             };
         }

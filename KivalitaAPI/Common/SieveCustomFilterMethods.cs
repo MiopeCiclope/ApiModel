@@ -12,4 +12,12 @@ public class SieveCustomFilterMethods : ISieveCustomFilterMethods
 
         return result;
     }
+
+    public IQueryable<Post> LastChangeDate(IQueryable<Post> source, string op, string[] value)
+    {
+        var lastDate = DateTime.Parse(value[0]);
+        var result = source.Where(entity => entity.CreatedAt > lastDate || entity.UpdatedAt > lastDate);
+
+        return result;
+    }
 }
