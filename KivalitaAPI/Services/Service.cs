@@ -50,7 +50,7 @@ namespace KivalitaAPI.Services
             return baseRepository.GetAll();
         }
 
-        public QueryResult<TEntity> GetAll_v2(SieveModel filterQuery)
+        public virtual QueryResult<TEntity> GetAll_v2(SieveModel filterQuery)
         {
             return baseRepository.GetAll_v2(filterQuery);
         }
