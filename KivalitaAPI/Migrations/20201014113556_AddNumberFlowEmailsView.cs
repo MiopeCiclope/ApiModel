@@ -22,7 +22,7 @@ namespace KivalitaAPI.Migrations
                     INNER JOIN (select id, status, flowactionid from flowtask where status = 'finished') ft
                     ON ft.flowactionid = fa.id
                     LEFT OUTER JOIN mailanswered ma
-                    ON ma.taskid = ft.id ) AS task
+                    ON ma.taskid = ft.id AND ma.Status != 3 ) AS task
                     GROUP BY flowid
                 go
             ");

@@ -23,6 +23,7 @@ namespace KivalitaAPI.Repositories {
             return context.Set<MailAnswered>()
                 .Where(
                     mail => mail.FlowTask.FlowAction.FlowId == flowid
+                    && mail.Status != Enum.MailAnsweredStatusEnum.NotFound
                 )
                 .Select(mail => mail.TaskId)
                 .Distinct()
