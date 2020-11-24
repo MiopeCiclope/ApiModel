@@ -59,5 +59,10 @@ namespace KivalitaAPI.Services
         {
             return baseRepository.Update(entity);
         }
+
+        public virtual List<TEntity> UpdateRange(List<TEntity> entities)
+        {
+            return baseRepository.UpdateRange(entities);
+        }
     }
 }

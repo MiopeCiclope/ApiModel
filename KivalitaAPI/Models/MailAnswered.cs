@@ -32,5 +32,10 @@ namespace KivalitaAPI.Models
         [Sieve(CanFilter = true, CanSort = true)]
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+
+        public string GetTableName()
+        {
+            return "MailAnswered";
+        }
     }
 }

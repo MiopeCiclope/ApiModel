@@ -20,5 +20,6 @@ namespace KivalitaAPI.Interfaces
         List<T> DeleteRange(List<T> entities);
         List<T> GetListByQuery(string query);
         T GetByQuery(string query);
+        List<T> UpdateRange(List<T> entities);
     }
 }

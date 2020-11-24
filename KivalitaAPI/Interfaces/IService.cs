@@ -18,5 +18,6 @@ namespace KivalitaAPI.Interfaces
         T Update(T entity);
         T Delete(int id, int userId);
         List<T> DeleteRange(List<T> entities);
+        List<T> UpdateRange(List<T> entities);
     }
 }
