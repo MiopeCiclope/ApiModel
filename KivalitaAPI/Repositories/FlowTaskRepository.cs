@@ -150,15 +150,19 @@ namespace KivalitaAPI.Repositories
                             .ToList();
         }
 
-        public int GetAmountSentEmails(int flowid)
+        public int GetAmountSentEmails(int flowid, int? templateId = null)
         {
-            return context.Set<FlowTask>()
+            var query = context.Set<FlowTask>()
                 .Where(
                     task => task.FlowAction.Type == "email"
                     && task.FlowAction.FlowId == flowid
                     && task.Status == "finished"
-                )
-                .Count();
+                );
+
+            if (templateId.HasValue)
+                query = query.Where(task => task.FlowAction.TemplateId == templateId);
+
+            return query.Count();
         }
     }
 }

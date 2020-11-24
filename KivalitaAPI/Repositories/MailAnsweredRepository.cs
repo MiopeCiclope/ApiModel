@@ -18,52 +18,60 @@ namespace KivalitaAPI.Repositories {
                 .SingleOrDefault();
         }
 
-        public int GetAmountAnsweredEmails(int flowid)
+        public int GetAmountAnsweredEmails(int flowid, int? templateId = null)
         {
-            return context.Set<MailAnswered>()
+            var query = context.Set<MailAnswered>()
                 .Where(
                     mail => mail.FlowTask.FlowAction.FlowId == flowid
                     && mail.Status != Enum.MailAnsweredStatusEnum.NotFound
-                )
-                .Select(mail => mail.TaskId)
-                .Distinct()
-                .Count();
+                );
+
+            if (templateId.HasValue)
+                query = query.Where(mail => mail.FlowTask.FlowAction.TemplateId == templateId);
+                            
+            return query.Select(mail => mail.TaskId).Distinct().Count();
         }
 
-        public int GetAmountPositiveAnsweredEmails(int flowid)
+        public int GetAmountPositiveAnsweredEmails(int flowid, int? templateId = null)
         {
-            return context.Set<MailAnswered>()
+            var query = context.Set<MailAnswered>()
                 .Where(
                     mail => mail.FlowTask.FlowAction.FlowId == flowid
                     && mail.Status == Enum.MailAnsweredStatusEnum.Positive
-                )
-                .Select(mail => mail.TaskId)
-                .Distinct()
-                .Count();
+                );
+
+            if (templateId.HasValue)
+                query = query.Where(mail => mail.FlowTask.FlowAction.TemplateId == templateId);
+
+            return query.Select(mail => mail.TaskId).Distinct().Count();
         }
 
-        public int GetAmountNegativeAnsweredEmails(int flowid)
+        public int GetAmountNegativeAnsweredEmails(int flowid, int? templateId = null)
         {
-            return context.Set<MailAnswered>()
+            var query = context.Set<MailAnswered>()
                 .Where(
                     mail => mail.FlowTask.FlowAction.FlowId == flowid
                     && mail.Status == Enum.MailAnsweredStatusEnum.Negative
-                )
-                .Select(mail => mail.TaskId)
-                .Distinct()
-                .Count();
+                );
+
+            if (templateId.HasValue)
+                query = query.Where(mail => mail.FlowTask.FlowAction.TemplateId == templateId);
+
+            return query.Select(mail => mail.TaskId).Distinct().Count();
         }
 
-        public int GetAmountNotFoundAnsweredEmails(int flowid)
+        public int GetAmountNotFoundAnsweredEmails(int flowid, int? templateId = null)
         {
-            return context.Set<MailAnswered>()
+            var query = context.Set<MailAnswered>()
                 .Where(
                     mail => mail.FlowTask.FlowAction.FlowId == flowid
                     && mail.Status == Enum.MailAnsweredStatusEnum.NotFound
-                )
-                .Select(mail => mail.TaskId)
-                .Distinct()
-                .Count();
+                );
+
+            if (templateId.HasValue)
+                query = query.Where(mail => mail.FlowTask.FlowAction.TemplateId == templateId);
+
+            return query.Select(mail => mail.TaskId).Distinct().Count();
         }
     }
 }

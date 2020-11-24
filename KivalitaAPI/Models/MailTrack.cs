@@ -15,7 +15,10 @@ namespace KivalitaAPI.Models
         [ForeignKey("Leads")]
         [Sieve(CanFilter = true, CanSort = true)]
         public int LeadId { get; set; }
+
+        [ForeignKey("FlowTask")]
         public int TaskId { get; set; }
+        public FlowTask FlowTask { get; set; }
 
         [JsonIgnore]
         public Leads Lead { get; set; }

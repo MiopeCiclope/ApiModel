@@ -21,6 +21,7 @@ namespace KivalitaAPI.Services
         FilterRepository filterRepository;
         TemplateRepository templateRepository;
         MailAnsweredRepository mailAnsweredRepository;
+        MailTrackRepository mailTrackRepository;
         ScheduleTasksService scheduleTasksService;
         IMapper mapper;
         FilterDTORepository filterDTORepository;
@@ -36,7 +37,8 @@ namespace KivalitaAPI.Services
             ScheduleTasksService _scheduleTasksService,
             IMapper _mapper,
             FilterDTORepository _filterDTORepository,
-            MailAnsweredRepository _mailAnsweredRepository
+            MailAnsweredRepository _mailAnsweredRepository,
+            MailTrackRepository _mailTrackRepository
         ) : base(context, baseRepository) {
             leadsRepository = _leadsRepository;
             flowActionRepository = _flowActionRepository;
@@ -44,6 +46,7 @@ namespace KivalitaAPI.Services
             filterRepository = _filterRepository;
             templateRepository = _templateRepository;
             mailAnsweredRepository = _mailAnsweredRepository;
+            mailTrackRepository = _mailTrackRepository;
             scheduleTasksService = _scheduleTasksService;
             mapper = _mapper;
             filterDTORepository = _filterDTORepository;
@@ -145,18 +148,20 @@ namespace KivalitaAPI.Services
             return hasTask.FirstOrDefault() != null;
         }
 
-        public FlowReportDTO getReport(int flowId)
+        public FlowReportDTO getReport(int flowId, int? templateId = null)
         {
             var amountOfLeads = leadsRepository.GetAmountLeadsInFlow(flowId);
-            var amountSentEmails = flowTaskRepository.GetAmountSentEmails(flowId);
-            var amountAnsweredEmails = mailAnsweredRepository.GetAmountAnsweredEmails(flowId);
-            var amountPositiveAnsweredEmails = mailAnsweredRepository.GetAmountPositiveAnsweredEmails(flowId);
-            var amountNegativeAnsweredEmails = mailAnsweredRepository.GetAmountNegativeAnsweredEmails(flowId);
-            var amountNotFoundAnsweredEmails = mailAnsweredRepository.GetAmountNotFoundAnsweredEmails(flowId);
+            var amountSentEmails = flowTaskRepository.GetAmountSentEmails(flowId, templateId);
+            var amountAnsweredEmails = mailAnsweredRepository.GetAmountAnsweredEmails(flowId, templateId);
+            var amountOpenedEmails = mailTrackRepository.GetAmountOpenedEmails(flowId, templateId);
+            var amountPositiveAnsweredEmails = mailAnsweredRepository.GetAmountPositiveAnsweredEmails(flowId, templateId);
+            var amountNegativeAnsweredEmails = mailAnsweredRepository.GetAmountNegativeAnsweredEmails(flowId, templateId);
+            var amountNotFoundAnsweredEmails = mailAnsweredRepository.GetAmountNotFoundAnsweredEmails(flowId, templateId);
             return new FlowReportDTO
             {
                 sentEmails = amountSentEmails,
                 answeredEmails = amountAnsweredEmails,
+                openedEmails = amountOpenedEmails,
                 positiveAnsweredEmails = amountPositiveAnsweredEmails,
                 negativeAnsweredEmails = amountNegativeAnsweredEmails,
                 notFoundAnsweredEmails = amountNotFoundAnsweredEmails,

@@ -22,12 +22,12 @@ namespace KivalitaAPI.Controllers
         [HttpGet]
         [Authorize]
         [Route("{flowId}/report")]
-        public HttpResponse<FlowReportDTO> GetReport(int flowId)
+        public HttpResponse<FlowReportDTO> GetReport(int flowId, [FromQuery] int? templateId)
         {
             logger.LogInformation($"{this.GetType().Name} - Flow Report");
             try
             {
-                FlowReportDTO report = service.getReport(flowId);
+                FlowReportDTO report = service.getReport(flowId, templateId);
                 return new HttpResponse<FlowReportDTO>
                 {
                     IsStatusCodeSuccess = true,
