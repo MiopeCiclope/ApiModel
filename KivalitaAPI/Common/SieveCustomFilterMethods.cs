@@ -24,7 +24,15 @@ public class SieveCustomFilterMethods : ISieveCustomFilterMethods
     public IQueryable<FlowTask> ShowAutomatic(IQueryable<FlowTask> source, string op, string[] value)
     {
         var showAutomatic = value[0] == "true";
-        var result = (showAutomatic) ? source : source.Where(entity => entity.FlowAction.Type == "email" && entity.FlowAction.Flow.isAutomatic);
+        var result = (showAutomatic) 
+                ? source.Where(entity => entity.FlowAction.Flow.IsActive)
+                : source.Where(entity =>
+                            entity.FlowAction.Flow.IsActive
+                            && (
+                                (entity.FlowAction.Type == "email" && entity.FlowAction.Flow.isAutomatic) 
+                                || entity.FlowAction.Type != "email"
+                            )
+                        );
 
         return result;
     }
