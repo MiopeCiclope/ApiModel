@@ -1,7 +1,9 @@
 ﻿
+using KivalitaAPI.Common;
 using KivalitaAPI.Data;
 using KivalitaAPI.Models;
 using KivalitaAPI.Repositories;
+using Sieve.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -76,6 +78,26 @@ namespace KivalitaAPI.Services
             var JobAuthors = this._userRepository.GetBy(user => authors.Contains(user.Id));
 
             storedJobs = storedJobs.Select(Job =>
+            {
+                Job.JobImage = JobImages.Where(image => image.Id == Job.ImageId)
+                    .First();
+
+                Job.Author = JobAuthors.Where(author => author.Id == Job.AuthorId).First();
+                return Job;
+            }).ToList();
+
+            return storedJobs;
+        }
+
+        public override QueryResult<Job> GetAll_v2(SieveModel filterQuery)
+        {
+            var storedJobs = baseRepository.GetAll_v2(filterQuery);
+            var authors = storedJobs.Items.Select(Job => Job.AuthorId);
+
+            var JobImages = this._imageRepository.GetBy(image => image.Type == "Job");
+            var JobAuthors = this._userRepository.GetBy(user => authors.Contains(user.Id));
+
+            storedJobs.Items = storedJobs.Items.Select(Job =>
             {
                 Job.JobImage = JobImages.Where(image => image.Id == Job.ImageId)
                     .First();

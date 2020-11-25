@@ -10,6 +10,7 @@ using System;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using System.Linq;
+using Sieve.Models;
 
 namespace KivalitaAPI.Controllers
 {
@@ -83,5 +84,42 @@ namespace KivalitaAPI.Controllers
                 };
             }
         }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("v2")]
+        public override HttpResponse<List<Job>> GetAll_v2([FromQuery] SieveModel filterQuery)
+        {
+            logger.LogInformation($"{this.GetType().Name} - GetAll_v2");
+            try
+            {
+                var dataList = service.GetAll_v2(filterQuery);
+
+                if (GetAuditTrailUser() == 0)
+                {
+                    dataList.Items = dataList.Items.Where(job => job.Published == true).ToList();
+                }
+
+                return new HttpResponse<List<Job>>
+                {
+                    IsStatusCodeSuccess = true,
+                    statusCode = HttpStatusCode.OK,
+                    data = dataList.Items,
+                    Total = dataList.TotalItems
+                };
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.Message);
+                return new HttpResponse<List<Job>>
+                {
+                    IsStatusCodeSuccess = false,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    data = null,
+                    ErrorMessage = "Erro ao realizar a requisição"
+                };
+            }
+        }
+
     }
 }

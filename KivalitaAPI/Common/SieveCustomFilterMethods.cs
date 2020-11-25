@@ -21,6 +21,14 @@ public class SieveCustomFilterMethods : ISieveCustomFilterMethods
         return result;
     }
 
+    public IQueryable<Job> LastChangeDate(IQueryable<Job> source, string op, string[] value)
+    {
+        var lastDate = DateTime.Parse(value[0]);
+        var result = source.Where(entity => entity.CreatedAt > lastDate || entity.UpdatedAt > lastDate);
+
+        return result;
+    }
+
     public IQueryable<FlowTask> ShowAutomatic(IQueryable<FlowTask> source, string op, string[] value)
     {
         var showAutomatic = value[0] == "true";
@@ -28,4 +36,5 @@ public class SieveCustomFilterMethods : ISieveCustomFilterMethods
 
         return result;
     }
+
 }
