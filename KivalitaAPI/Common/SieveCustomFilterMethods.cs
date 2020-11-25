@@ -29,7 +29,7 @@ public class SieveCustomFilterMethods : ISieveCustomFilterMethods
                 : source.Where(entity =>
                             entity.FlowAction.Flow.IsActive
                             && (
-                                (entity.FlowAction.Type == "email" && entity.FlowAction.Flow.isAutomatic) 
+                                (entity.FlowAction.Type == "email" && !entity.FlowAction.Flow.isAutomatic) 
                                 || entity.FlowAction.Type != "email"
                             )
                         );
