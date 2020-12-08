@@ -49,6 +49,9 @@ namespace KivalitaAPI.Models
         public bool isNews { get; set; }
 
         [Sieve(CanFilter = true, CanSort = true)]
+        public bool isLegislation { get; set; }
+
+        [Sieve(CanFilter = true, CanSort = true)]
         public int? LinkId { get; set; }
 
         [JsonIgnore]
