@@ -52,6 +52,7 @@ namespace KivalitaAPI.Repositories
                     PostImage = p.PostImage,
                     Language = p.Language,
                     isNews = p.isNews,
+                    isLegislation = p.isLegislation,
                     Published = p.Published,
                     AuthorId = p.AuthorId,
                     CreatedAt = p.CreatedAt
