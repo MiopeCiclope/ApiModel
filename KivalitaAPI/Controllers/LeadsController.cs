@@ -507,6 +507,46 @@ namespace KivalitaAPI.Controllers
             }
         }
 
+        [HttpPost]
+        [Authorize]
+        [Route("import")]
+        public HttpResponse<Boolean> ImpotLead([FromBody] List<Leads> leads)
+        {
+            logger.LogInformation($"{this.GetType().Name} - CSV Import");
+            try
+            {
+                var userAuditId = GetAuditTrailUser();
+                var utfNowTime = DateTime.UtcNow;
+
+                if (userAuditId == 0) throw new Exception("Token Sem Usuário válido.");
+
+                leads.ForEach(lead => {
+                    lead.CreatedBy = userAuditId;
+                    lead.CreatedAt = utfNowTime;
+                });
+
+                this.service.ImportLeads(leads);
+
+                return new HttpResponse<Boolean>
+                {
+                    IsStatusCodeSuccess = true,
+                    data = true,
+                    statusCode = HttpStatusCode.OK
+                };
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.Message);
+                return new HttpResponse<Boolean>
+                {
+                    IsStatusCodeSuccess = false,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    data = false,
+                    ErrorMessage = "Erro ao realizar a requisição"
+                };
+            }
+        }
+
         [ApiExplorerSettings(IgnoreApi = true)]
         public virtual bool isColaborador()
         {

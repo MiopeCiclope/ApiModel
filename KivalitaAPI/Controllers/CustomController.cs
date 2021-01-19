@@ -171,6 +171,8 @@ namespace KivalitaAPI.Controllers
 
                 entity.CreatedBy = userAuditId;
                 entity.CreatedAt = DateTime.UtcNow;
+                entity.UpdatedBy = userAuditId;
+                entity.UpdatedAt = DateTime.UtcNow;
 
                 var createdData = service.Add(entity);
 

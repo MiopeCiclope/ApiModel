@@ -19,6 +19,8 @@ namespace KivalitaAPI.Services {
 		LeadTagRepository leadTagRepository;
 		ScheduleTasksService scheduleTasksService;
 		CompanyDTORepository companyDtoRepository;
+		LeadsDTORepository leadBulkRepository;
+
 		IMapper _mapper;
 
 		public LeadsService (
@@ -29,7 +31,8 @@ namespace KivalitaAPI.Services {
 			LeadTagRepository leadTagRepository,
 			ScheduleTasksService scheduleTasksService,
 			IMapper mapper,
-			CompanyDTORepository _companyDTORepository
+			CompanyDTORepository _companyDTORepository,
+			LeadsDTORepository _leadBulkRepository
 		) : base (context, baseRepository) {
 			this.companyRepository = companyRepository;
 			this.flowRepository = flowRepository;
@@ -37,6 +40,7 @@ namespace KivalitaAPI.Services {
 			this.leadTagRepository = leadTagRepository;
 			this._mapper = mapper;
 			this.companyDtoRepository = _companyDTORepository;
+			this.leadBulkRepository = _leadBulkRepository;
 		}
 
 		public override Leads Update(Leads lead)
@@ -135,7 +139,28 @@ namespace KivalitaAPI.Services {
 
 			return leadSearch.FirstOrDefault() != null ? true : false;
 		}
+		
+		public virtual List<Leads> ImportLeads(List<Leads> leadDTOs)
+		{
+			List<Leads> leads = new List<Leads> { };
 
+			foreach (var lead in leadDTOs)
+			{
+				lead.Company.UserId = lead.CreatedBy;
+				var company = this.companyRepository.Add(lead.Company);
+				lead.Company = company;
+				lead.DidGuessEmail = true;
+				lead.Status = LeadStatusEnum.ColdLead;
+				lead.CreatedAt = lead.CreatedAt;
+				lead.CreatedBy = lead.CreatedBy;
+				leads.Add(lead);
+			}
+
+			var leadsToInsert = _mapper.Map<List<LeadDatabaseDTO>>(leads);
+			this.leadBulkRepository.AddRangeBulkTools(leadsToInsert);
+
+			return leads;
+		}
 
 		public virtual List<Leads> SaveRange(List<LeadDTO> leadDTOs)
         {
