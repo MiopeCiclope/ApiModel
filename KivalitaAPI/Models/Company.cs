@@ -42,6 +42,9 @@ namespace KivalitaAPI.Models
         [NotMapped]
         public bool shouldUpdateAllSectors { get; set; }
 
+        public string City { get; set; }
+        public string State { get; set; }
+
         [JsonIgnore]
         [Sieve(CanFilter = true, CanSort = true)]
         public int? Owner
