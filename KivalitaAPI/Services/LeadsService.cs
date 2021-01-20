@@ -147,8 +147,12 @@ namespace KivalitaAPI.Services {
 			foreach (var lead in leadDTOs)
 			{
 				lead.Company.UserId = lead.CreatedBy;
+				lead.Company.CreatedAt = DateTime.UtcNow;
+				lead.Company.CreatedBy = lead.CreatedBy;
 				var company = this.companyRepository.Add(lead.Company);
+
 				lead.Company = company;
+				lead.CompanyId = company.Id;
 				lead.DidGuessEmail = true;
 				lead.Status = LeadStatusEnum.ColdLead;
 				lead.CreatedAt = lead.CreatedAt;
