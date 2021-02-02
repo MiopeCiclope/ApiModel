@@ -7,6 +7,7 @@ using KivalitaAPI.Common;
 using System.Collections.Generic;
 using System;
 using System.Net;
+using Sieve.Models;
 
 namespace KivalitaAPI.Controllers
 {
@@ -19,6 +20,16 @@ namespace KivalitaAPI.Controllers
         public MailAnsweredController(MailAnsweredService _service, ILogger<MailAnsweredController> logger) : base(_service, logger)
         {
             this.service = _service;
+        }
+
+
+        [HttpGet]
+        [Authorize]
+        [Route("v2")]
+        public override HttpResponse<List<MailAnswered>> GetAll_v2([FromQuery] SieveModel filterQuery)
+        {
+            if (String.IsNullOrEmpty(filterQuery.Filters)) filterQuery.Filters = "Status != 3";
+            return base.GetAll_v2(filterQuery);
         }
 
         [HttpPut]

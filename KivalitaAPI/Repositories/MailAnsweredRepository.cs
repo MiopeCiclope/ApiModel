@@ -23,6 +23,7 @@ namespace KivalitaAPI.Repositories {
             var query = context.Set<MailAnswered>()
                 .Where(
                     mail => mail.FlowTask.FlowAction.FlowId == flowid
+                    && mail.Status != null
                     && mail.Status != Enum.MailAnsweredStatusEnum.NotFound
                 );
 
@@ -37,6 +38,7 @@ namespace KivalitaAPI.Repositories {
             var query = context.Set<MailAnswered>()
                 .Where(
                     mail => mail.FlowTask.FlowAction.FlowId == flowid
+                    && mail.Status != null
                     && mail.Status == Enum.MailAnsweredStatusEnum.Positive
                 );
 
@@ -51,6 +53,7 @@ namespace KivalitaAPI.Repositories {
             var query = context.Set<MailAnswered>()
                 .Where(
                     mail => mail.FlowTask.FlowAction.FlowId == flowid
+                    && mail.Status != null
                     && mail.Status == Enum.MailAnsweredStatusEnum.Negative
                 );
 
@@ -65,6 +68,7 @@ namespace KivalitaAPI.Repositories {
             var query = context.Set<MailAnswered>()
                 .Where(
                     mail => mail.FlowTask.FlowAction.FlowId == flowid
+                    && mail.Status != null
                     && mail.Status == Enum.MailAnsweredStatusEnum.NotFound
                 );
 

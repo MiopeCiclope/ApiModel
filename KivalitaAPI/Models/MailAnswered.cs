@@ -25,6 +25,8 @@ namespace KivalitaAPI.Models
         public string BodyContent { get; set; }
         public string Sender { get; set; }
         public string Recipient { get; set; }
+
+        [Sieve(CanFilter = true, CanSort = true)]
         public MailAnsweredStatusEnum? Status { get; set; }
 
         public int CreatedBy { get; set; }
