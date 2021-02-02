@@ -163,7 +163,7 @@ public class SendMailJob : IJob
     {
         var text = $"{taskId}-{lead.Id}";
         var encriptKey = HttpUtility.UrlEncode(AesCripty.EncryptString(Setting.MailTrackSecret, text), Encoding.UTF8);
-        var url = $"<img src = \"http://localhost:5000/api/tracker/track?key={encriptKey}\" width=1 height=1 style=\"mso-hide:all; display:none; line-height: 0; font-size: 0; height: 0; padding: 0; visibility:hidden;\"/>";
+        var url = $"<img src = \"{Setting.SelfUrl}tracker/track?key={encriptKey}\" width=1 height=1 style=\"mso-hide:all; display:none; line-height: 0; font-size: 0; height: 0; padding: 0; visibility:hidden;\"/>";
         return url;
     }
 

@@ -180,8 +180,9 @@ namespace KivalitaAPI.Services
 
         public override MicrosoftToken Delete(int userId, int responsableId)
         {
-            var tokenUser = base.GetAll().Where(token => token.UserId == userId).First();
-            return base.Delete(tokenUser.Id, responsableId);
+            var tokenUserList = base.GetAll().Where(token => token.UserId == userId).ToList();
+            base.DeleteRange(tokenUserList);
+            return tokenUserList.First();
         }
 
         public Message BuildEmail(Leads lead, Template template, int taskId, string signature)
@@ -236,7 +237,7 @@ namespace KivalitaAPI.Services
         {
             var text = $"{taskId}-{lead.Id}";
             var encriptKey = HttpUtility.UrlEncode(AesCripty.EncryptString(Setting.MailTrackSecret, text), Encoding.UTF8);
-            var url = $"<img src = \"https://api.kivalita.com.br/api/tracker/track?key={encriptKey}\" width=1 height=1 style=\"mso-hide:all; display:none; line-height: 0; font-size: 0; height: 0; padding: 0; visibility:hidden;\"/>";
+            var url = $"<img src = \"{Setting.SelfUrl}tracker/track?key={encriptKey}\" width=1 height=1 style=\"mso-hide:all; display:none; line-height: 0; font-size: 0; height: 0; padding: 0; visibility:hidden;\"/>";
             return url;
         }
 
@@ -265,7 +266,7 @@ namespace KivalitaAPI.Services
                 var subscription = new Subscription
                 {
                     ChangeType = "created",
-                    NotificationUrl = $"https://localhost:5001/api/Graph/Webhook/{userId}/{folderName}/GetAnsweredEmailsQualified",
+                    NotificationUrl = $"{Setting.SelfUrl}Graph/Webhook/{userId}/{folderName}/GetAnsweredEmailsQualified",
                     Resource = $"me/mailFolders('{folder.Id}')/messages",
                     ExpirationDateTime = DateTimeOffset.UtcNow.AddMinutes(4200)
                 };
