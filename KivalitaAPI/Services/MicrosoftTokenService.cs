@@ -236,39 +236,42 @@ namespace KivalitaAPI.Services
         {
             var text = $"{taskId}-{lead.Id}";
             var encriptKey = HttpUtility.UrlEncode(AesCripty.EncryptString(Setting.MailTrackSecret, text), Encoding.UTF8);
-            var url = $"<img src = \"http://localhost:5000/api/tracker/track?key={encriptKey}\" width=1 height=1 style=\"mso-hide:all; display:none; line-height: 0; font-size: 0; height: 0; padding: 0; visibility:hidden;\"/>";
+            var url = $"<img src = \"https://api.kivalita.com.br/api/tracker/track?key={encriptKey}\" width=1 height=1 style=\"mso-hide:all; display:none; line-height: 0; font-size: 0; height: 0; padding: 0; visibility:hidden;\"/>";
             return url;
         }
 
         public async Task<IGraphServiceSubscriptionsCollectionPage> RegisterWebhookToAnsweredEmailsAsync(int userId)
         {
-            var folderName = "PokeLead Respostas";
+            var folderList = new List<string> { "PokeLead Bounce", "PokeLead Positivo", "PokeLead Negativo" };
             var graphClient = GetTokenClient(userId);
 
-            var folders = await graphClient.Me.MailFolders.Request().Filter($"displayName eq '{folderName}'").GetAsync();
-            MailFolder folder;
+            foreach (var folderName in folderList)
+            {
+                var folders = await graphClient.Me.MailFolders.Request().Filter($"displayName eq '{folderName}'").GetAsync();
+                MailFolder folder;
 
-            if (folders.Count > 0)
-            {
-                folder = folders.First();
-            }
-            else
-            {
-                folder = await graphClient.Me.MailFolders.Request().AddAsync(new MailFolder
+                if (folders.Count > 0)
                 {
-                    DisplayName = folderName
-                });
+                    folder = folders.First();
+                }
+                else
+                {
+                    folder = await graphClient.Me.MailFolders.Request().AddAsync(new MailFolder
+                    {
+                        DisplayName = folderName
+                    });
+                }
+
+                var subscription = new Subscription
+                {
+                    ChangeType = "created",
+                    NotificationUrl = $"https://localhost:5001/api/Graph/Webhook/{userId}/{folderName}/GetAnsweredEmailsQualified",
+                    Resource = $"me/mailFolders('{folder.Id}')/messages",
+                    ExpirationDateTime = DateTimeOffset.UtcNow.AddMinutes(4200)
+                };
+
+                await graphClient.Subscriptions.Request().AddAsync(subscription);
             }
-
-            var subscription = new Subscription
-            {
-                ChangeType = "created",
-                NotificationUrl = $"https://api.kivalita.com.br/api/Graph/Webhook/{userId}/GetAnsweredEmails",
-                Resource = $"me/mailFolders('{folder.Id}')/messages",
-                ExpirationDateTime = DateTimeOffset.UtcNow.AddMinutes(4200)
-            };
-
-            await graphClient.Subscriptions.Request().AddAsync(subscription);
 
             return await graphClient.Subscriptions.Request().GetAsync();
         }

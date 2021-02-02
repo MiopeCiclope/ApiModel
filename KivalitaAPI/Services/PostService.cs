@@ -82,6 +82,8 @@ namespace KivalitaAPI.Services
             }
 
             post.Slug = GenerateSlug(post.Title);
+
+            _deploy.TriggerDeploy();
             return base.Update(post);
         }
 

@@ -301,6 +301,73 @@ namespace KivalitaAPI.Controllers
             }
         }
 
+        [HttpPost("Webhook/{userId}/{folderName}/GetAnsweredEmailsQualified")]
+        public async Task<IActionResult> GetAnsweredEmailsQualified(int userId, string folderName, [FromQuery] string validationToken = null)
+        {
+            logger.LogInformation($"{this.GetType().Name} - GetAnsweredEmails");
+
+            try
+            {
+                if (string.IsNullOrEmpty(validationToken))
+                {
+                    var body = new StreamReader(Request.Body);
+                    var requestBody = await body.ReadToEndAsync();
+                    var collection = JsonConvert.DeserializeObject<GraphNotificationCollection>(requestBody);
+
+                    var graphClient = service.GetTokenClient(userId);
+
+                    foreach (var notification in collection.Value)
+                    {
+                        if (notification.ChangeType == "created")
+                        {
+                            // Obter email pelo ID 
+                            var message = await graphClient.Me.Messages[notification.ResourceData.Id].Request().GetAsync();
+                            var mainMessage = await graphClient.Me.Messages.Request().Filter($"conversationId eq '{message.ConversationId}'").GetAsync();
+
+                            var regex = new Regex(@"(track\?key+)=([^\s\""]+)");
+                            var match = regex.Match(mainMessage[0].Body.Content);
+
+                            if (match.Success)
+                            {
+                                var mailStatus = MailAnsweredStatusEnum.NotFound;
+                                switch (folderName)
+                                {
+                                    case "PokeLead Bounce":
+                                        mailStatus = MailAnsweredStatusEnum.NotFound;
+                                        break;
+                                    case "PokeLead Positivo":
+                                        mailStatus = MailAnsweredStatusEnum.Positive;
+                                        break;
+                                    case "PokeLead Negativo":
+                                        mailStatus = MailAnsweredStatusEnum.Negative;
+                                        break;
+                                }
+
+                                var key = match.Value.Split("=").Last();
+                                key = Uri.UnescapeDataString(key);
+
+                                var decryptedKey = AesCripty.DecryptString(Setting.MailTrackSecret, key);
+                                int taskId = int.Parse(decryptedKey.Split("-")[0]);
+                                int leadId = int.Parse(decryptedKey.Split("-")[1]);
+
+                                mailAnsweredService.SaveQualified(message, userId, leadId, taskId, mailStatus);
+                            }
+                        }
+                    }
+
+                    return Accepted();
+                }
+                else
+                {
+                    return Content(WebUtility.HtmlEncode(validationToken));
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+
         // Called by pipedream every 2 days 
         [HttpGet("Cron/UpdateSubscriptions")]
         public virtual async Task<IActionResult> UpdateSubscriptions()
