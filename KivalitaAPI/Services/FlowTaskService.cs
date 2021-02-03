@@ -7,6 +7,7 @@ using AutoMapper;
 using KivalitaAPI.Common;
 using KivalitaAPI.Data;
 using KivalitaAPI.DTOs;
+using KivalitaAPI.Enum;
 using KivalitaAPI.Interfaces;
 using KivalitaAPI.Models;
 using KivalitaAPI.Repositories;
@@ -21,18 +22,21 @@ namespace KivalitaAPI.Services
         public readonly IJobScheduler _scheduler;
         private readonly IMapper _mapper;
         private readonly FlowTaskDTORepository _flowtaskDtoRepository;
+        private readonly LeadsRepository _leadsRepository;
 
         public FlowTaskService(
             KivalitaApiContext context,
             FlowTaskRepository baseRepository,
             IJobScheduler scheduler,
             IMapper mapper,
-            FlowTaskDTORepository flowtaskDtoRepository
+            FlowTaskDTORepository flowtaskDtoRepository,
+            LeadsRepository leadsRepository
         ) : base(context, baseRepository)
         {
             _scheduler = scheduler;
             _mapper = mapper;
             _flowtaskDtoRepository = flowtaskDtoRepository;
+            _leadsRepository = leadsRepository;
         }
 
         public override FlowTask Update(FlowTask flowTask)
@@ -83,7 +87,16 @@ namespace KivalitaAPI.Services
 
                     _scheduler.ScheduleJob(cancellationToken, job);
                 }
-            }
+            } 
+            else
+                afterFlowAction(currentTask.LeadId);
+        }
+
+        private void afterFlowAction(int leadId)
+        {
+            var lead = _leadsRepository.Get(leadId);
+            lead.Status = LeadStatusEnum.Pending;
+            _leadsRepository.Update(lead);
         }
 
         public bool isJobAutomatic(FlowAction flowAction)
