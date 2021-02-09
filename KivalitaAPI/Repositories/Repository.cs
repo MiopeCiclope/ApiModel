@@ -41,6 +41,13 @@ namespace KivalitaAPI.Repositories {
 			return entities;
 		}
 
+		public virtual List<TEntity> AddRangeNoBulk(List<TEntity> entities)
+		{
+			context.Set<TEntity>().AddRange(entities);
+			context.SaveChanges();
+			return entities;
+		}
+
 		public virtual TEntity Delete (int id, int userId) {
 			var entity = context.Set<TEntity> ().Find (id);
 			entity.UpdatedBy = userId;

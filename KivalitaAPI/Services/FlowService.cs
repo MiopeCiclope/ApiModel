@@ -118,7 +118,7 @@ namespace KivalitaAPI.Services
             {
                 var actionList = actionToLink.ToList();
                 actionList.ForEach(action => action.FlowId = flow.Id);
-                flowActionRepository.AddRange(actionList);
+                flowActionRepository.AddRangeNoBulk(actionList);
             }
 
             return base.Update(flow);
