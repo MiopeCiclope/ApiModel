@@ -4,14 +4,16 @@ using KivalitaAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace KivalitaAPI.Migrations
 {
     [DbContext(typeof(KivalitaApiContext))]
-    partial class KivalitaApiContextModelSnapshot : ModelSnapshot
+    [Migration("20210210173005_FlowLessTask")]
+    partial class FlowLessTask
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -972,7 +974,7 @@ namespace KivalitaAPI.Migrations
                     b.Property<bool>("Done")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("FlowId")
+                    b.Property<int>("FlowId")
                         .HasColumnType("int");
 
                     b.Property<int?>("TemplateId")
@@ -1817,7 +1819,8 @@ namespace KivalitaAPI.Migrations
                     b.HasOne("KivalitaAPI.Models.Flow", "Flow")
                         .WithMany("FlowAction")
                         .HasForeignKey("FlowId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("KivalitaAPI.Models.FlowTask", b =>

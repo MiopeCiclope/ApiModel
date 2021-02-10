@@ -46,7 +46,7 @@ public class TaskJob : IJob
         var flowTaskService = scope.ServiceProvider.GetService<FlowTaskService>();
 
         var flowTask = flowTaskRepository.Get(taskId);
-        var flow = flowRepository.Get(flowTask.FlowAction.FlowId);
+        var flow = flowRepository.Get(flowTask.FlowAction.FlowId.Value);
 
         if (flowTaskService.isJobAutomatic(flowTask.FlowAction) && flow.IsActive)
         {

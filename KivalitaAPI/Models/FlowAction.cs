@@ -23,7 +23,7 @@ namespace KivalitaAPI.Models
 		[Sieve(CanFilter = true, CanSort = true)]
 		public bool Done { get; set; }
 
-		public int FlowId { get; set; }
+		public int? FlowId { get; set; }
 		public Flow Flow { get; set; }
 
 		[JsonIgnore]

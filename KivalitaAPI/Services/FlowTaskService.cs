@@ -23,6 +23,8 @@ namespace KivalitaAPI.Services
         private readonly IMapper _mapper;
         private readonly FlowTaskDTORepository _flowtaskDtoRepository;
         private readonly LeadsRepository _leadsRepository;
+        private readonly FlowActionRepository _flowActionRepository;
+        private readonly FlowTaskRepository _flowTaskRepository;
 
         public FlowTaskService(
             KivalitaApiContext context,
@@ -30,13 +32,17 @@ namespace KivalitaAPI.Services
             IJobScheduler scheduler,
             IMapper mapper,
             FlowTaskDTORepository flowtaskDtoRepository,
-            LeadsRepository leadsRepository
+            LeadsRepository leadsRepository,
+            FlowActionRepository flowActionRepository,
+            FlowTaskRepository flowTaskRepository
         ) : base(context, baseRepository)
         {
             _scheduler = scheduler;
             _mapper = mapper;
             _flowtaskDtoRepository = flowtaskDtoRepository;
             _leadsRepository = leadsRepository;
+            _flowActionRepository = flowActionRepository;
+            _flowTaskRepository = flowTaskRepository;
         }
 
         public override FlowTask Update(FlowTask flowTask)
@@ -97,6 +103,24 @@ namespace KivalitaAPI.Services
             var lead = _leadsRepository.Get(leadId);
             lead.Status = LeadStatusEnum.Pending;
             _leadsRepository.Update(lead);
+
+            var flowAction = _flowActionRepository.Add(new FlowAction
+                                    {
+                                        afterDays = 0,
+                                        Done = false,
+                                        TemplateId = 0,
+                                        Type = "doneflow",
+                                        CreatedBy = 6
+                                    });
+
+             _flowTaskRepository.Add(new FlowTask
+                                    {
+                                        FlowActionId = flowAction.Id,
+                                        LeadId = leadId,
+                                        CreatedBy = 6,
+                                        Status = "pending",
+                                        ScheduledTo = DateTime.UtcNow,
+                                    });
         }
 
         public bool isJobAutomatic(FlowAction flowAction)

@@ -25,7 +25,7 @@ namespace KivalitaAPI.Models
 
 		[Sieve(CanFilter = true, CanSort = true)]
 		[ForeignKey("FlowAction")]
-		public int FlowActionId { get; set; }
+		public int? FlowActionId { get; set; }
 		public FlowAction FlowAction { get; set; }
 
 		public List<TaskNote> TaskNote { get; set; }

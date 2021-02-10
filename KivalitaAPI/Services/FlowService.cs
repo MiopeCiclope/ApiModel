@@ -151,7 +151,7 @@ namespace KivalitaAPI.Services
             if(flowActions.Any())
             {
                 var actionIds = flowActions.Select(action => action.Id);
-                var flowTasks = this.flowTaskRepository.GetBy(task => actionIds.Contains(task.FlowActionId) && task.Status == "pending");
+                var flowTasks = this.flowTaskRepository.GetBy(task => actionIds.Contains(task.FlowActionId.Value) && task.Status == "pending");
 
                 if(flowTasks.Any())
                 {
