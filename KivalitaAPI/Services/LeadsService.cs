@@ -281,7 +281,7 @@ namespace KivalitaAPI.Services {
 
 			if (lead.FlowId.HasValue)
 			{
-				throw new Exception("N?o ? poss?vel excluir a Lead pois existe um fluxo relaciodado!");
+				throw new Exception("Não é possível excluir a Lead pois existe um fluxo relaciodado!");
 			}
 
 			return baseRepository.Delete(id, userId);

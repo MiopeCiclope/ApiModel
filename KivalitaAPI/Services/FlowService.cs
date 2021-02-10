@@ -25,6 +25,8 @@ namespace KivalitaAPI.Services
         ScheduleTasksService scheduleTasksService;
         IMapper mapper;
         FilterDTORepository filterDTORepository;
+        LeadsDTORepository leadsDTORepository;
+        FlowTaskDTORepository taskDtoRepository;
 
         public FlowService(
             KivalitaApiContext context,
@@ -38,7 +40,9 @@ namespace KivalitaAPI.Services
             IMapper _mapper,
             FilterDTORepository _filterDTORepository,
             MailAnsweredRepository _mailAnsweredRepository,
-            MailTrackRepository _mailTrackRepository
+            MailTrackRepository _mailTrackRepository,
+            LeadsDTORepository _leadsDTORepository,
+            FlowTaskDTORepository _taskDtoRepository
         ) : base(context, baseRepository) {
             leadsRepository = _leadsRepository;
             flowActionRepository = _flowActionRepository;
@@ -50,6 +54,8 @@ namespace KivalitaAPI.Services
             scheduleTasksService = _scheduleTasksService;
             mapper = _mapper;
             filterDTORepository = _filterDTORepository;
+            leadsDTORepository = _leadsDTORepository;
+            taskDtoRepository = _taskDtoRepository;
         }
 
         public override Flow Add(Flow flow)
@@ -61,7 +67,7 @@ namespace KivalitaAPI.Services
 
             var filterIds = filters.Select(f => f.Id).ToList();
             var leads = GetLeadsByFilter(filterIds);
-            leads = leads.Where(l => l.Status == LeadStatusEnum.ColdLead).ToList();
+            leads = leads.Where(l => l.Status != LeadStatusEnum.Blacklist).ToList();
 
             scheduleTasksService.Execute(flowCreated, leads);
 
@@ -126,12 +132,60 @@ namespace KivalitaAPI.Services
 
         public override Flow Delete(int id, int userId)
         {
-            if (HasTask(id))
-            {
-                throw new Exception("Não é possível excluir o Fluxo pois existe terefas relacionada a ele!");
-            }
-
+            this.RemoveFlowFromFilter(id);
+            this.RemoveFlowFromLeads(id);
+            this.RemoveFlowTasks(id);
             return baseRepository.Delete(id, userId);
+        }
+
+        private void RemoveFlowTasks(int id)
+        {
+            var flowActions = this.flowActionRepository.GetAll().Where(action => action.FlowId == id);
+            if(flowActions.Any())
+            {
+                var actionIds = flowActions.Select(action => action.Id);
+                var flowTasks = this.flowTaskRepository.GetBy(task => actionIds.Contains(task.FlowActionId) && task.Status == "pending");
+
+                if(flowTasks.Any())
+                {
+                    foreach (var task in flowTasks)
+                    {
+                        task.Status = "finished";
+                    }
+                    var bulkListTask = mapper.Map<List<FlowTaskDatabaseDTO>>(flowTasks);
+                    taskDtoRepository.UpdateRange(bulkListTask);
+                }
+            }
+        }
+
+        private void RemoveFlowFromFilter(int id)
+        {
+            var flowFilter = this.filterRepository.GetBy(filter => filter.FlowId == id);
+            if(flowFilter.Any())
+            {
+                foreach (var filter in flowFilter)
+                {
+                    filter.FlowId = null;
+
+                }
+                var bulkListFilter = mapper.Map<List<FilterDatabaseDTO>>(flowFilter);
+                filterDTORepository.UpdateRange(bulkListFilter);
+            }
+        }
+
+        private void RemoveFlowFromLeads(int id)
+        {
+            var filterLeads = this.leadsRepository.GetLeadsByFlowId(id, null);
+            if (filterLeads.Any())
+            { 
+                foreach (var lead in filterLeads)
+                {
+                    lead.Status = LeadStatusEnum.Paused;
+                    lead.FlowId = null;
+                }
+                var bulkListLeads = mapper.Map<List<LeadDatabaseDTO>>(filterLeads);
+                leadsDTORepository.UpdateRange(bulkListLeads);
+            }
         }
 
         public bool HasTemplate(int templateId)

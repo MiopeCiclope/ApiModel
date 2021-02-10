@@ -25,6 +25,7 @@ namespace KivalitaAPI.Repositories
         public override QueryResult<Flow> GetAll_v2(SieveModel filterQuery)
         {
             var result = context.Set<Flow>()
+                .Where(flow => flow.Deleted == false)
                 .Include(f => f.User)
                 .AsNoTracking();
 
@@ -62,6 +63,15 @@ namespace KivalitaAPI.Repositories
                 .Where(l => l.Id == id)
                 .AsNoTracking()
                 .SingleOrDefault();
+        }
+
+        public override Flow Delete(int id, int userId)
+        {
+            var deletedFlow = base.Get(id);
+            deletedFlow.UpdatedBy = userId;
+            deletedFlow.Deleted = true;
+            deletedFlow.IsActive = false;
+            return base.Update(deletedFlow);
         }
     }
 }

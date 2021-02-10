@@ -43,6 +43,8 @@ namespace KivalitaAPI.Models
 
 		[NotMapped]
 		public NumberFLowEmailsView? NumberFLowEmails { get; set; }
+		[Sieve(CanFilter = true, CanSort = true)]
+		public bool Deleted { get; set; }
 
 		[JsonIgnore]
 		public int CreatedBy { get; set; }
