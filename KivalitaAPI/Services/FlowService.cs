@@ -60,18 +60,25 @@ namespace KivalitaAPI.Services
 
         public override Flow Add(Flow flow)
         {
-            var filters = flow.Filter.Select(filter => filterRepository.Get(filter.Id)).ToList();
-            flow.Filter = filters;
+            var hasFilter = flow.Filter?.Any() ?? false;
 
-            var flowCreated = base.Add(flow);
+            if (hasFilter)
+            {
+                var filters =  flow.Filter.Select(filter => filterRepository.Get(filter.Id)).ToList();
+                flow.Filter = filters;
+                var flowCreated = base.Add(flow);
 
-            var filterIds = filters.Select(f => f.Id).ToList();
-            var leads = GetLeadsByFilter(filterIds);
-            leads = leads.Where(l => l.Status != LeadStatusEnum.Blacklist).ToList();
-
-            scheduleTasksService.Execute(flowCreated, leads);
-
-            return flowCreated;
+                var filterIds = filters.Select(f => f.Id).ToList();
+                var leads = GetLeadsByFilter(filterIds);
+                leads = leads.Where(l => l.Status != LeadStatusEnum.Blacklist).ToList();
+                scheduleTasksService.Execute(flowCreated, leads);
+             
+                return flowCreated;
+            } else
+            {
+                var flowCreated = base.Add(flow);
+                return flowCreated;
+            }
         }
 
         public override Flow Update(Flow flow)
