@@ -23,10 +23,6 @@ namespace KivalitaAPI.Models
         [Sieve(CanFilter = true, CanSort = true)]
         public string Content { get; set; }
 
-        [Sieve(CanFilter = true, CanSort = true)]
-        [ForeignKey("Category")]
-        public int CategoryId { get; set; }
-        public Category Category { get; set; }
         [ForeignKey("User")]
         [Sieve(CanFilter = true, CanSort = true)]
         public int? Owner { get; set; }

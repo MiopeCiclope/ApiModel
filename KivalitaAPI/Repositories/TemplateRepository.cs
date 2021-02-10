@@ -13,7 +13,6 @@ namespace KivalitaAPI.Repositories {
         public override List<Template> GetAll()
         {
             return context.Set<Template>()
-                .Include(t => t.Category)
                 .AsNoTracking()
                 .ToList();
         }
@@ -29,14 +28,12 @@ namespace KivalitaAPI.Repositories {
         {
             return context.Set<Template>()
                 .Where(t => t.Id == id)
-                .Include(t => t.Category)
                 .SingleOrDefault();
         }
 
         public override QueryResult<Template> GetAll_v2(SieveModel filterQuery)
         {
             var result = context.Set<Template>()
-                .Include(t => t.Category)
                 .AsNoTracking();
 
             var total = result.Count();

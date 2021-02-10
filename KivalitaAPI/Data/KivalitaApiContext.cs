@@ -124,11 +124,6 @@ namespace KivalitaAPI.Data
                     new Category { Id = 4, Name = "RH" }
                 );
 
-            modelBuilder.Entity<Template>()
-                .HasOne(t => t.Category)
-                .WithMany()
-                .OnDelete(DeleteBehavior.Restrict);
-
             modelBuilder.Entity<Filter>()
                 .HasOne(f => f.Flow)
                 .WithMany(f => f.Filter)

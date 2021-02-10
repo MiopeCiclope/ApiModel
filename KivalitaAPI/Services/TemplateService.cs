@@ -32,12 +32,6 @@ namespace KivalitaAPI.Services
                 throw new Exception("Erro no formato do template: pelo menos uma ou mais váriaveis estão definidas incorretamente.");
             }
 
-            var existingCategory = _categoryRepository.Get(entity.CategoryId);
-            if (existingCategory == null)
-                throw new Exception("Categoria não encontrada");
-
-            entity.Category = existingCategory;
-
             return base.Add(entity);
         }
 

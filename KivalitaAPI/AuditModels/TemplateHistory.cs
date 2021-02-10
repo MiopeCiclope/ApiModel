@@ -11,8 +11,6 @@ namespace KivalitaAPI.AuditModels
         public string Type { get; set; }
         public string Subject { get; set; }
         public string Content { get; set; }
-        public int CategoryId { get; set; }
-
         public int TableId { get; set; }
         public ActionEnum Action { get; set; }
         public int Responsable { get; set; }
