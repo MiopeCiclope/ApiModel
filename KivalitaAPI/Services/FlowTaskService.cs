@@ -95,32 +95,58 @@ namespace KivalitaAPI.Services
                 }
             } 
             else
-                afterFlowAction(currentTask.LeadId);
+                afterFlowAction(currentTask);
         }
 
-        private void afterFlowAction(int leadId)
+        private void afterFlowAction(FlowTask task)
+        {
+            updateLeadStatus(task.LeadId);
+            if(task.FlowAction.Type != "doneflow")
+                createdFlowDoneTask(task);
+        }
+
+        private void createdFlowDoneTask(FlowTask task)
+        {
+            var doneFlowActionQuery = _flowActionRepository
+                            .GetBy(action => action.FlowId == task.FlowAction.FlowId && action.Type == "doneflow");
+
+            if (doneFlowActionQuery.Any())
+            {
+                var doneFlowAction = doneFlowActionQuery.First();
+                createTask(doneFlowAction.Id, task.LeadId);
+            }
+            else
+            {
+                var flowAction = _flowActionRepository.Add(new FlowAction
+                {
+                    afterDays = 0,
+                    Done = false,
+                    TemplateId = 0,
+                    Type = "doneflow",
+                    CreatedBy = 6,
+                    FlowId = task.FlowAction.FlowId
+                });
+                createTask(flowAction.Id, task.LeadId);
+            }
+        }
+
+        private void createTask(int flowActionId, int leadId)
+        {
+            _flowTaskRepository.Add(new FlowTask
+            {
+                FlowActionId = flowActionId,
+                LeadId = leadId,
+                CreatedBy = 6,
+                Status = "pending",
+                ScheduledTo = DateTime.UtcNow,
+            });
+        }
+
+        private void updateLeadStatus(int leadId)
         {
             var lead = _leadsRepository.Get(leadId);
             lead.Status = LeadStatusEnum.Pending;
             _leadsRepository.Update(lead);
-
-            var flowAction = _flowActionRepository.Add(new FlowAction
-                                    {
-                                        afterDays = 0,
-                                        Done = false,
-                                        TemplateId = 0,
-                                        Type = "doneflow",
-                                        CreatedBy = 6
-                                    });
-
-             _flowTaskRepository.Add(new FlowTask
-                                    {
-                                        FlowActionId = flowAction.Id,
-                                        LeadId = leadId,
-                                        CreatedBy = 6,
-                                        Status = "pending",
-                                        ScheduledTo = DateTime.UtcNow,
-                                    });
         }
 
         public bool isJobAutomatic(FlowAction flowAction)
