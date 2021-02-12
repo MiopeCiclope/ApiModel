@@ -293,5 +293,32 @@ namespace KivalitaAPI.Services {
 
 			return hasCompany.FirstOrDefault() != null;
 		}
+
+		public bool BulkUpdateLeads(LeadBulkDTO bulkLeadsOptions)
+		{
+			var useFilter = (bulkLeadsOptions.LeadList == null || bulkLeadsOptions.LeadList.Count == 0);
+			var updateTags = bulkLeadsOptions.Tags?.Any() ?? false;
+			var updateSector = !String.IsNullOrEmpty(bulkLeadsOptions.Sector);
+
+			var leadList = useFilter ? this.baseRepository.GetAll_v2(bulkLeadsOptions.filter).Items : bulkLeadsOptions.LeadList;
+
+			if(updateSector)
+			{
+				var companies = leadList
+									.Where(lead => lead.CompanyId != null && lead.CompanyId > 0)
+									.Select(lead => lead.Company)
+									.ToList();
+
+				if (companies.Any())
+				{
+					companies.ForEach(comany => comany.Sector = bulkLeadsOptions.Sector);
+					var bulkListCompany = _mapper.Map<List<CompanyDatabaseDTO>>(companies);
+					companyDtoRepository.UpdateRange(bulkListCompany);
+					return true;
+				}
+
+			}
+			return false;
+		}
 	}
 }

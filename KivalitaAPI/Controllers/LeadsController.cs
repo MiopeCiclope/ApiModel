@@ -148,6 +148,41 @@ namespace KivalitaAPI.Controllers
             }
         }
 
+        [HttpPut]
+        [Authorize]
+        [Route("BulkUpdate")]
+        public virtual HttpResponse<bool> BulkUpdate([FromQuery] SieveModel filterQuery, [FromBody] LeadBulkDTO bulkLeadsOptions)
+        {
+            logger.LogInformation($"{this.GetType().Name} - BulkLeadUpdate");
+            try
+            {
+                var userAuditId = GetAuditTrailUser();
+                if (userAuditId == 0) throw new Exception("Token Sem Usuário válido.");
+
+                bulkLeadsOptions.filter = filterQuery;
+                var didUpdate = service.BulkUpdateLeads(bulkLeadsOptions);
+
+                var statusRequest = didUpdate ? HttpStatusCode.OK : HttpStatusCode.InternalServerError;
+                return new HttpResponse<bool>
+                {
+                    IsStatusCodeSuccess = (statusRequest == HttpStatusCode.OK),
+                    statusCode = statusRequest,
+                    data = true
+                };
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.Message);
+                return new HttpResponse<bool>
+                {
+                    IsStatusCodeSuccess = false,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    data = false,
+                    ErrorMessage = "Erro ao realizar a requisição"
+                };
+            }
+        }
+
         [HttpGet]
         [Authorize]
         [Route("{linkedInID}/exists")]
