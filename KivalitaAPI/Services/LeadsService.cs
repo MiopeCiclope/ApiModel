@@ -6,6 +6,7 @@ using KivalitaAPI.Common;
 using KivalitaAPI.Data;
 using KivalitaAPI.DTOs;
 using KivalitaAPI.Enum;
+using KivalitaAPI.Equitables;
 using KivalitaAPI.Models;
 using KivalitaAPI.Repositories;
 using Sieve.Models;
@@ -307,6 +308,7 @@ namespace KivalitaAPI.Services {
 				var companies = leadList
 									.Where(lead => lead.CompanyId != null && lead.CompanyId > 0)
 									.Select(lead => lead.Company)
+									.Distinct(new CompanyEquitable())
 									.ToList();
 
 				if (companies.Any())
