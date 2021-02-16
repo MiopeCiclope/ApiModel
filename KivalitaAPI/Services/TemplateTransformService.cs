@@ -55,6 +55,23 @@ namespace KivalitaAPI.Services
 
             return templateRender;
         }
+        public string Transform(string text, Models.Leads leadData)
+        {
+
+            Template.RegisterFilter(typeof(TextFilters));
+
+            RegisterSafeTypes();
+
+            var templateParse = Template.Parse(text);
+
+            var templateRender = templateParse.Render(Hash.FromAnonymousObject(new
+            {
+                leads = leadData,
+                company = leadData.Company
+            }));
+
+            return templateRender;
+        }
 
         public bool IsValid(string text)
         {

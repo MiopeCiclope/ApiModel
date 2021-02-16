@@ -6,6 +6,7 @@ using System;
 using System.Net;
 using KivalitaAPI.Common;
 using Microsoft.AspNetCore.Authorization;
+using System.Linq;
 
 namespace KivalitaAPI.Controllers
 {
@@ -40,6 +41,38 @@ namespace KivalitaAPI.Controllers
                 var template = service.Get(id);
 
                 var templateRendered = templateTransformService.TransformLead(template.Content, lead);
+
+                return new HttpResponse<string>
+                {
+                    IsStatusCodeSuccess = true,
+                    data = templateRendered,
+                    statusCode = HttpStatusCode.OK
+                };
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.Message);
+                return new HttpResponse<string>
+                {
+                    IsStatusCodeSuccess = false,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    data = null,
+                    ErrorMessage = "Erro ao realizar a requisição"
+                };
+            }
+        }
+
+        [HttpPost]
+        [Authorize]
+        [Route("TransformByData")]
+        public virtual HttpResponse<string> TransformByData(Template template)
+        {
+            logger.LogInformation($"{this.GetType().Name} - TransformByData - {template.ToString()}");
+            try
+            {
+                var lead = leadsService.GetAll_v2(null).Items.First();
+
+                var templateRendered = templateTransformService.Transform(template.Content, lead);
 
                 return new HttpResponse<string>
                 {
