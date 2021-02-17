@@ -141,7 +141,7 @@ public class MailSchedulerJob : IJob
             if (template == null) return null;
 
             return leadList
-                    .Where(lead => !String.IsNullOrEmpty(lead.Email) && !this.graphService.DidReply(this.client, lead.Email))
+                    .Where(lead => !String.IsNullOrEmpty(lead.Email))
                     .Select(lead => BuildEmail(lead, template, flowTask.Id)).ToList();
         }
         catch (Exception e)
