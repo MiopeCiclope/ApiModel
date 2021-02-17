@@ -52,7 +52,7 @@ namespace KivalitaAPI.Services
                     break;
                 case LogTaskEnum.EmailRead:
                     logTask.Description = "E-mail lido";
-                    logTask.Type = "email";
+                    logTask.Type = "emailLido";
                     break;
             }
 

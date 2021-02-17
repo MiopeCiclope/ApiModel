@@ -66,14 +66,12 @@ namespace KivalitaAPI.Services
                         {
                             lead.FlowId = flow.Id;
                             leadListToUpdate.Add(lead);
-                            logList.Add(_logTaskService.GenerateLog(LogTaskEnum.LeadAddedToFLow, lead.Id));
                         }
 
                         if (lead.Status != LeadStatusEnum.Flow)
                         {
                             lead.Status = LeadStatusEnum.Flow;
                             leadListToUpdate.Add(lead);
-                            logList.Add(_logTaskService.GenerateLog(LogTaskEnum.LeadAddedToFLow, lead.Id));
                         }
 
                         var task = new FlowTask

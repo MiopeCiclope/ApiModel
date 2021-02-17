@@ -8,5 +8,4 @@
         EmailSent,
         EmailRead
     }
-
 }
