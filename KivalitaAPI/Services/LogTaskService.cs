@@ -24,11 +24,12 @@ namespace KivalitaAPI.Services
             _bulkBaseRepository = bulkBaseRepository;
         }
 
-        public LogTask GenerateLog(LogTaskEnum logTaskEnum, int leadId, int taskId = 0) {
+        public LogTask GenerateLog(LogTaskEnum logTaskEnum, int leadId, int taskId = 0, int mailId = 0) {
             var logTask = new LogTask
             {
                 LeadId = leadId,
                 TaskId = taskId,
+                MailAnsweredId = mailId,
                 CreatedAt = DateTime.Now
             };
 
@@ -54,14 +55,18 @@ namespace KivalitaAPI.Services
                     logTask.Description = "E-mail lido";
                     logTask.Type = "emailLido";
                     break;
+                case LogTaskEnum.EmailAnswered:
+                    logTask.Description = "E-mail respondido";
+                    logTask.Type = "emailAnswered";
+                    break;
             }
 
             return logTask;
         }
 
-        public void RegisterLog(LogTaskEnum logTaskEnum, int leadId, int taskId = 0)
+        public void RegisterLog(LogTaskEnum logTaskEnum, int leadId, int taskId = 0, int mailId = 0)
         {
-            var logTask = GenerateLog(logTaskEnum, leadId, taskId);
+            var logTask = GenerateLog(logTaskEnum, leadId, taskId, mailId);
             baseRepository.Add(logTask);
         }
 

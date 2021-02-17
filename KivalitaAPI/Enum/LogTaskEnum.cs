@@ -6,6 +6,7 @@
         StatusChanged,
         TaskAdded,
         EmailSent,
-        EmailRead
+        EmailRead,
+        EmailAnswered
     }
 }

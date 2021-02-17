@@ -13,10 +13,15 @@ namespace KivalitaAPI.Services
 
     public class MailAnsweredService : Service<MailAnswered, KivalitaApiContext, MailAnsweredRepository>
     {
+        private LogTaskService logTaskService;
+
         public MailAnsweredService(
             KivalitaApiContext context,
-            MailAnsweredRepository baseRepository
-        ) : base(context, baseRepository) { }
+            MailAnsweredRepository baseRepository,
+            LogTaskService _logTaskService
+        ) : base(context, baseRepository) {
+            this.logTaskService = _logTaskService;
+        }
 
         public MailAnswered Save(Message message, int userId, int leadId, int taskId)
         {
@@ -44,7 +49,9 @@ namespace KivalitaAPI.Services
                 CreatedAt = DateTime.UtcNow
             };
 
-            return baseRepository.Add(mail);
+            var answer = baseRepository.Add(mail);
+            this.logTaskService.RegisterLog(LogTaskEnum.EmailAnswered, leadId, taskId, answer.Id);
+            return answer;
         }
 
         public MailAnswered SaveQualified(Message message, int userId, int leadId, int taskId, MailAnsweredStatusEnum qualification)
@@ -74,7 +81,9 @@ namespace KivalitaAPI.Services
                 Status = qualification
             };
 
-            return baseRepository.Add(mail);
+            var answer = baseRepository.Add(mail);
+            this.logTaskService.RegisterLog(LogTaskEnum.EmailAnswered, leadId, taskId, answer.Id);
+            return answer;
         }
     }
 }

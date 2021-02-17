@@ -19,6 +19,10 @@ namespace KivalitaAPI.Models
 		[Sieve(CanFilter = true, CanSort = true)]
 		public int TaskId { get; set; }
 
+		[Sieve(CanFilter = true, CanSort = true)]
+
+		public int? MailAnsweredId { get; set; }
+
 		[JsonIgnore]
 		public int CreatedBy { get; set; }
 		[JsonIgnore]
