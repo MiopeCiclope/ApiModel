@@ -91,7 +91,6 @@ namespace KivalitaAPI.Services
                         }
 
                         taskList.Add(task);
-                        logList.Add(_logTaskService.GenerateLog(LogTaskEnum.LeadAddedToFLow, lead.Id));
                     }
                     daysToAdd = 1;
                 }
@@ -102,6 +101,11 @@ namespace KivalitaAPI.Services
             {
                 var bulkListLeads = _mapper.Map<List<LeadDatabaseDTO>>(leadListToUpdate.Distinct().ToList());
                 _leadsDTORepository.UpdateRange(bulkListLeads);
+
+                foreach (var lead in leadListToUpdate)
+                {
+                    logList.Add(_logTaskService.GenerateLog(LogTaskEnum.LeadAddedToFLow, lead.Id));
+                }
             }
             if (taskList.Any())
                 _flowTaskRepository.AddRange(taskList);
