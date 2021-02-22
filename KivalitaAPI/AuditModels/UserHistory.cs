@@ -18,6 +18,7 @@ namespace KivalitaAPI.AuditModels
         public string Password { get; set; }
         public string Timezone { get; set; }
         public int? MailSignatureId { get; set; }
+        public int? MailCredentialId { get; set; }
         public ActionEnum Action { get; set; }
         public int Responsable { get; set; }
         public DateTime Date { get; set; }

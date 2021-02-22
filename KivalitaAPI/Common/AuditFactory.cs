@@ -63,6 +63,12 @@ namespace KivalitaAPI.Common
                 case MailSignature mailSignature:
                     var mailSignatureAudit = _mapper.Map<MailSignatureHistory>(mailSignature);
                     return addAuditComplement(mailSignatureAudit, action, responsable);
+                case MailServer mailServer:
+                    var mailServerAudit = _mapper.Map<MailServerHistory>(mailServer);
+                    return addAuditComplement(mailServerAudit, action, responsable);
+                case MailCredential mailCredential:
+                    var mailCredentialAudit = _mapper.Map<MailCredentialHistory>(mailCredential);
+                    return addAuditComplement(mailCredentialAudit, action, responsable);
                 default:
                     return null;
             }

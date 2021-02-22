@@ -5,6 +5,6 @@
   </PropertyGroup>
   <PropertyGroup>
     <ActiveDebugProfile>KivalitaAPI</ActiveDebugProfile>
-    <NameOfLastUsedPublishProfile>HostAzul Deploy</NameOfLastUsedPublishProfile>
+    <NameOfLastUsedPublishProfile>KivalitaApi - FTP</NameOfLastUsedPublishProfile>
   </PropertyGroup>
 </Project>

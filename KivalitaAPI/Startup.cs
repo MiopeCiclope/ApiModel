@@ -311,6 +311,16 @@ namespace KivalitaAPI
 
                 cfg.CreateMap<LogTaskDatabaseDTO, LogTask>();
                 cfg.CreateMap<LogTask, LogTaskDatabaseDTO>();
+
+                cfg.CreateMap<MailServer, MailServerHistory>()
+                            .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Id))
+                            .ForMember(dest => dest.Id, opt => opt.Ignore());
+                cfg.CreateMap<MailServerHistory, MailServer>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TableId));
+
+                cfg.CreateMap<MailCredential, MailCredentialHistory>()
+                            .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Id))
+                            .ForMember(dest => dest.Id, opt => opt.Ignore());
+                cfg.CreateMap<MailCredentialHistory, MailCredential>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TableId));
             });
 
             //Mapper Configured service
@@ -333,8 +343,8 @@ namespace KivalitaAPI
             services.AddSingleton<GetMailJob>();
             services.AddSingleton<MailSchedulerJob>();
 
-            services.AddSingleton(new JobScheduleDTO("MailSchedulerJob", "0 0 9 1/1 * ? *", null, 0));
-            services.AddSingleton(new JobScheduleDTO("GetMailJob", null, DateTimeOffset.UtcNow, 0));
+            //services.AddSingleton(new JobScheduleDTO("MailSchedulerJob", "0 0 9 1/1 * ? *", null, 0));
+            //services.AddSingleton(new JobScheduleDTO("GetMailJob", null, DateTimeOffset.UtcNow, 0));
 
             services.AddHostedService<SchedulerService>();
             services.AddSingleton<IJobScheduler, SchedulerService>();
@@ -369,6 +379,12 @@ namespace KivalitaAPI
             });
 
             app.UseStaticFiles();
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"Resources");
+            if (!Directory.Exists(filePath))
+            {
+                Directory.CreateDirectory(filePath);
+            }
+
             app.UseStaticFiles(new StaticFileOptions()
             {
                 FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"Resources")),

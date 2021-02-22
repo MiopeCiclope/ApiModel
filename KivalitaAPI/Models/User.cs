@@ -50,5 +50,8 @@ namespace KivalitaAPI.Models
 
         public int? MailSignatureId { get; set; }
         public MailSignature? MailSignature { get; set; }
+
+        public int? MailCredentialId { get; set; }
+        public MailCredential? MailCredential { get; set; }
     }
 }

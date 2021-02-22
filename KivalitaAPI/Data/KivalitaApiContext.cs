@@ -20,9 +20,6 @@ namespace KivalitaAPI.Data
             _auditFactory = new AuditFactory(mapper);
         }
 
-        //public KivalitaApiContext()
-        //{ }
-
         public DbSet<User> User { get; set; }
         public DbSet<UserHistory> UserHistory { get; set; }
 
@@ -86,6 +83,12 @@ namespace KivalitaAPI.Data
 
         public DbSet<MailAnswered> MailAnswered { get; set; }
         public DbSet<MailAnsweredHistory> MailAnsweredHistory { get; set; }
+
+        public DbSet<MailServer> MailServer { get; set; }
+        public DbSet<MailServerHistory> MailServerHistory { get; set; }
+
+        public DbSet<MailCredential> MailCredential { get; set; }
+        public DbSet<MailCredentialHistory> MailCredentialHistory { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
