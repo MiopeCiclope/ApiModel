@@ -6,15 +6,15 @@ ao editar este arquivo MSBuild. Para saber mais sobre isso, visite https://go.mi
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <TimeStampOfAssociatedLegacyPublishXmlFile />
-    <EncryptedPassword>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA/pu4V1tRAkqeqK5dLQhr+wAAAAACAAAAAAAQZgAAAAEAACAAAAAkEIMhTWznFcct0H7YBzh1qmJxhkNyNrTCzEEhsC/TjAAAAAAOgAAAAAIAACAAAAAfrW9DMYK5EvWW9go0qvMGwMEJvhCB2FLv9PDgYAlyDoAAAACQXr4bbkfT7It7Y328jP2i8H/v9snk4RL/MQAG0L5K771XFkNDSnXtOo+iVWJ2tXrnXtI87mF6Ekt8XaeYpjB7mOhAD9WnUf6Ac/utxf3kN0LH1/eARh/R51VB+6l3XgtsSEObeZ3Wm57jKkoMXH+Pz+sFSWMzjW7sgtq7sYCp6UAAAADOv9frs2nnf0DPIYFpOk3qv4l1b83NoDVhAQY+unuVPm3X9kHs2qEJRxcYUVtDZYRVle7F91C9s2k+S1rwlfJ7</EncryptedPassword>
+    <EncryptedPassword>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA/pu4V1tRAkqeqK5dLQhr+wAAAAACAAAAAAAQZgAAAAEAACAAAADdKigo7pHkZ4fPCYMmTE9wLABxjoCJfwEBoouqFVYVRAAAAAAOgAAAAAIAACAAAAB8r02+1AdjlUhpvXp7RSFmCqruNlIqo7Ye+cd7RfOERoAAAACThdy0yiD0v+QMXyVX45KnDf8giR/t843YYubRat+H87FZdtyhHhMChdj4ECOC0bTNqOVyr2WArxvHJPCriZJEiZrBSPWJPBzoIsYsnXJCtjfciOAaRBeNrJZhxV1Y10V54UvNmLNh69Nvn/I7b7c2bgEz3km4c9xCBLQwqrIoJ0AAAAAphrEJEze1+z/fmxg1riXfAeVkdrvY9EAlr2NFY1UN0zrqTpLu2zzUHask5IV0NP6D0MMBm2Dofa+vzCLk3E4p</EncryptedPassword>
     <_PublishTargetUrl>ftp://waws-prod-cq1-025.ftp.azurewebsites.windows.net/site/wwwroot</_PublishTargetUrl>
   </PropertyGroup>
   <ItemGroup>
     <File Include="appsettings.Development.json">
-      <publishTime>02/17/2021 12:09:56</publishTime>
+      <publishTime>02/23/2021 15:32:03</publishTime>
     </File>
     <File Include="appsettings.json">
-      <publishTime>02/17/2021 12:09:56</publishTime>
+      <publishTime>02/23/2021 13:54:32</publishTime>
     </File>
     <File Include="AutoMapper.dll">
       <publishTime>12/08/2019 12:42:04</publishTime>
@@ -110,22 +110,22 @@ ao editar este arquivo MSBuild. Para saber mais sobre isso, visite https://go.mi
       <publishTime>12/09/2019 17:08:36</publishTime>
     </File>
     <File Include="KivalitaAPI.deps.json">
-      <publishTime>02/22/2021 10:31:39</publishTime>
+      <publishTime>02/23/2021 15:37:57</publishTime>
     </File>
     <File Include="KivalitaAPI.dll">
-      <publishTime>02/22/2021 10:31:37</publishTime>
+      <publishTime>02/23/2021 15:37:56</publishTime>
     </File>
     <File Include="KivalitaAPI.exe">
-      <publishTime>02/22/2021 10:31:37</publishTime>
+      <publishTime>02/23/2021 15:37:56</publishTime>
     </File>
     <File Include="KivalitaAPI.pdb">
-      <publishTime>02/22/2021 10:31:37</publishTime>
+      <publishTime>02/23/2021 15:37:56</publishTime>
     </File>
     <File Include="KivalitaAPI.runtimeconfig.json">
-      <publishTime>02/09/2021 16:55:45</publishTime>
+      <publishTime>02/23/2021 14:08:48</publishTime>
     </File>
     <File Include="KivalitaAPI.xml">
-      <publishTime>02/22/2021 10:31:31</publishTime>
+      <publishTime>02/23/2021 15:37:51</publishTime>
     </File>
     <File Include="ko/Microsoft.CodeAnalysis.CSharp.resources.dll">
       <publishTime>12/09/2019 17:09:00</publishTime>
@@ -524,7 +524,7 @@ ao editar este arquivo MSBuild. Para saber mais sobre isso, visite https://go.mi
       <publishTime>12/09/2019 17:08:36</publishTime>
     </File>
     <File Include="web.config">
-      <publishTime>02/22/2021 10:31:39</publishTime>
+      <publishTime>02/23/2021 15:37:57</publishTime>
     </File>
     <File Include="Z.EntityFramework.Extensions.EFCore.dll">
       <publishTime>09/25/2020 04:48:14</publishTime>
