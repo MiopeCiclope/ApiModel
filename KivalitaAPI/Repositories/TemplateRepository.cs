@@ -38,7 +38,7 @@ namespace KivalitaAPI.Repositories {
 
             var total = result.Count();
 
-            result = this.filterProcessor.Apply(filterQuery, result);
+            result = this.filterProcessor.Apply(filterQuery, result.OrderByDescending(r => r.CreatedAt));
             return new QueryResult<Template>
             {
                 Items = result.ToList(),

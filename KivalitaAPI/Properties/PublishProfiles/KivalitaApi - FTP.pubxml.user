@@ -11,10 +11,10 @@ ao editar este arquivo MSBuild. Para saber mais sobre isso, visite https://go.mi
   </PropertyGroup>
   <ItemGroup>
     <File Include="appsettings.Development.json">
-      <publishTime>02/23/2021 15:32:03</publishTime>
+      <publishTime>02/26/2021 11:56:01</publishTime>
     </File>
     <File Include="appsettings.json">
-      <publishTime>02/23/2021 13:54:32</publishTime>
+      <publishTime>02/26/2021 11:56:01</publishTime>
     </File>
     <File Include="AutoMapper.dll">
       <publishTime>12/08/2019 12:42:04</publishTime>
@@ -110,22 +110,22 @@ ao editar este arquivo MSBuild. Para saber mais sobre isso, visite https://go.mi
       <publishTime>12/09/2019 17:08:36</publishTime>
     </File>
     <File Include="KivalitaAPI.deps.json">
-      <publishTime>02/23/2021 15:37:57</publishTime>
+      <publishTime>02/26/2021 12:00:58</publishTime>
     </File>
     <File Include="KivalitaAPI.dll">
-      <publishTime>02/23/2021 15:37:56</publishTime>
+      <publishTime>02/26/2021 12:00:57</publishTime>
     </File>
     <File Include="KivalitaAPI.exe">
-      <publishTime>02/23/2021 15:37:56</publishTime>
+      <publishTime>02/26/2021 12:00:57</publishTime>
     </File>
     <File Include="KivalitaAPI.pdb">
-      <publishTime>02/23/2021 15:37:56</publishTime>
+      <publishTime>02/26/2021 12:00:57</publishTime>
     </File>
     <File Include="KivalitaAPI.runtimeconfig.json">
-      <publishTime>02/23/2021 14:08:48</publishTime>
+      <publishTime>02/26/2021 11:59:13</publishTime>
     </File>
     <File Include="KivalitaAPI.xml">
-      <publishTime>02/23/2021 15:37:51</publishTime>
+      <publishTime>02/26/2021 12:00:48</publishTime>
     </File>
     <File Include="ko/Microsoft.CodeAnalysis.CSharp.resources.dll">
       <publishTime>12/09/2019 17:09:00</publishTime>
@@ -524,7 +524,7 @@ ao editar este arquivo MSBuild. Para saber mais sobre isso, visite https://go.mi
       <publishTime>12/09/2019 17:08:36</publishTime>
     </File>
     <File Include="web.config">
-      <publishTime>02/23/2021 15:37:57</publishTime>
+      <publishTime>02/26/2021 12:00:58</publishTime>
     </File>
     <File Include="Z.EntityFramework.Extensions.EFCore.dll">
       <publishTime>09/25/2020 04:48:14</publishTime>
