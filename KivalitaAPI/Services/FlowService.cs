@@ -270,7 +270,9 @@ namespace KivalitaAPI.Services
                 leads.AddRange(leadsFound);
             }
 
-            return leads;
+            return leads
+                    .OrderBy(lead => lead.Company.Name)
+                    .ToList();
         }
 
     }
