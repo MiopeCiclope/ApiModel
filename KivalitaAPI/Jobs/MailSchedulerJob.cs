@@ -91,10 +91,11 @@ public class MailSchedulerJob : IJob
                             {
                                 this.logTaskService.RegisterLog(LogTaskEnum.EmailSent, flowTask.LeadId, flowTask.Id);
                                 flowTask.Status = "finished";
-                                taskScheduledList.Add(flowTask);
                             }
                             _logger.LogInformation($"{logMessage}: {mail.ToRecipients.First().EmailAddress.Address}");
                         });
+
+                    taskScheduledList.Add(flowTask);
                 }
                 catch (Exception e)
                 {
