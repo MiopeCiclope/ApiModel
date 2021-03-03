@@ -90,6 +90,8 @@ namespace KivalitaAPI.Data
         public DbSet<MailCredential> MailCredential { get; set; }
         public DbSet<MailCredentialHistory> MailCredentialHistory { get; set; }
 
+        public DbSet<FlowTaskQueryDTO> FlowTaskQueryDTO { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<LeadTag>().HasKey(sc => new { sc.LeadId, sc.TagId });

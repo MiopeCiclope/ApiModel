@@ -9,12 +9,16 @@ using Sieve.Models;
 using Microsoft.Linq.Translations;
 using System;
 using KivalitaAPI.DTOs;
+using AutoMapper;
 
 namespace KivalitaAPI.Repositories
 {
     public class FlowTaskRepository : Repository<FlowTask, DbContext, SieveProcessor>
     {
-        public FlowTaskRepository(DbContext context, SieveProcessor filterProcessor) : base(context, filterProcessor) { }
+        private readonly IMapper _mapper;
+        public FlowTaskRepository(DbContext context, SieveProcessor filterProcessor, IMapper mapper) : base(context, filterProcessor) {
+            _mapper = mapper;
+        }
 
         public override List<FlowTask> GetAll()
         {
@@ -45,6 +49,60 @@ namespace KivalitaAPI.Repositories
             {
                 Items = response,
                 TotalItems = total,
+            };
+        }
+
+        public QueryResult<FlowTask> GetTodayTask(SieveModel filterQuery)
+        {
+            var filter = filterQuery.GetFiltersParsed();
+
+            var query = $@"SELECT  [f].[Id], 
+                                [f].[CreatedAt], 
+                                [f].[CreatedBy], 
+                                [f].[FlowActionId], 
+                                [f].[LeadId], 
+                                [f].[ScheduledTo], 
+                                [f].[Status], 
+                                [f].[UpdatedAt], 
+                                [f].[UpdatedBy], 
+                                [l].[Id] as LeadsId,
+                                [l].[Name] as LeadName,
+                                [c].[Id] as CompanyId, 
+		                        [c].[UserId] as Owner, 
+                                [c].[Name] as CompanyName, 
+                                [f0].[FlowId] as FlowActionFlowId, 
+                                [f0].[Type] as FlowActionType, 
+                                [f1].[Id] as FlowId, 
+                                [f1].[Name] as FlowName, 
+                                [u].[Id] as UserId, 
+                                [u].[FirstName] as UserFirstName
+                        FROM       [FlowTask]   AS [f] 
+                        LEFT JOIN  [FlowAction] AS [f0] 
+                        ON         [f].[FlowActionId] = [f0].[Id] 
+                        LEFT JOIN  [Flow] AS [f1] 
+                        ON         [f0].[FlowId] = [f1].[Id] 
+                        INNER JOIN [Leads] AS [l] 
+                        ON         [f].[LeadId] = [l].[Id] 
+                        LEFT JOIN  [Company] AS [c] 
+                        ON         [l].[CompanyId] = [c].[Id] 
+                        LEFT JOIN  [user] [u] 
+                        ON         u.id = [c].userid 
+                        WHERE  [f].[ScheduledTo] between '2021-03-03T00:00:00.0000000' and '2021-03-04T00:00:00.0000000' 
+	                        and [c].[UserId] = 19 
+	                        and [f1].[IsActive] = 1
+                            AND (
+			                        ([f0].[Type] = N'email' AND [f1].[isAutomatic] <> 1) 
+			                        OR [f0].[Type] <> N'email'
+		                        )
+                        ORDER BY   (SELECT 1) offset 0 rows FETCH next 20 rows only";
+
+            var response = context.Set<FlowTaskQueryDTO>().FromSqlRaw(query).ToList();
+            //result = this.filterProcessor.Apply(filterQuery, result).WithTranslations();
+            var result = _mapper.Map<List<FlowTask>>(response);
+            return new QueryResult<FlowTask>
+            {
+                Items = result,
+                TotalItems = result.Count,
             };
         }
 

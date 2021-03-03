@@ -311,6 +311,19 @@ namespace KivalitaAPI
 
                 cfg.CreateMap<LogTaskDatabaseDTO, LogTask>();
                 cfg.CreateMap<LogTask, LogTaskDatabaseDTO>();
+
+                cfg.CreateMap<FlowTask, FlowTaskQueryDTO>()
+                            .ForMember(dest => dest.LeadName, opt => opt.MapFrom(src => src.Leads.Name))
+                            .ForMember(dest => dest.LeadsId, opt => opt.MapFrom(src => src.Leads.Id))
+                            .ForMember(dest => dest.CompanyId, opt => opt.MapFrom(src => src.Leads.Company.Id))
+                            .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Leads.Company.Name))
+                            .ForMember(dest => dest.FlowActionFlowId, opt => opt.MapFrom(src => src.FlowAction.Id))
+                            .ForMember(dest => dest.FlowActionType, opt => opt.MapFrom(src => src.FlowAction.Type))
+                            .ForMember(dest => dest.FlowId, opt => opt.MapFrom(src => src.FlowAction.Flow.Id))
+                            .ForMember(dest => dest.FlowName, opt => opt.MapFrom(src => src.FlowAction.Flow.Name))
+                            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.FlowAction.Flow.User.Id))
+                            .ForMember(dest => dest.UserFirstName, opt => opt.MapFrom(src => src.FlowAction.Flow.User.FirstName))
+                            .ReverseMap();
             });
 
             //Mapper Configured service
@@ -333,7 +346,7 @@ namespace KivalitaAPI
             services.AddSingleton<GetMailJob>();
             services.AddSingleton<MailSchedulerJob>();
 
-            services.AddSingleton(new JobScheduleDTO("MailSchedulerJob", "0 0 9 1/1 * ? *", null, 0));
+            //services.AddSingleton(new JobScheduleDTO("MailSchedulerJob", null, DateTimeOffset.UtcNow, 0));
             //services.AddSingleton(new JobScheduleDTO("GetMailJob", null, DateTimeOffset.UtcNow, 0));
 
             services.AddHostedService<SchedulerService>();
