@@ -77,7 +77,7 @@ namespace KivalitaAPI.Services {
 				{
 					var tagList = tagToLink.ToList();
 					tagList.ForEach(leadtag => leadtag.Tag = null);
-					leadTagRepository.AddRange(tagList);
+					leadTagRepository.AddRangeNoBulk(tagList);
 				}
 			}
 
