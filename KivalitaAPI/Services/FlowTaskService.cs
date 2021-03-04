@@ -171,5 +171,10 @@ namespace KivalitaAPI.Services
             this._flowtaskDtoRepository.UpdateRange(flowTaskDto);
             return tasks;
         }
+
+        public QueryResult<FlowTask> GetTask(string type, int userId = 0, int take = 20, int skip = 0)
+        {
+            return this.baseRepository.GetTask(type, userId, take, skip);
+        }
     }
 }

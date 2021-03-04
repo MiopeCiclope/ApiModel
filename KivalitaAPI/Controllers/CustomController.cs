@@ -231,15 +231,15 @@ namespace KivalitaAPI.Controllers
         }
 
         [HttpGet]
-        //[Authorize]
+        [Authorize]
         [Route("v2")]
         public virtual HttpResponse<List<TEntity>> GetAll_v2([FromQuery] SieveModel filterQuery)
         {
             logger.LogInformation($"{this.GetType().Name} - GetAll_v2");
             try
             {
-                //if(hasOwner() && isColaborador()) filterQuery.Filters = $"{filterQuery.Filters},Owner=={GetAuditTrailUser()}";
-                //if(hasOwner() && isMarketing() && typeof(TEntity).Name != "Company") filterQuery.Filters = $"{filterQuery.Filters},Owner=={GetAuditTrailUser()}";
+                if (hasOwner() && isColaborador()) filterQuery.Filters = $"{filterQuery.Filters},Owner=={GetAuditTrailUser()}";
+                if (hasOwner() && isMarketing() && typeof(TEntity).Name != "Company") filterQuery.Filters = $"{filterQuery.Filters},Owner=={GetAuditTrailUser()}";
 
                 var dataList = service.GetAll_v2(filterQuery);
 

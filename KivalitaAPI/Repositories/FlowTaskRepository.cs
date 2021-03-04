@@ -52,53 +52,12 @@ namespace KivalitaAPI.Repositories
             };
         }
 
-        public QueryResult<FlowTask> GetTodayTask(SieveModel filterQuery)
+        public QueryResult<FlowTask> GetTask(string type, int userId, int take, int skip)
         {
-            var filter = filterQuery.GetFiltersParsed();
-
-            var query = $@"SELECT  [f].[Id], 
-                                [f].[CreatedAt], 
-                                [f].[CreatedBy], 
-                                [f].[FlowActionId], 
-                                [f].[LeadId], 
-                                [f].[ScheduledTo], 
-                                [f].[Status], 
-                                [f].[UpdatedAt], 
-                                [f].[UpdatedBy], 
-                                [l].[Id] as LeadsId,
-                                [l].[Name] as LeadName,
-                                [c].[Id] as CompanyId, 
-		                        [c].[UserId] as Owner, 
-                                [c].[Name] as CompanyName, 
-                                [f0].[FlowId] as FlowActionFlowId, 
-                                [f0].[Type] as FlowActionType, 
-                                [f1].[Id] as FlowId, 
-                                [f1].[Name] as FlowName, 
-                                [u].[Id] as UserId, 
-                                [u].[FirstName] as UserFirstName
-                        FROM       [FlowTask]   AS [f] 
-                        LEFT JOIN  [FlowAction] AS [f0] 
-                        ON         [f].[FlowActionId] = [f0].[Id] 
-                        LEFT JOIN  [Flow] AS [f1] 
-                        ON         [f0].[FlowId] = [f1].[Id] 
-                        INNER JOIN [Leads] AS [l] 
-                        ON         [f].[LeadId] = [l].[Id] 
-                        LEFT JOIN  [Company] AS [c] 
-                        ON         [l].[CompanyId] = [c].[Id] 
-                        LEFT JOIN  [user] [u] 
-                        ON         u.id = [c].userid 
-                        WHERE  [f].[ScheduledTo] between '2021-03-03T00:00:00.0000000' and '2021-03-04T00:00:00.0000000' 
-	                        and [c].[UserId] = 19 
-	                        and [f1].[IsActive] = 1
-                            AND (
-			                        ([f0].[Type] = N'email' AND [f1].[isAutomatic] <> 1) 
-			                        OR [f0].[Type] <> N'email'
-		                        )
-                        ORDER BY   (SELECT 1) offset 0 rows FETCH next 20 rows only";
-
+            var query = BuildTaskQuery(userId, type, take, skip);
             var response = context.Set<FlowTaskQueryDTO>().FromSqlRaw(query).ToList();
-            //result = this.filterProcessor.Apply(filterQuery, result).WithTranslations();
             var result = _mapper.Map<List<FlowTask>>(response);
+
             return new QueryResult<FlowTask>
             {
                 Items = result,
@@ -201,7 +160,7 @@ namespace KivalitaAPI.Repositories
                             .AsNoTracking()
                             .Where(task => task.Status == "pending" 
                                         && task.ScheduledTo.HasValue 
-                                        && task.ScheduledTo.Value.Date <= DateTime.Now
+                                        && task.ScheduledTo.Value.Date <= DateTime.Now.AddDays(1)
                                         && task.FlowAction.Type == "email" 
                                         && task.FlowAction.Flow.isAutomatic
                                         && task.FlowAction.Flow.IsActive)
@@ -221,6 +180,81 @@ namespace KivalitaAPI.Repositories
                 query = query.Where(task => task.FlowAction.TemplateId == templateId);
 
             return query.Count();
+        }
+
+        private string BuildTaskQuery(int userId, string taskType, int take, int skip)
+        {
+            var today = DateTime.Now.Date;
+            var ownerCondition = userId == 0 ? "" : $"and[c].[UserId] = { userId}";
+            var statusCondition = $"and [f].Status = 'pending'";
+
+            var dateCondition = "";
+            switch (taskType)
+            {
+                case "today":
+                    dateCondition = $@"[f].[ScheduledTo] between '{today.ToString("yyyy/MM/dd")}' 
+                                            and '{today.AddDays(1).ToString("yyyy/MM/dd")}'";
+                    break;
+                case "overdue":
+                    dateCondition = $@"[f].[ScheduledTo] < '{today.ToString("yyyy/MM/dd")}'";
+                    break;
+                case "future":
+                    dateCondition = $@"[f].[ScheduledTo] between '{today.AddDays(1).ToString("yyyy/MM/dd")}' 
+                                            and '{today.AddDays(3).ToString("yyyy/MM/dd")}'";
+                    break;
+                case "finished":
+                    dateCondition = $@"[f].[ScheduledTo] between '{today.ToString("yyyy/MM/dd")}' 
+                                            and '{today.AddDays(1).ToString("yyyy/MM/dd")}'";
+                    statusCondition = $"and [f].Status = 'finished'";
+                    break;
+                default:
+                    dateCondition = $@"[f].[ScheduledTo] between '{today.ToString("yyyy/MM/dd")}' 
+                                            and '{today.AddDays(1).ToString("yyyy/MM/dd")}'";
+                    break;
+            }
+
+            var query = $@"SELECT  [f].[Id], 
+                                [f].[CreatedAt], 
+                                [f].[CreatedBy], 
+                                [f].[FlowActionId], 
+                                [f].[LeadId], 
+                                [f].[ScheduledTo], 
+                                [f].[Status], 
+                                [f].[UpdatedAt], 
+                                [f].[UpdatedBy], 
+                                [l].[Id] as LeadsId,
+                                [l].[Name] as LeadName,
+                                [c].[Id] as CompanyId, 
+		                        [c].[UserId] as Owner, 
+                                [c].[Name] as CompanyName, 
+                                [f0].[FlowId] as FlowActionFlowId, 
+                                [f0].[Type] as FlowActionType, 
+                                [f1].[Id] as FlowId, 
+                                [f1].[Name] as FlowName, 
+                                [u].[Id] as UserId, 
+                                [u].[FirstName] as UserFirstName
+                        FROM       [FlowTask]   AS [f] 
+                        LEFT JOIN  [FlowAction] AS [f0] 
+                        ON         [f].[FlowActionId] = [f0].[Id] 
+                        LEFT JOIN  [Flow] AS [f1] 
+                        ON         [f0].[FlowId] = [f1].[Id] 
+                        INNER JOIN [Leads] AS [l] 
+                        ON         [f].[LeadId] = [l].[Id] 
+                        LEFT JOIN  [Company] AS [c] 
+                        ON         [l].[CompanyId] = [c].[Id] 
+                        LEFT JOIN  [user] [u] 
+                        ON         u.id = [c].userid 
+                        WHERE  
+                            {dateCondition}
+	                        {ownerCondition}
+                            {statusCondition}
+	                        and [f1].[IsActive] = 1
+                            AND (
+			                        ([f0].[Type] = N'email' AND [f1].[isAutomatic] <> 1) 
+			                        OR [f0].[Type] <> N'email'
+		                        )
+                        ORDER BY   (SELECT 1) offset {skip} rows FETCH next {take} rows only";
+            return query;
         }
     }
 }

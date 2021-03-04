@@ -80,5 +80,41 @@ namespace KivalitaAPI.Controllers
                 };
             }
         }
+
+        [HttpGet]
+        [Authorize]
+        [Route("v2/GetTask/{type}")]
+        public virtual HttpResponse<List<FlowTask>> GetTask(string type, [FromQuery] SieveModel filterQuery)
+        {
+            logger.LogInformation($"{this.GetType().Name} - Today Task");
+            try
+            {
+                var userId = isColaborador() ? GetAuditTrailUser() : 0;
+                var take = filterQuery.PageSize.Value;
+                var page = filterQuery.Page.Value;
+                var skip = take * (page - 1);
+
+                var dataList = service.GetTask(type, userId, take, skip);
+
+                return new HttpResponse<List<FlowTask>>
+                {
+                    IsStatusCodeSuccess = true,
+                    statusCode = HttpStatusCode.OK,
+                    data = dataList.Items,
+                    Total = dataList.TotalItems
+                };
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.Message);
+                return new HttpResponse<List<FlowTask>>
+                {
+                    IsStatusCodeSuccess = false,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    data = null,
+                    ErrorMessage = "Erro ao realizar a requisição"
+                };
+            }
+        }
     }
 }
