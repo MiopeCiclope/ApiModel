@@ -52,16 +52,16 @@ namespace KivalitaAPI.Repositories
             };
         }
 
-        public QueryResult<FlowTask> GetTask(string type, int userId, int take, int skip)
+        public QueryResult<FlowTask> GetTask(string type, int userId, int take, int skip, string date = null)
         {
-            var query = BuildTaskQuery(userId, type, take, skip);
+            var query = BuildTaskQuery(userId, type, take, skip, date);
             var response = context.Set<FlowTaskQueryDTO>().FromSqlRaw(query).ToList();
             var result = _mapper.Map<List<FlowTask>>(response);
 
             return new QueryResult<FlowTask>
             {
                 Items = result,
-                TotalItems = result.Count,
+                TotalItems = response.Any() ? response.First().Total : 0,
             };
         }
 
@@ -182,7 +182,7 @@ namespace KivalitaAPI.Repositories
             return query.Count();
         }
 
-        private string BuildTaskQuery(int userId, string taskType, int take, int skip)
+        private string BuildTaskQuery(int userId, string taskType, int take, int skip, string date = null)
         {
             var today = DateTime.Now.Date;
             var ownerCondition = userId == 0 ? "" : $"and[c].[UserId] = { userId}";
@@ -203,8 +203,9 @@ namespace KivalitaAPI.Repositories
                                             and '{today.AddDays(3).ToString("yyyy/MM/dd")}'";
                     break;
                 case "finished":
-                    dateCondition = $@"[f].[ScheduledTo] between '{today.ToString("yyyy/MM/dd")}' 
-                                            and '{today.AddDays(1).ToString("yyyy/MM/dd")}'";
+                    var selectedDate = Convert.ToDateTime(date);
+                    dateCondition = $@"[f].[ScheduledTo] between '{selectedDate.ToString("yyyy/MM/dd")}' 
+                                            and '{selectedDate.AddDays(1).ToString("yyyy/MM/dd")}'";
                     statusCondition = $"and [f].Status = 'finished'";
                     break;
                 default:
@@ -232,7 +233,8 @@ namespace KivalitaAPI.Repositories
                                 [f1].[Id] as FlowId, 
                                 [f1].[Name] as FlowName, 
                                 [u].[Id] as UserId, 
-                                [u].[FirstName] as UserFirstName
+                                [u].[FirstName] as UserFirstName,
+                                Total = COUNT(*) OVER()
                         FROM       [FlowTask]   AS [f] 
                         LEFT JOIN  [FlowAction] AS [f0] 
                         ON         [f].[FlowActionId] = [f0].[Id] 

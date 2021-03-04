@@ -30,5 +30,6 @@ namespace KivalitaAPI.DTOs
         public string FlowName { get; set; }
 		public int UserId { get; set; } 
         public string UserFirstName { get; set; }
+		public int Total { get; set; }
 	}
 }

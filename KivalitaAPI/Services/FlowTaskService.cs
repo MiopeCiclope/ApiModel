@@ -172,9 +172,9 @@ namespace KivalitaAPI.Services
             return tasks;
         }
 
-        public QueryResult<FlowTask> GetTask(string type, int userId = 0, int take = 20, int skip = 0)
+        public QueryResult<FlowTask> GetTask(string type, int userId = 0, int take = 20, int skip = 0, string date = null)
         {
-            return this.baseRepository.GetTask(type, userId, take, skip);
+            return this.baseRepository.GetTask(type, userId, take, skip, date);
         }
     }
 }

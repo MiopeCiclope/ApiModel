@@ -10,6 +10,7 @@ using Sieve.Models;
 using System.Net;
 using System;
 using KivalitaAPI.DTOs;
+using System.Linq;
 
 namespace KivalitaAPI.Controllers
 {
@@ -89,12 +90,18 @@ namespace KivalitaAPI.Controllers
             logger.LogInformation($"{this.GetType().Name} - Today Task");
             try
             {
+                var date = type == "finished" ? filterQuery.GetFiltersParsed()
+                                                            .Where(filter => filter.Names.Contains("date"))
+                                                            ?.Select(filter => filter.Values.First())
+                                                            ?.First() ?? null
+                                                            : null;
+
                 var userId = isColaborador() ? GetAuditTrailUser() : 0;
                 var take = filterQuery.PageSize.Value;
                 var page = filterQuery.Page.Value;
                 var skip = take * (page - 1);
 
-                var dataList = service.GetTask(type, userId, take, skip);
+                var dataList = service.GetTask(type, userId, take, skip, date);
 
                 return new HttpResponse<List<FlowTask>>
                 {
