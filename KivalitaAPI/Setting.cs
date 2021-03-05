@@ -7,6 +7,6 @@ namespace KivalitaAPI
         public static string MailTrackSecret = "149afd631693c895f81e508eb5aaef37";
         public static string Schema = "dbo";
         public static string SelfUrl = "https://kivalitaapi.azurewebsites.net/api/";
-        //public static string SelfUrl = "https://557c302f2251.ngrok.io/api/";
+        //public static string SelfUrl = "https://d98ff2af8800.ngrok.io/api/";
     }
 }

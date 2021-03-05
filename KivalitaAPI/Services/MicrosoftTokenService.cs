@@ -3,6 +3,7 @@ using AutoMapper;
 using KivalitaAPI.Common;
 using KivalitaAPI.Data;
 using KivalitaAPI.DTOs;
+using KivalitaAPI.Enum;
 using KivalitaAPI.Models;
 using KivalitaAPI.Repositories;
 using Microsoft.Extensions.Logging;
@@ -13,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -25,6 +27,8 @@ namespace KivalitaAPI.Services
         private readonly string authUrl = "/oauth2/v2.0/token";
         private readonly IMapper _mapper;
         private readonly ILogger<MicrosoftTokenService> _logger;
+        private readonly MailAnsweredService mailAnsweredService;
+        private readonly FlowTaskRepository flowTaskRepository;
 
         public MicrosoftTokenService(
             KivalitaApiContext context
@@ -32,10 +36,14 @@ namespace KivalitaAPI.Services
             , IOptions<Settings> settings
             , IMapper mapper
             , ILogger<MicrosoftTokenService> logger
+            , MailAnsweredService _mailAnsweredService
+            , FlowTaskRepository _flowTaskRepository
         ) : base(context, baseRepository) {
             _myConfiguration = settings.Value;
             _mapper = mapper;
             _logger = logger;
+            mailAnsweredService = _mailAnsweredService;
+            flowTaskRepository = _flowTaskRepository;
         }
 
         public MicrosoftToken Auth(MicrosoftAuthDTO auth, int userId)
@@ -262,7 +270,7 @@ namespace KivalitaAPI.Services
                         DisplayName = folderName
                     });
                 }
-
+                
                 var subscription = new Subscription
                 {
                     ChangeType = "created",
@@ -275,6 +283,88 @@ namespace KivalitaAPI.Services
             }
 
             return await graphClient.Subscriptions.Request().GetAsync();
+        }
+
+        public async Task ReadMail(int userId)
+        {
+            var folderList = new List<string> { "PokeLead Bounce", "PokeLead Positivo", "PokeLead Negativo" };
+            var graphClient = GetTokenClient(userId);
+            var lastReadMail = mailAnsweredService.GetLastReadMailId(userId);
+            var lastMail = await graphClient.Me.Messages[lastReadMail].Request().GetAsync();
+            var nextDate = $"{lastMail.ReceivedDateTime.Value.AddDays(-1).ToString("yyyy-MM-dd")}T00:00:00Z";
+
+            foreach (var folderName in folderList)
+            {
+                var folders = await graphClient.Me.MailFolders.Request().Filter($"displayName eq '{folderName}'").GetAsync();
+                MailFolder folder;
+
+                if (folders.Count > 0)
+                {
+                    folder = folders.First();
+                    var messageList = await graphClient.Me.MailFolders[$"{folder.Id}"].Messages
+                                        .Request()
+                                        .Filter($"receivedDateTime ge {nextDate}")
+                                        .GetAsync();
+
+                    foreach (var message in messageList)
+                    {
+                        var mailStatus = MailAnsweredStatusEnum.NotFound;
+                        switch (folderName)
+                        {
+                            case "PokeLead Bounce":
+                                mailStatus = MailAnsweredStatusEnum.NotFound;
+                                break;
+                            case "PokeLead Positivo":
+                                mailStatus = MailAnsweredStatusEnum.Positive;
+                                break;
+                            case "PokeLead Negativo":
+                                mailStatus = MailAnsweredStatusEnum.Negative;
+                                break;
+                        }
+
+                        var regex = new Regex(@"(track\?key+)=([^\s\""]+)");
+                        var match = regex.Match(message.Body.Content);
+
+                        if (match.Success)
+                        {
+                            var key = match.Value.Split("=").Last();
+                            key = Uri.UnescapeDataString(key);
+
+                            var decryptedKey = AesCripty.DecryptString(Setting.MailTrackSecret, key);
+                            int taskId = int.Parse(decryptedKey.Split("-")[0]);
+                            int leadId = int.Parse(decryptedKey.Split("-")[1]);
+
+                            mailAnsweredService.SaveQualified(message, userId, leadId, taskId, mailStatus);
+                        }
+                        else
+                        {
+                            var mailRegex = new Regex("[a-z0-9_\\-\\+]+@[a-z0-9\\-]+\\.([a-z]{2,3})(?:\\.[a-z]{2})?");
+                            var mailMatch = mailRegex.Match(message.Body.Content);
+                            var recieveDate = message.ReceivedDateTime;
+
+                            if (mailMatch.Success)
+                            {
+                                var mail = mailMatch.Value;
+                                var query = $@"select ft.* from flowtask ft
+                                                left join flowAction fa on fa.Id = ft.FlowActionId
+                                                left join flow f on f.Id = fa.FlowId
+                                                where ft.LeadId in 
+	                                                (select id from leads 
+	                                                where email is not null and email like '%{mail}%')
+	                                                and f.Owner = {userId}
+	                                                and fa.Type = 'email'
+	                                                and ft.Status = 'finished'
+	                                                and ft.ScheduledTo < '{recieveDate.Value.AddDays(1).ToString("yyyy/MM/dd")}'";
+
+                                var task = flowTaskRepository.GetByQuery(query);
+
+                                mailAnsweredService.SaveQualified(message, userId, task.LeadId, task.Id, mailStatus);
+                            }
+                        }
+                    }
+                }
+
+            }
         }
     }
 }

@@ -245,7 +245,6 @@ namespace KivalitaAPI.Controllers
                     ErrorMessage = "Erro ao realizar a requisição"
                 };
             }
-            
         }
 
         [HttpPost("Webhook/{userId}/GetAnsweredEmails")]
@@ -374,32 +373,66 @@ namespace KivalitaAPI.Controllers
         {
             logger.LogInformation($"{this.GetType().Name} - Cron/UpdateSubscriptions");
 
-            var users = userService.GetAll();
+            var users = service.GetAll().Where(t => t.AccessToken != null);
 
             foreach (var user in users)
             {
-
-                var graphClient = service.GetTokenClient(user.Id);
-
-                if (graphClient != null)
+                try
                 {
-                    var subscriptions = await graphClient.Subscriptions
-                        .Request()
-                        .GetAsync();
-
-                    foreach (var subscription in subscriptions)
+                    var graphClient = service.GetTokenClient(user.UserId);
+                    if (graphClient != null)
                     {
-                        await graphClient.Subscriptions[subscription.Id]
+                        var subscriptions = await graphClient.Subscriptions
                             .Request()
-                            .UpdateAsync(new Subscription
-                            {
-                                ExpirationDateTime = DateTimeOffset.UtcNow.AddMinutes(4200)
-                            });
+                            .GetAsync();
+
+                        foreach (var subscription in subscriptions)
+                        {
+                            await graphClient.Subscriptions[subscription.Id]
+                                .Request()
+                                .UpdateAsync(new Subscription
+                                {
+                                    ExpirationDateTime = DateTimeOffset.UtcNow.AddMinutes(4200)
+                                });
+                        }
                     }
+                } 
+                catch(Exception e)
+                {
+                    logger.LogError($"{this.GetType().Name} - {e.Message}");
                 }
             }
 
             return Accepted();
+        }
+
+        [HttpPost("ReadMail/{userId}")]
+        //[Authorize]
+        public async Task<HttpResponse<bool>> ReadMail(int userId)
+        {
+            logger.LogInformation($"{this.GetType().Name} - ReadMail");
+            try
+            {
+                await service.ReadMail(userId);
+
+                return new HttpResponse<bool>
+                {
+                    IsStatusCodeSuccess = true,
+                    statusCode = HttpStatusCode.OK,
+                    data = true
+                };
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.Message);
+                return new HttpResponse<bool>
+                {
+                    IsStatusCodeSuccess = false,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    data = false,
+                    ErrorMessage = "Erro ao realizar a requisição"
+                };
+            }
         }
     }
 }

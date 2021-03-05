@@ -14,13 +14,16 @@ namespace KivalitaAPI.Services
     public class MailAnsweredService : Service<MailAnswered, KivalitaApiContext, MailAnsweredRepository>
     {
         private LogTaskService logTaskService;
+        private LeadsService leadService;
 
         public MailAnsweredService(
             KivalitaApiContext context,
             MailAnsweredRepository baseRepository,
-            LogTaskService _logTaskService
+            LogTaskService _logTaskService,
+            LeadsService _leadService
         ) : base(context, baseRepository) {
             this.logTaskService = _logTaskService;
+            this.leadService = _leadService;
         }
 
         public MailAnswered Save(Message message, int userId, int leadId, int taskId)
@@ -83,7 +86,24 @@ namespace KivalitaAPI.Services
 
             var answer = baseRepository.Add(mail);
             this.logTaskService.RegisterLog(LogTaskEnum.EmailAnswered, leadId, taskId, answer.Id);
-            return answer;
+
+            if (qualification == MailAnsweredStatusEnum.Negative) 
+                removeLeadFromFlow(leadId);
+
+            return null;
+        }
+
+        private void removeLeadFromFlow(int leadId)
+        {
+            var blackListLead = this.leadService.Get(leadId);
+            blackListLead.Status = LeadStatusEnum.Blacklist;
+            blackListLead.FlowId = null;
+            this.leadService.Update(blackListLead);
+        }
+
+        public string GetLastReadMailId(int userId)
+        {
+            return baseRepository.GetLastReadMailId(userId);
         }
     }
 }

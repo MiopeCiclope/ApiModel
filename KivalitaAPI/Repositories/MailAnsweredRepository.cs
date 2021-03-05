@@ -77,5 +77,14 @@ namespace KivalitaAPI.Repositories {
 
             return query.Select(mail => mail.TaskId).Distinct().Count();
         }
+
+        public string GetLastReadMailId(int userId)
+        {
+            return context.Set<MailAnswered>()
+                            .Where(mail => mail.UserId == userId)
+                            .OrderByDescending(mail => mail.Id)
+                            .Select(mail => mail.MessageId)
+                            ?.First() ?? null;
+        }
     }
 }
