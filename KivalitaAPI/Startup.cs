@@ -323,6 +323,8 @@ namespace KivalitaAPI
                             .ForMember(dest => dest.FlowName, opt => opt.MapFrom(src => src.FlowAction.Flow.Name))
                             .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.FlowAction.Flow.User.Id))
                             .ForMember(dest => dest.UserFirstName, opt => opt.MapFrom(src => src.FlowAction.Flow.User.FirstName))
+                            .ForMember(dest => dest.LeadPhone, opt => opt.MapFrom(src => src.Leads.Phone))
+                            .ForMember(dest => dest.LeadLinkedIn, opt => opt.MapFrom(src => src.Leads.LinkedInPublic))
                             .ReverseMap();
             });
 

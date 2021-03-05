@@ -16,6 +16,8 @@ namespace KivalitaAPI.DTOs
 		public int LeadId { get; set; }
 		public int LeadsId { get; set; }
 		public string LeadName { get; set; }
+		public string LeadPhone { get; set; }
+		public string LeadLinkedIn { get; set; }
 		public int? FlowActionId { get; set; }
 		public int? Owner { get; set; }
 		public int CreatedBy { get; set; }

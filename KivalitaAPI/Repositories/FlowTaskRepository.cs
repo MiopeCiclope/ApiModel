@@ -225,6 +225,8 @@ namespace KivalitaAPI.Repositories
                                 [f].[UpdatedBy], 
                                 [l].[Id] as LeadsId,
                                 [l].[Name] as LeadName,
+                                [l].[Phone] as LeadPhone,
+                                [l].[LinkedInPublic] as LeadLinkedIn,
                                 [c].[Id] as CompanyId, 
 		                        [c].[UserId] as Owner, 
                                 [c].[Name] as CompanyName, 
