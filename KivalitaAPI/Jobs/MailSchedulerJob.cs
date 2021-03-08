@@ -136,13 +136,16 @@ public class MailSchedulerJob : IJob
         try
         {
             var leadService = scope.ServiceProvider.GetService<LeadsService>();
+            var mailService = scope.ServiceProvider.GetService<MailAnsweredRepository>();
             var leadList = new List<Leads> { leadService.Get(flowTask.LeadId) };
 
             var template = GetTemplate(templateId);
             if (template == null) return null;
 
+            var shouldSendMail = mailService.GetBy(mail => mail.Recipient == leadList.First().Email).Any();
+
             return leadList
-                    .Where(lead => !String.IsNullOrEmpty(lead.Email))
+                    .Where(lead => !String.IsNullOrEmpty(lead.Email) && shouldSendMail)
                     .Select(lead => BuildEmail(lead, template, flowTask.Id)).ToList();
         }
         catch (Exception e)
