@@ -160,7 +160,7 @@ namespace KivalitaAPI.Repositories
                             .AsNoTracking()
                             .Where(task => task.Status == "pending" 
                                         && task.ScheduledTo.HasValue 
-                                        && task.ScheduledTo.Value.Date <= DateTime.Now.AddDays(1)
+                                        && task.ScheduledTo.Value.Date <= DateTime.Now.Date
                                         && task.FlowAction.Type == "email" 
                                         && task.FlowAction.Flow.isAutomatic
                                         && task.FlowAction.Flow.IsActive)

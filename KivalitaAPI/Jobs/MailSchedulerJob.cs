@@ -142,7 +142,7 @@ public class MailSchedulerJob : IJob
             var template = GetTemplate(templateId);
             if (template == null) return null;
 
-            var shouldSendMail = mailService.GetBy(mail => mail.Recipient == leadList.First().Email).Any();
+            var shouldSendMail = !mailService.GetBy(mail => mail.Recipient == leadList.First().Email).Any();
 
             return leadList
                     .Where(lead => !String.IsNullOrEmpty(lead.Email) && shouldSendMail)
