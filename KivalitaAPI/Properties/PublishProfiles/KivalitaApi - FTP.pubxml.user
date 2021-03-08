@@ -110,22 +110,22 @@ ao editar este arquivo MSBuild. Para saber mais sobre isso, visite https://go.mi
       <publishTime>12/09/2019 17:08:36</publishTime>
     </File>
     <File Include="KivalitaAPI.deps.json">
-      <publishTime>03/08/2021 08:22:40</publishTime>
+      <publishTime>03/08/2021 12:12:54</publishTime>
     </File>
     <File Include="KivalitaAPI.dll">
-      <publishTime>03/08/2021 08:22:39</publishTime>
+      <publishTime>03/08/2021 12:12:52</publishTime>
     </File>
     <File Include="KivalitaAPI.exe">
-      <publishTime>03/08/2021 08:22:39</publishTime>
+      <publishTime>03/08/2021 12:12:52</publishTime>
     </File>
     <File Include="KivalitaAPI.pdb">
-      <publishTime>03/08/2021 08:22:39</publishTime>
+      <publishTime>03/08/2021 12:12:52</publishTime>
     </File>
     <File Include="KivalitaAPI.runtimeconfig.json">
       <publishTime>03/04/2021 10:42:52</publishTime>
     </File>
     <File Include="KivalitaAPI.xml">
-      <publishTime>03/08/2021 08:22:31</publishTime>
+      <publishTime>03/08/2021 12:12:44</publishTime>
     </File>
     <File Include="ko/Microsoft.CodeAnalysis.CSharp.resources.dll">
       <publishTime>12/09/2019 17:09:00</publishTime>
@@ -524,7 +524,7 @@ ao editar este arquivo MSBuild. Para saber mais sobre isso, visite https://go.mi
       <publishTime>12/09/2019 17:08:36</publishTime>
     </File>
     <File Include="web.config">
-      <publishTime>03/08/2021 08:22:40</publishTime>
+      <publishTime>03/08/2021 12:12:54</publishTime>
     </File>
     <File Include="Z.EntityFramework.Extensions.EFCore.dll">
       <publishTime>09/25/2020 04:48:14</publishTime>

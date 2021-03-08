@@ -81,6 +81,8 @@ namespace KivalitaAPI.Services {
 				}
 			}
 
+			if (lead.CompanyId != lead.Company?.Id) lead.CompanyId = lead.Company?.Id ?? 0;
+
 			return baseRepository.Update(lead);
 		}
 
