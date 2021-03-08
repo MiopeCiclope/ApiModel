@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using AutoMapper;
 using KivalitaAPI.Data;
 using KivalitaAPI.Models;
@@ -29,9 +30,23 @@ namespace KivalitaAPI.Services
 
         public override Company Update(Company entity)
         {
+            var oldCompany = this.baseRepository.Get(entity.Id);
+            if (oldCompany.LinkedIn != entity.LinkedIn || oldCompany.Name != entity.Name)
+            {
+                var companyExists = this.baseRepository
+                                            .GetBy(company =>
+                                                company.Id != entity.Id
+                                                && (
+                                                    company.LinkedIn?.ToLower() == entity.LinkedIn?.ToLower() 
+                                                    || company.Name?.ToLower() == entity.Name?.ToLower())
+                                                    )
+                                            .Any();
+
+                if (companyExists) throw new Exception("Já existe empresa com esse nome ou Linked In");
+            }
+
             if(entity.shouldUpdateAllSectors)
             {
-                var oldCompany = this.baseRepository.Get(entity.Id);
                 var companiesWithSameSector = this.baseRepository
                                                     .GetBy(company => company.Sector == oldCompany.Sector);
                 companiesWithSameSector.ForEach(comany => comany.Sector = entity.Sector);
@@ -39,6 +54,7 @@ namespace KivalitaAPI.Services
                 var bulkListCompany = _mapper.Map<List<CompanyDatabaseDTO>>(companiesWithSameSector);
                 companyDtoRepository.UpdateRange(bulkListCompany);
             }
+
             return base.Update(entity);
         }
 
