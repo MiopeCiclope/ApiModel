@@ -101,7 +101,7 @@ namespace KivalitaAPI.Controllers
                 var page = filterQuery.Page.Value;
                 var skip = take * (page - 1);
 
-                var dataList = service.GetTask(type, userId, take, skip, date);
+                var dataList = service.GetTask(type, userId, take, skip, date, filterQuery);
 
                 return new HttpResponse<List<FlowTask>>
                 {

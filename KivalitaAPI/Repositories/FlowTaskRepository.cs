@@ -52,9 +52,9 @@ namespace KivalitaAPI.Repositories
             };
         }
 
-        public QueryResult<FlowTask> GetTask(string type, int userId, int take, int skip, string date = null)
+        public QueryResult<FlowTask> GetTask(string type, int userId, int take, int skip, string date = null, SieveModel filterQuery = null)
         {
-            var query = BuildTaskQuery(userId, type, take, skip, date);
+            var query = BuildTaskQuery(userId, type, take, skip, date, filterQuery);
             var response = context.Set<FlowTaskQueryDTO>().FromSqlRaw(query).ToList();
             var result = _mapper.Map<List<FlowTask>>(response);
 
@@ -182,11 +182,18 @@ namespace KivalitaAPI.Repositories
             return query.Count();
         }
 
-        private string BuildTaskQuery(int userId, string taskType, int take, int skip, string date = null)
+        private string BuildTaskQuery(int userId, string taskType, int take, int skip, string date = null, SieveModel filterQuery = null)
         {
             var today = DateTime.Now.Date;
             var ownerCondition = userId == 0 ? "" : $"and[c].[UserId] = { userId}";
             var statusCondition = $"and [f].Status = 'pending'";
+
+            var aditionalQuery = $"";
+            if (filterQuery != null && filterQuery.Filters != null && filterQuery.GetFiltersParsed().Where(filter => filter.Names.Contains("actionType")).Any())
+            {
+                var filters = filterQuery.GetFiltersParsed().First();
+                aditionalQuery = $@"and [f0].type = '{filters.Values.First()}'";
+            }
 
             var dateCondition = "";
             switch (taskType)
@@ -252,6 +259,7 @@ namespace KivalitaAPI.Repositories
                             {dateCondition}
 	                        {ownerCondition}
                             {statusCondition}
+                            {aditionalQuery}
 	                        and [f1].[IsActive] = 1
                             AND (
 			                        ([f0].[Type] = N'email' AND [f1].[isAutomatic] <> 1) 

@@ -34,12 +34,12 @@ namespace KivalitaAPI.Repositories
 
             var flows = result.ToList();
 
-            foreach (var flow in flows)
-            {
-                flow.NumberFLowEmails = context.Set<NumberFLowEmailsView>()
-                    .Where(fe => fe.FlowId == flow.Id)
-                    .FirstOrDefault();
-            }
+            //foreach (var flow in flows)
+            //{
+            //    flow.NumberFLowEmails = context.Set<NumberFLowEmailsView>()
+            //        .Where(fe => fe.FlowId == flow.Id)
+            //        .FirstOrDefault();
+            //}
 
             return new QueryResult<Flow>
             {
