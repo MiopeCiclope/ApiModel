@@ -59,11 +59,11 @@ public class ReadMailJob : IJob
                     _logger.LogError($"ReadMailJob - {e.Message}");
                 }
             }
-
+            _logger.LogInformation($"ReadMailJob - Done {DateTime.Now}");
         }
         catch (Exception e)
         {
-            _logger.LogError($"ReadMailJob - {e.Message}");
+            _logger.LogError($"ReadMailJob - Fail - {e.Message}");
         }
         finally
         {
