@@ -305,47 +305,75 @@ namespace KivalitaAPI.Services
                                         .Request()
                                         .Filter($"receivedDateTime ge {nextDate}")
                                         .GetAsync();
-
-                    foreach (var message in messageList)
+                    do
                     {
-                        var mailStatus = MailAnsweredStatusEnum.NotFound;
-                        switch (folderName)
+                        ParserMailList(folderName, userId, messageList);
+                        if (messageList.NextPageRequest != null)
                         {
-                            case "PokeLead Bounce":
-                                mailStatus = MailAnsweredStatusEnum.NotFound;
-                                break;
-                            case "PokeLead Positivo":
-                                mailStatus = MailAnsweredStatusEnum.Positive;
-                                break;
-                            case "PokeLead Negativo":
-                                mailStatus = MailAnsweredStatusEnum.Negative;
-                                break;
+                            messageList = await messageList.NextPageRequest.GetAsync();
                         }
+                    } while (messageList.NextPageRequest != null);
+                }
+            }
+        }
 
-                        var regex = new Regex(@"(track\?key+)=([^\s\""]+)");
-                        var match = regex.Match(message.Body.Content);
+        private void ParserMailList(string folderName, int userId, IMailFolderMessagesCollectionPage messageList)
+        {
+            foreach (var message in messageList)
+            {
+                var mailStatus = MailAnsweredStatusEnum.NotFound;
+                var mail = "";
+                int leadId = 0;
+                int taskId = 0;
 
-                        if (match.Success)
+                switch (folderName)
+                {
+                    case "PokeLead Bounce":
+                        mailStatus = MailAnsweredStatusEnum.NotFound;
+                        break;
+                    case "PokeLead Positivo":
+                        mailStatus = MailAnsweredStatusEnum.Positive;
+                        break;
+                    case "PokeLead Negativo":
+                        mailStatus = MailAnsweredStatusEnum.Negative;
+                        break;
+                }
+
+                var regex = new Regex(@"(track\?key+)=([^\s\""]+)");
+                var match = regex.Match(message.Body.Content);
+
+                if (match.Success)
+                {
+                    try
+                    {
+                        var key = match.Value.Split("=").Last();
+                        key = Uri.UnescapeDataString(key);
+
+                        var decryptedKey = AesCripty.DecryptString(Setting.MailTrackSecret, key);
+                        taskId = int.Parse(decryptedKey.Split("-")[0]);
+                        leadId = int.Parse(decryptedKey.Split("-")[1]);
+
+                        mailAnsweredService.SaveQualified(message, userId, leadId, taskId, mailStatus);
+                        _logger.LogInformation($@"ReadMail - Read Regex Done - Task: {taskId} // Lead: {leadId}");
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogError($@"ReadMail - Read Regex Fail - {leadId}");
+                        continue;
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        var mailRegex = new Regex("[a-z0-9_\\-\\+]+@[a-z0-9\\-]+\\.([a-z]{2,3})(?:\\.[a-z]{2})?");
+                        var mailMatch = mailRegex.Match(message.Body.Content);
+                        var recieveDate = message.ReceivedDateTime;
+
+                        if (mailMatch.Success)
                         {
-                            var key = match.Value.Split("=").Last();
-                            key = Uri.UnescapeDataString(key);
-
-                            var decryptedKey = AesCripty.DecryptString(Setting.MailTrackSecret, key);
-                            int taskId = int.Parse(decryptedKey.Split("-")[0]);
-                            int leadId = int.Parse(decryptedKey.Split("-")[1]);
-
-                            mailAnsweredService.SaveQualified(message, userId, leadId, taskId, mailStatus);
-                        }
-                        else
-                        {
-                            var mailRegex = new Regex("[a-z0-9_\\-\\+]+@[a-z0-9\\-]+\\.([a-z]{2,3})(?:\\.[a-z]{2})?");
-                            var mailMatch = mailRegex.Match(message.Body.Content);
-                            var recieveDate = message.ReceivedDateTime;
-
-                            if (mailMatch.Success)
-                            {
-                                var mail = mailMatch.Value;
-                                var query = $@"select ft.* from flowtask ft
+                            mail = mailMatch.Value;
+                            var query = $@"select ft.* from flowtask ft
                                                 left join flowAction fa on fa.Id = ft.FlowActionId
                                                 left join flow f on f.Id = fa.FlowId
                                                 where ft.LeadId in 
@@ -353,17 +381,20 @@ namespace KivalitaAPI.Services
 	                                                where email is not null and email like '%{mail}%')
 	                                                and f.Owner = {userId}
 	                                                and fa.Type = 'email'
-	                                                and ft.Status = 'finished'
-	                                                and ft.ScheduledTo < '{recieveDate.Value.AddDays(1).ToString("yyyy/MM/dd")}'";
+	                                                and ft.Status = 'finished'";
 
-                                var task = flowTaskRepository.GetByQuery(query);
+                            var task = flowTaskRepository.GetByQuery(query);
 
-                                mailAnsweredService.SaveQualified(message, userId, task.LeadId, task.Id, mailStatus);
-                            }
+                            mailAnsweredService.SaveQualified(message, userId, task.LeadId, task.Id, mailStatus);
+                            _logger.LogInformation($@"ReadMail - Read Body Done - Task: {task.Id} // Lead: {task.LeadId}");
                         }
                     }
+                    catch (Exception e)
+                    {
+                        _logger.LogError($@"ReadMail - Read Body Fail - {mail}");
+                        continue;
+                    }
                 }
-
             }
         }
     }
