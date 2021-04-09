@@ -135,6 +135,7 @@ namespace KivalitaAPI
             services.AddScoped<GetEmailService>();
 
             services.AddScoped<IEmailExtractorService, EmailExtractorService>();
+            services.AddScoped<EmailExtractorService>();
             services.AddScoped<RequestService>();
 
             services.AddScoped<WpRdStationRepository>();
@@ -348,10 +349,11 @@ namespace KivalitaAPI
             services.AddSingleton<GetMailJob>();
             services.AddSingleton<MailSchedulerJob>();
             services.AddSingleton<ReadMailJob>();
+            services.AddSingleton<FindMailJob>();
 
-            services.AddSingleton(new JobScheduleDTO("MailSchedulerJob", "0 0 9 1/1 * ? *", null, 0));
-            services.AddSingleton(new JobScheduleDTO("ReadMailJob", "0 0 10 1/1 * ? *", null, 0));
-            services.AddSingleton(new JobScheduleDTO("GetMailJob", null, DateTimeOffset.UtcNow, 0));
+            //services.AddSingleton(new JobScheduleDTO("MailSchedulerJob", "0 0 9 1/1 * ? *", null, 0));
+            //services.AddSingleton(new JobScheduleDTO("ReadMailJob", "0 0 10 1/1 * ? *", null, 0));
+            //services.AddSingleton(new JobScheduleDTO("GetMailJob", null, DateTimeOffset.UtcNow, 0));
 
             services.AddHostedService<SchedulerService>();
             services.AddSingleton<IJobScheduler, SchedulerService>();

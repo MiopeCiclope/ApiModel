@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Sieve.Models;
 using AutoMapper;
+using KivalitaAPI.Interfaces;
+using System.Threading;
 
 namespace KivalitaAPI.Controllers
 {
@@ -24,6 +26,7 @@ namespace KivalitaAPI.Controllers
         public readonly GetEmailService _getEmailService;
         public readonly ILogger<LeadsController> logger;
         private readonly IMapper _mapper;
+        public readonly IJobScheduler _scheduler;
 
         public LeadsController(
                 CompanyService companyService
@@ -31,6 +34,7 @@ namespace KivalitaAPI.Controllers
                 , LeadsService _service
                 , ILogger<LeadsController> logger
                 , IMapper mapper
+                , IJobScheduler scheduler
             )
         {
             this.service = _service;
@@ -38,6 +42,7 @@ namespace KivalitaAPI.Controllers
             this._getEmailService = getEmailService;
             this.logger = logger;
             this._mapper = mapper;
+            this._scheduler = scheduler;
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
@@ -298,10 +303,9 @@ namespace KivalitaAPI.Controllers
                 DefaultQueue queue = new DefaultQueue();
                 List<Leads> newLeads = this.service.SaveRange(leads);
 
-                foreach (Leads lead in newLeads)
-                {
-                    queue.Enqueue(() => _getEmailService.FromLeadAsync(lead));
-                }
+                var cancellationToken = new CancellationToken();
+                var job = new JobScheduleDTO("FindMailJob", null, DateTimeOffset.UtcNow, 0);
+                _scheduler.ScheduleJob(cancellationToken, job);
 
                 return new HttpResponse<string>
                 {
