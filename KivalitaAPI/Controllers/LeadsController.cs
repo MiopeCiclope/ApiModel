@@ -300,7 +300,6 @@ namespace KivalitaAPI.Controllers
                     lead.CreatedAt = utfNowTime;
                 });
 
-                DefaultQueue queue = new DefaultQueue();
                 List<Leads> newLeads = this.service.SaveRange(leads);
 
                 var cancellationToken = new CancellationToken();
