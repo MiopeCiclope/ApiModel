@@ -14,6 +14,7 @@ using Sieve.Models;
 using AutoMapper;
 using KivalitaAPI.Interfaces;
 using System.Threading;
+using System.Linq;
 
 namespace KivalitaAPI.Controllers
 {
@@ -212,6 +213,49 @@ namespace KivalitaAPI.Controllers
                     IsStatusCodeSuccess = false,
                     statusCode = HttpStatusCode.InternalServerError,
                     data = false,
+                    ErrorMessage = "Erro ao realizar a requisição"
+                };
+            }
+        }
+
+
+        [HttpPost]
+        //[Authorize]
+        [Route("existsList")]
+        public HttpResponse<List<string>> ExistList([FromBody] List<string> existList)
+        {
+            logger.LogInformation($"{this.GetType().Name} - Exists List");
+            try
+            {
+                if(existList == null || existList.Count == 0)
+                {
+                    logger.LogError("Empty List");
+                    return new HttpResponse<List<string>>
+                    {
+                        IsStatusCodeSuccess = false,
+                        statusCode = HttpStatusCode.InternalServerError,
+                        data = null,
+                        ErrorMessage = "Erro ao realizar a requisição"
+                    };
+                }
+
+                var existingLeads = this.service.LeadExists(existList);
+
+                return new HttpResponse<List<string>>
+                {
+                    IsStatusCodeSuccess =  true,
+                    statusCode = HttpStatusCode.OK,
+                    data = existingLeads
+                };
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.Message);
+                return new HttpResponse<List<string>>
+                {
+                    IsStatusCodeSuccess = false,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    data = null,
                     ErrorMessage = "Erro ao realizar a requisição"
                 };
             }

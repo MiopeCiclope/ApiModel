@@ -227,5 +227,14 @@ namespace KivalitaAPI.Repositories
             var bulkListLeads = _mapper.Map<List<LeadDatabaseDTO>>(leads);
             return _mapper.Map<List<Leads>>(_leadsDTORepository.UpdateRange(bulkListLeads));
         }
+
+        public List<string> getExistingLinkedIn(List<string> linkedInIds)
+        {
+            return context.Set<Leads>()
+                .AsNoTracking()
+                .Where(l => linkedInIds.Contains(l.LinkedInPublic))
+                .Select(l => l.LinkedInPublic)
+                .ToList();
+        }
     }
 }

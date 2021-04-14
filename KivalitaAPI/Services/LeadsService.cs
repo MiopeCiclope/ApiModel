@@ -142,7 +142,13 @@ namespace KivalitaAPI.Services {
 
 			return leadSearch.FirstOrDefault() != null ? true : false;
 		}
-		
+
+		public List<string> LeadExists(List<string> listToCheck)
+		{
+			var leadsThatExists = this.baseRepository.getExistingLinkedIn(listToCheck);
+			return leadsThatExists;
+		}
+
 		public virtual List<Leads> ImportLeads(List<Leads> leadDTOs)
 		{
 			List<Leads> leads = new List<Leads> { };
