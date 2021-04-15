@@ -41,46 +41,56 @@ public class FindMailJob : IJob
 
     public async Task workerTask()
     {
+        semaphore.WaitOne();
+        _logger.LogInformation($"FindMailJob - {DateTime.Now}");
+        if (scope == null)
+        {
+            scope = this._serviceProvider.CreateScope();
+        }
+
+        List<Leads> leadEmailGuessed = new List<Leads>();
+        var leadsRepository = scope.ServiceProvider.GetService<LeadsRepository>();
+
         try
         {
-            semaphore.WaitOne();
-            _logger.LogInformation($"{DateTime.Now}");
-            if (scope == null)
-            {
-                scope = this._serviceProvider.CreateScope();
-            }
-
-            var leadsRepository = scope.ServiceProvider.GetService<LeadsRepository>();
             var leads = leadsRepository.GetBy(l => l.DidGuessEmail == false && l.CompanyId != null);
 
             var emailExtractorService = scope.ServiceProvider.GetService<EmailExtractorService>(); 
-            List<Leads> leadEmailGuessed = new List<Leads>();
 
             foreach (var lead in leads)
             {
-                string firstName;
-                string lastName;
-
-                var domains = GetDomainsFromCompany(lead.Company);
-                (firstName, lastName) = GetNames(lead.Name);
-
-                Console.WriteLine($"{lead.Company.Name} - {firstName} {lastName}");
-
-                string email;
                 try
                 {
-                    email = await emailExtractorService.Run(firstName, lastName, domains);
+                    string firstName;
+                    string lastName;
+
+                    var domains = GetDomainsFromCompany(lead.Company);
+                    (firstName, lastName) = GetNames(lead.Name);
+
+                    _logger.LogInformation($"{lead.Company.Name} - {firstName} {lastName}");
+
+                    string email;
+                    try
+                    {
+                        email = await emailExtractorService.Run(firstName, lastName, domains);
+                    }
+                    catch
+                    {
+                        email = null;
+                    }
+
+                    _logger.LogInformation($"Email - {email}");
+
+                    lead.Email = (!String.IsNullOrEmpty(email)) ? email : lead.Email;
+                    lead.DidGuessEmail = true;
+                    leadEmailGuessed.Add(lead);
                 }
-                catch
+                catch (Exception e)
                 {
-                    email = null;
+                    _logger.LogError($"{e.Message}");
+                    _logger.LogError($"Erro ao buscar e-mail da lead: {lead.Id}");
                 }
 
-                Console.WriteLine($"Email - {email}");
-
-                lead.Email = (!String.IsNullOrEmpty(email)) ? email : lead.Email;
-                lead.DidGuessEmail = true;
-                leadEmailGuessed.Add(lead);
             }
 
             leadsRepository.UpdateRangeNoMapper(leadEmailGuessed);
@@ -88,6 +98,8 @@ public class FindMailJob : IJob
         catch(Exception e)
         {
             _logger.LogError($"{e.Message}");
+            if (leadEmailGuessed.Any()) 
+                leadsRepository.UpdateRangeNoMapper(leadEmailGuessed);
         }
         finally
         {
