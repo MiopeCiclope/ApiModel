@@ -44,7 +44,8 @@ namespace KivalitaAPI.Services
                 base.Update(postLinked);
             }
 
-            _deploy.TriggerDeploy();
+            //_deploy.TriggerDeploy();
+            _deploy.TriggerDeployHQ();
             return postAdded;
         }
 
@@ -83,7 +84,8 @@ namespace KivalitaAPI.Services
 
             post.Slug = GenerateSlug(post.Title);
 
-            _deploy.TriggerDeploy();
+            //_deploy.TriggerDeploy();
+            _deploy.TriggerDeployHQ();
             return base.Update(post);
         }
 

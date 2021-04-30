@@ -8,6 +8,7 @@ namespace KivalitaAPI.Services
     public class CircleCiService
     {
         private readonly string apiUrl = "https://circleci.com/api/v2/project/github/Kivalita/Website/pipeline";
+        private readonly string apiUrlHQ = "https://kivalita.deployhq.com/deploy/website/zxzj6gWwphzY4KNzeWSVLAJjK-yG3ibz";
         public readonly ILogger logger;
 
         public CircleCiService(ILogger<CircleCiService> _logger) {
@@ -27,6 +28,38 @@ namespace KivalitaAPI.Services
             using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
             {
                 streamWriter.Write(JsonSerializer.Serialize(circleCiPayload));
+            }
+
+            var result = "";
+            var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+            using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+            {
+                result = streamReader.ReadToEnd();
+            }
+
+            logger.LogInformation($"{this.GetType().Name} - {result}");
+        }
+
+        public void TriggerDeployHQ()
+        {
+            var httpWebRequest = (HttpWebRequest)WebRequest.Create(apiUrlHQ);
+            httpWebRequest.ContentType = "application/json";
+            httpWebRequest.Method = "POST";
+
+            var hqPayload = new
+            {
+                payload = new
+                {
+                    new_ref = "latest",
+                    branch = "baseline",
+                    email = "romulo.carvalho@kivalita.com.br",
+                    clone_url = "https://github.com/Kivalita/Website.git"
+                }
+            };
+
+            using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
+            {
+                streamWriter.Write(JsonSerializer.Serialize(hqPayload));
             }
 
             var result = "";
